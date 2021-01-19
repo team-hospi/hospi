@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".LoginActivity">
+
+    <TextView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="120dp"
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center"
+        android:text="Hospi"
+        android:textColor="@color/main_color"
+        android:textSize="90sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:background="@drawable/edit_txt">
+
+        <EditText
+            android:id="@+id/inputID"
+            android:layout_width="200dp"
+            android:layout_height="47dp"
+            android:layout_marginLeft="10dp"
+            android:background="@null"
+            android:ems="10"
+            android:hint="아이디"
+            android:inputType="textPersonName"
+            android:singleLine="true" />
+
+        <ImageButton
+            android:id="@+id/idCancelBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_action_cancel"
+            android:visibility="invisible"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:background="@drawable/edit_txt">
+
+        <EditText
+            android:id="@+id/inputPW"
+            android:layout_width="200dp"
+            android:layout_height="47dp"
+            android:layout_marginLeft="10dp"
+            android:background="@null"
+            android:ems="10"
+            android:hint="비밀번호"
+            android:inputType="textPassword"
+            android:singleLine="true" />
+
+        <ImageButton
+            android:id="@+id/pwCancelBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_action_cancel"
+            android:visibility="invisible"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/loginErrorTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="80dp"
+        android:text="잘못된 아이디/비밀번호 입니다."
+        android:textColor="@color/red"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/accountFindBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="80dp"
+        android:text="아이디를 잊으셨나요?"
+        android:textColor="@color/blue"
+        android:clickable="true"/>
+
+    <Button
+        android:id="@+id/loginBtn"
+        android:layout_width="254dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="60dp"
+        android:layout_gravity="center"
+        android:text="로그인"
+        android:textSize="20sp"/>
+
+    <Button
+        android:id="@+id/registerBtn"
+        android:layout_width="254dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:text="회원가입"
+        android:textSize="20sp" />
+</LinearLayout>
