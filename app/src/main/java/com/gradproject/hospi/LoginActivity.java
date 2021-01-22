@@ -77,7 +77,6 @@ public class LoginActivity extends AppCompatActivity {
 
     // 로그인 실패 팝업 띄우기
     private void loginFail(){
-        Intent loginFail = new Intent(getApplicationContext(), LoginFailPopUp.class);
-        startActivity(loginFail);
+        startActivity(new Intent(getApplicationContext(), LoginFailPopUp.class));
     }
 }

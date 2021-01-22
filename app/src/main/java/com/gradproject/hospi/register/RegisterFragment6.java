@@ -1,5 +1,6 @@
 package com.gradproject.hospi.register;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gradproject.hospi.LoginFailPopUp;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.Utils;
 
@@ -57,6 +59,8 @@ public class RegisterFragment6 extends Fragment {
                             "생년월일: " + registerActivity.user.getBirth() + "\n" +
                             "성별: " + registerActivity.user.getSex();
                     Toast.makeText(getContext(), check, Toast.LENGTH_LONG).show();
+                    getActivity().finish();
+                    registerSuccess();
                 }
             }
         });
@@ -76,5 +80,10 @@ public class RegisterFragment6 extends Fragment {
         };
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    }
+
+    // 회원가입 완료 팝업업
+    private void registerSuccess(){
+        startActivity(new Intent(getContext(), RegisterSuccessPopUp.class));
     }
 }
