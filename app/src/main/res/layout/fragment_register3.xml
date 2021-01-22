@@ -52,7 +52,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <DatePicker
-        android:id="@+id/datePicker"
+        android:id="@+id/birthDp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -64,17 +64,18 @@
         app:layout_constraintTop_toBottomOf="@+id/guideTxt2" />
 
     <RadioGroup
+        android:id="@+id/sexRg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.284"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/datePicker">
+        app:layout_constraintTop_toBottomOf="@+id/birthDp">
 
         <RadioButton
-            android:id="@+id/radioMan"
+            android:id="@+id/manRb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
@@ -83,7 +84,7 @@
             tools:layout_editor_absoluteY="302dp" />
 
         <RadioButton
-            android:id="@+id/radioWoman"
+            android:id="@+id/womanRb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="여자"
@@ -91,5 +92,16 @@
             tools:layout_editor_absoluteY="302dp" />
     </RadioGroup>
 
-
+    <TextView
+        android:id="@+id/radioErrorTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="성별을 선택해주세요."
+        android:textColor="@color/red"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.282"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sexRg" />
 </androidx.constraintlayout.widget.ConstraintLayout>

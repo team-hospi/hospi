@@ -27,10 +27,14 @@ public class RegisterActivity extends AppCompatActivity {
     RegisterFragment3 registerFragment3; RegisterFragment4 registerFragment4;
     RegisterFragment5 registerFragment5; RegisterFragment6 registerFragment6;
 
+    User user; // 회원가입 정보
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        user = new User();
 
         registerFragment1 = new RegisterFragment1(); registerFragment2 = new RegisterFragment2();
         registerFragment3 = new RegisterFragment3(); registerFragment4 = new RegisterFragment4();

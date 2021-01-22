@@ -10,11 +10,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.gradproject.hospi.R;
 
 public class RegisterFragment5 extends Fragment {
     RegisterActivity registerActivity;
+    TextView emailErrorTxt, emailErrorTxt2, emailErrorTxt3; // 1: 중복 체크 2: 공백 체크 3: 올바른 이메일인지 체크
+    EditText inputEmail;
+
+    String email;
+    String tmpEamil = "test@test"; // 확인용 임시 이메일
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -22,12 +29,33 @@ public class RegisterFragment5 extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_register5, container,false);
 
         registerActivity = (RegisterActivity) getActivity();
+        emailErrorTxt = rootView.findViewById(R.id.emailErrorTxt);
+        emailErrorTxt2 = rootView.findViewById(R.id.emailErrorTxt2);
+        emailErrorTxt3 = rootView.findViewById(R.id.emailErrorTxt3);
+        inputEmail = rootView.findViewById(R.id.inputEmail);
 
         Button nextBtn = rootView.findViewById(R.id.nextBtn);
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                registerActivity.onFragmentChanged(5);
+                email = inputEmail.getText().toString();
+
+                if(email.equals(tmpEamil)){
+                    emailErrorTxt.setVisibility(View.VISIBLE);
+                    emailErrorTxt2.setVisibility(View.INVISIBLE);
+                    emailErrorTxt3.setVisibility(View.INVISIBLE);
+                }else if(email.equals("")){
+                    emailErrorTxt.setVisibility(View.INVISIBLE);
+                    emailErrorTxt2.setVisibility(View.VISIBLE);
+                    emailErrorTxt3.setVisibility(View.INVISIBLE);
+                }else if(!(email.contains("@"))){
+                    emailErrorTxt.setVisibility(View.INVISIBLE);
+                    emailErrorTxt2.setVisibility(View.INVISIBLE);
+                    emailErrorTxt3.setVisibility(View.VISIBLE);
+                }else{
+                    registerActivity.user.setEmail(email);
+                    registerActivity.onFragmentChanged(5);
+                }
             }
         });
 
