@@ -35,11 +35,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="주소 입력"
+        android:text="이메일 입력"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guideTxt" />
+
+    <EditText
+        android:id="@+id/inputEmail"
+        android:layout_width="250dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/edit_text"
+        android:hint="이메일"
+        android:ems="10"
+        android:inputType="textEmailAddress"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:singleLine="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guideTxt2" />
 
     <Button
         android:id="@+id/nextBtn"
@@ -50,91 +66,4 @@
         android:text="다음"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <EditText
-        android:id="@+id/inputAddress1"
-        android:layout_width="110dp"
-        android:layout_height="47dp"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/edit_text"
-        android:ems="10"
-        android:hint="시/도"
-        android:inputType="text"
-        android:privateImeOptions="defaultInputmode=korean"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:singleLine="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.289"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guideTxt2" />
-
-    <EditText
-        android:id="@+id/inputAddress2"
-        android:layout_width="110dp"
-        android:layout_height="47dp"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/edit_text"
-        android:ems="10"
-        android:hint="시/군/구"
-        android:inputType="text"
-        android:privateImeOptions="defaultInputmode=korean"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:singleLine="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.163"
-        app:layout_constraintStart_toEndOf="@+id/inputAddress1"
-        app:layout_constraintTop_toBottomOf="@+id/guideTxt2" />
-
-    <EditText
-        android:id="@+id/inputAddress3"
-        android:layout_width="237dp"
-        android:layout_height="47dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/edit_text"
-        android:ems="10"
-        android:hint="시/군/구"
-        android:inputType="text"
-        android:privateImeOptions="defaultInputmode=korean"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:singleLine="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputAddress1" />
-
-    <EditText
-        android:id="@+id/inputAddress4"
-        android:layout_width="237dp"
-        android:layout_height="47dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/edit_text"
-        android:ems="10"
-        android:hint="도로명+건물번호"
-        android:inputType="text"
-        android:privateImeOptions="defaultInputmode=korean"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:singleLine="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputAddress3" />
-
-    <EditText
-        android:id="@+id/inputAddress5"
-        android:layout_width="237dp"
-        android:layout_height="47dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/edit_text"
-        android:ems="10"
-        android:hint="추가 입력"
-        android:inputType="text"
-        android:privateImeOptions="defaultInputmode=korean"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:singleLine="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputAddress4" />
 </androidx.constraintlayout.widget.ConstraintLayout>

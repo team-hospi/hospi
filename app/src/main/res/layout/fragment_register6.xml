@@ -34,21 +34,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="이메일 입력"
+        android:text="비밀번호 생성"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guideTxt" />
 
     <EditText
-        android:id="@+id/inputEmail"
-        android:layout_width="237dp"
-        android:layout_height="47dp"
+        android:id="@+id/inputPW"
+        android:layout_width="250dp"
+        android:layout_height="45dp"
         android:layout_marginTop="25dp"
         android:background="@drawable/edit_text"
-        android:hint="이메일"
+        android:hint="비밀번호"
         android:ems="10"
-        android:inputType="textEmailAddress"
+        android:inputType="textPassword"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:singleLine="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guideTxt2" />
+
+    <EditText
+        android:id="@+id/inputPW2"
+        android:layout_width="250dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/edit_text"
+        android:hint="비밀번호 확인"
+        android:ems="10"
+        android:inputType="textPassword"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:singleLine="true"
@@ -62,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:text="다음"
+        android:text="완료"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

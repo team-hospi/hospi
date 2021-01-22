@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.gradproject.hospi.R;
 
@@ -27,7 +28,7 @@ public class RegisterFragment6 extends Fragment {
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                registerActivity.onFragmentChanged(6);
+                Toast.makeText(getContext(), "마지막 페이지", Toast.LENGTH_SHORT).show();
             }
         });
 

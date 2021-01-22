@@ -17,13 +17,13 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.180" />
+        app:layout_constraintVertical_bias="0.078" />
 
     <TextView
         android:id="@+id/accountFindBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="86dp"
+        android:layout_marginStart="83dp"
         android:layout_marginTop="10dp"
         android:clickable="true"
         android:text="아이디/비밀번호 찾기"
@@ -38,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="86dp"
+        android:layout_marginRight="83dp"
         android:clickable="true"
         android:text="회원가입"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -49,7 +49,7 @@
 
     <Button
         android:id="@+id/loginBtn"
-        android:layout_width="240dp"
+        android:layout_width="250dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
         android:text="로그인"
@@ -63,8 +63,8 @@
 
     <EditText
         android:id="@+id/inputEmail"
-        android:layout_width="237dp"
-        android:layout_height="47dp"
+        android:layout_width="250dp"
+        android:layout_height="45dp"
         android:background="@drawable/edit_text"
         android:ems="10"
         android:hint="이메일"
@@ -80,8 +80,8 @@
 
     <EditText
         android:id="@+id/inputPW"
-        android:layout_width="237dp"
-        android:layout_height="47dp"
+        android:layout_width="250dp"
+        android:layout_height="45dp"
         android:layout_marginTop="5dp"
         android:background="@drawable/edit_text"
         android:ems="10"

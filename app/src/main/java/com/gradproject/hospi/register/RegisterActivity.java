@@ -26,7 +26,6 @@ public class RegisterActivity extends AppCompatActivity {
     RegisterFragment1 registerFragment1; RegisterFragment2 registerFragment2;
     RegisterFragment3 registerFragment3; RegisterFragment4 registerFragment4;
     RegisterFragment5 registerFragment5; RegisterFragment6 registerFragment6;
-    RegisterFragment7 registerFragment7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +35,6 @@ public class RegisterActivity extends AppCompatActivity {
         registerFragment1 = new RegisterFragment1(); registerFragment2 = new RegisterFragment2();
         registerFragment3 = new RegisterFragment3(); registerFragment4 = new RegisterFragment4();
         registerFragment5 = new RegisterFragment5(); registerFragment6 = new RegisterFragment6();
-        registerFragment7 = new RegisterFragment7();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.registerContainer, registerFragment1).commit();
     }
@@ -60,9 +58,6 @@ public class RegisterActivity extends AppCompatActivity {
                 break;
             case 5:
                 getSupportFragmentManager().beginTransaction().replace(R.id.registerContainer, registerFragment6).commit();
-                break;
-            case 6:
-                getSupportFragmentManager().beginTransaction().replace(R.id.registerContainer, registerFragment7).commit();
                 break;
         }
     }

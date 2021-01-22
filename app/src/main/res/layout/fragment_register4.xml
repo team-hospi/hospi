@@ -42,8 +42,8 @@
 
     <EditText
         android:id="@+id/inputPhone"
-        android:layout_width="237dp"
-        android:layout_height="47dp"
+        android:layout_width="250dp"
+        android:layout_height="45dp"
         android:layout_marginTop="25dp"
         android:background="@drawable/edit_text"
         android:hint="휴대폰 번호"
