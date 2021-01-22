@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Hospi</string>
+    <string name="register_title">Hospi 계정 만들기</string>
 </resources>
