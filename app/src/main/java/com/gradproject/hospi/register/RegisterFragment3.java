@@ -38,6 +38,8 @@ public class RegisterFragment3 extends Fragment {
         sexRg = rootView.findViewById(R.id.sexRg);
         radioErrorTxt = rootView.findViewById(R.id.radioErrorTxt);
 
+        birthDp.setMaxDate(System.currentTimeMillis());
+
         Button nextBtn = rootView.findViewById(R.id.nextBtn);
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
