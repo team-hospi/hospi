@@ -19,8 +19,8 @@ import com.gradproject.hospi.R;
 
 public class RegisterFragment1 extends Fragment {
     RegisterActivity registerActivity;
-    RadioButton agree, noAgree;
-    TextView radioErrorTxt;
+    RadioButton agree, noAgree;  // 동의, 미동의
+    TextView radioErrorTxt; // 미동의 및 체크 안했을때 표시할 경고 메시지
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,6 +32,7 @@ public class RegisterFragment1 extends Fragment {
         noAgree = rootView.findViewById(R.id.noAgree);
         radioErrorTxt = rootView.findViewById(R.id.radioErrorTxt);
 
+        // 다음 버튼
         Button nextBtn = rootView.findViewById(R.id.nextBtn);
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +59,6 @@ public class RegisterFragment1 extends Fragment {
             }
         };
 
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback); // 뒤로가기
     }
 }

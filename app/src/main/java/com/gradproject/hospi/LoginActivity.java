@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // 로그인 처리
-    private Boolean processedLogin(String id, String pw){
+    private boolean processedLogin(String id, String pw){
         // TODO - 로그인 처리 로직 구현
         if(id.equals(Email)){
             if(pw.equals(PW)){

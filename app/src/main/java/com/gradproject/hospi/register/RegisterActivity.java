@@ -27,7 +27,7 @@ public class RegisterActivity extends AppCompatActivity {
     RegisterFragment3 registerFragment3; RegisterFragment4 registerFragment4;
     RegisterFragment5 registerFragment5; RegisterFragment6 registerFragment6;
 
-    User user; // 회원가입 정보
+    User user; // 회원가입 정보 임시 저장
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.registerContainer, registerFragment1).commit();
     }
 
+    // 프래그먼트 화면 이동
     public void onFragmentChanged(int index){
         switch(index){
             case 0:

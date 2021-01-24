@@ -21,12 +21,8 @@ import org.w3c.dom.Text;
 
 public class RegisterFragment3 extends Fragment {
     RegisterActivity registerActivity;
-    DatePicker birthDp;
-    RadioGroup sexRg;
-    TextView radioErrorTxt;
-
-    int radioId;
-    String sex, date;
+    DatePicker birthDp; // 생년월일 받아오기
+    String date; // 생년월일 저장
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,27 +31,17 @@ public class RegisterFragment3 extends Fragment {
 
         registerActivity = (RegisterActivity) getActivity();
         birthDp = rootView.findViewById(R.id.birthDp);
-        sexRg = rootView.findViewById(R.id.sexRg);
-        radioErrorTxt = rootView.findViewById(R.id.radioErrorTxt);
 
-        birthDp.setMaxDate(System.currentTimeMillis());
+        birthDp.setMaxDate(System.currentTimeMillis()); // 현재 날짜를 최대로 지정
 
-        Button nextBtn = rootView.findViewById(R.id.nextBtn);
+        Button nextBtn = rootView.findViewById(R.id.nextBtn); // 다음 버튼
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                radioId = sexRg.getCheckedRadioButtonId();
-                if(radioId==-1){
-                    radioErrorTxt.setVisibility(View.VISIBLE);
-                }else{
-                    RadioButton sexRb = rootView.findViewById(radioId);
-                    sex = sexRb.getText().toString();
-                    int month = birthDp.getMonth() + 1;
-                    date = birthDp.getYear() + "-" + month + "-" + birthDp.getDayOfMonth();
-                    registerActivity.user.setSex(sex);
-                    registerActivity.user.setBirth(date);
-                    registerActivity.onFragmentChanged(3);
-                }
+                int month = birthDp.getMonth() + 1;
+                date = birthDp.getYear() + "-" + month + "-" + birthDp.getDayOfMonth();
+                registerActivity.user.setBirth(date);
+                registerActivity.onFragmentChanged(3);
             }
         });
 

@@ -24,7 +24,7 @@ public class RegisterFragment6 extends Fragment {
     EditText inputPW, inputPW2; // 1: 비밀번호 2: 비밀번호 확인
     TextView pwErrorTxt, pwErrorTxt2; // 1: 중복체크 2: 빈칸 체크
 
-    String pw;
+    String pw; // 비밀번호 저장
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,15 +50,6 @@ public class RegisterFragment6 extends Fragment {
                 }else{
                     pw = Utils.getEncrypt(registerActivity.user.getEmail(), inputPW2.getText().toString());
                     registerActivity.user.setPassword(pw);
-                    String check = "사용자 정보\n" +
-                            "이메일: " + registerActivity.user.getEmail() + "\n" +
-                            "비밀번호: " + inputPW2.getText().toString() + "\n" +
-                            "암호화된 비밀번호: " + registerActivity.user.getPassword() + "\n" +
-                            "이름: " + registerActivity.user.getName() + "\n" +
-                            "휴대폰 번호: " + registerActivity.user.getPhone() + "\n" +
-                            "생년월일: " + registerActivity.user.getBirth() + "\n" +
-                            "성별: " + registerActivity.user.getSex();
-                    Toast.makeText(getContext(), check, Toast.LENGTH_LONG).show();
                     getActivity().finish();
                     registerSuccess();
                 }
@@ -82,7 +73,7 @@ public class RegisterFragment6 extends Fragment {
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-    // 회원가입 완료 팝업업
+    // 회원가입 완료 팝업
     private void registerSuccess(){
         startActivity(new Intent(getContext(), RegisterSuccessPopUp.class));
     }

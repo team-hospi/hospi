@@ -7,21 +7,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.Utils;
 
 import org.w3c.dom.Text;
 
 public class RegisterFragment4 extends Fragment {
     RegisterActivity registerActivity;
-    EditText inputPhone;
-    TextView phoneErrorTxt;
+    EditText inputPhone; // 전화번호 입력받기
+    TextView phoneErrorTxt; // 전화번호 빈칸 에러메시지
 
-    String phone;
+    String phone; // 전화번호
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,11 +34,12 @@ public class RegisterFragment4 extends Fragment {
         inputPhone = rootView.findViewById(R.id.inputPhone);
         phoneErrorTxt = rootView.findViewById(R.id.phoneErrorTxt);
 
+        // 다음 버튼
         Button nextBtn = rootView.findViewById(R.id.nextBtn);
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                phone = inputPhone.getText().toString();
+                phone = Utils.phone(inputPhone.getText().toString()); // 자동 하이픈 입력 후 전화번호 저장
                 if(phone.equals("")){
                     phoneErrorTxt.setVisibility(View.VISIBLE);
                 }else{

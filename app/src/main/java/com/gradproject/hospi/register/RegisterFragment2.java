@@ -17,10 +17,10 @@ import com.gradproject.hospi.R;
 
 public class RegisterFragment2 extends Fragment {
     RegisterActivity registerActivity;
-    EditText inputName;
-    TextView nameErrorTxt;
+    EditText inputName; // 입력한 이름 받아오기
+    TextView nameErrorTxt; // 빈칸 에러 메시지
 
-    String name;
+    String name; // 이름 저장
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,17 +31,17 @@ public class RegisterFragment2 extends Fragment {
         inputName = rootView.findViewById(R.id.inputName);
         nameErrorTxt = rootView.findViewById(R.id.nameErrorTxt);
 
-        Button nextBtn = rootView.findViewById(R.id.nextBtn);
+        Button nextBtn = rootView.findViewById(R.id.nextBtn); // 다음 버튼
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 name = inputName.getText().toString();
 
                 if(name.equals("")){
-                    nameErrorTxt.setVisibility(View.VISIBLE);
+                    nameErrorTxt.setVisibility(View.VISIBLE); // 빈칸 에러 출력
                 }else{
-                    registerActivity.user.setName(name);
-                    registerActivity.onFragmentChanged(2);
+                    registerActivity.user.setName(name); // user 인스턴스에 이름 저장
+                    registerActivity.onFragmentChanged(2); // 다음 화면 이동
                 }
             }
         });
