@@ -45,13 +45,4 @@ public class Utils {
         }
         return src.replaceFirst("(^02|[0-9]{3})([0-9]{3,4})([0-9]{4})$", "$1-$2-$3");
     }
-
-    // 빈칸 체크
-    public static boolean blankCheck(String str){
-        if(str.equals("")){
-            return true;
-        }else{
-            return false;
-        }
-    }
 }

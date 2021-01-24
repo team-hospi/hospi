@@ -40,7 +40,7 @@ public class RegisterFragment6 extends Fragment {
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Utils.blankCheck(inputPW.getText().toString()) || Utils.blankCheck(inputPW2.getText().toString())){
+                if(inputPW.getText().toString().equals("") || inputPW2.getText().toString().equals("")){
                     pwErrorTxt.setText("비밀번호를 입력해주세요.");
                     pwErrorTxt.setVisibility(View.VISIBLE);
                 }else if(!(inputPW.getText().toString().equals(inputPW2.getText().toString()))){

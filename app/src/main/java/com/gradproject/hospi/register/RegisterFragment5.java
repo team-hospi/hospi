@@ -41,7 +41,7 @@ public class RegisterFragment5 extends Fragment {
                 if(checkDuplicateEmail(email)){
                     emailErrorTxt.setText("이미 등록된 이메일 입니다.");
                     emailErrorTxt.setVisibility(View.VISIBLE);
-                }else if(Utils.blankCheck(email)){
+                }else if(email.equals("")){
                     emailErrorTxt.setText("이메일을 입력해주세요.");
                     emailErrorTxt.setVisibility(View.VISIBLE);
                 }else if(!(email.contains("@"))){

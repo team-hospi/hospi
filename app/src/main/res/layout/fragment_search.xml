@@ -8,10 +8,10 @@
 
     <FrameLayout
         android:id="@+id/searchBox"
-        android:layout_width="280dp"
-        android:layout_height="45dp"
-        android:clickable="true"
+        android:layout_width="320dp"
+        android:layout_height="50dp"
         android:background="@drawable/edit_text"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
@@ -22,19 +22,29 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
             android:layout_gravity="left|center"
+            android:layout_marginLeft="10dp"
             android:hint="증상 또는 병원을 검색하세요"
-            android:textSize="17sp"/>
+            android:textSize="17sp" />
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center|right"
             android:layout_marginRight="10dp"
             android:src="@drawable/ic_action_search"
-            app:tint="@color/main_color"/>
+            app:tint="@color/main_color" />
     </FrameLayout>
 
-
+    <TextView
+        android:id="@+id/locationTxt"
+        android:layout_width="315dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="45dp"
+        android:layout_marginRight="45dp"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchBox" />
 </androidx.constraintlayout.widget.ConstraintLayout>

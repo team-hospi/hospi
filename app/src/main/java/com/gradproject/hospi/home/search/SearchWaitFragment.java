@@ -1,6 +1,5 @@
 package com.gradproject.hospi.home.search;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,7 +9,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,8 +16,6 @@ import android.widget.Toast;
 
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.Utils;
-
-import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class SearchWaitFragment extends Fragment {
     ImageView searchBtn, removeBtn;
@@ -66,7 +62,7 @@ public class SearchWaitFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(Utils.blankCheck(searchEdt.getText().toString())){
+                if(searchEdt.getText().toString().equals("")){
                     removeBtn.setClickable(false);
                     removeBtn.setVisibility(View.INVISIBLE);
                 }else{

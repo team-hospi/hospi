@@ -38,7 +38,7 @@ public class RegisterFragment2 extends Fragment {
             public void onClick(View v) {
                 name = inputName.getText().toString();
 
-                if(Utils.blankCheck(name)){
+                if(name.equals("")){
                     nameErrorTxt.setVisibility(View.VISIBLE); // 빈칸 에러 출력
                 }else{
                     registerActivity.user.setName(name); // user 인스턴스에 이름 저장
