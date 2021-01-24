@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.Utils;
 
 public class RegisterFragment2 extends Fragment {
     RegisterActivity registerActivity;
@@ -37,7 +38,7 @@ public class RegisterFragment2 extends Fragment {
             public void onClick(View v) {
                 name = inputName.getText().toString();
 
-                if(name.equals("")){
+                if(Utils.blankCheck(name)){
                     nameErrorTxt.setVisibility(View.VISIBLE); // 빈칸 에러 출력
                 }else{
                     registerActivity.user.setName(name); // user 인스턴스에 이름 저장

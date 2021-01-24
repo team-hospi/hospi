@@ -14,14 +14,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.Utils;
 
 public class RegisterFragment5 extends Fragment {
     RegisterActivity registerActivity;
-    TextView emailErrorTxt, emailErrorTxt2, emailErrorTxt3; // 1: 중복 체크 2: 공백 체크 3: 올바른 이메일인지 체크
+    TextView emailErrorTxt;
     EditText inputEmail;
 
     String email;
-    String tmpEamil = "test@test"; // 확인용 임시 이메일
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,8 +30,6 @@ public class RegisterFragment5 extends Fragment {
 
         registerActivity = (RegisterActivity) getActivity();
         emailErrorTxt = rootView.findViewById(R.id.emailErrorTxt);
-        emailErrorTxt2 = rootView.findViewById(R.id.emailErrorTxt2);
-        emailErrorTxt3 = rootView.findViewById(R.id.emailErrorTxt3);
         inputEmail = rootView.findViewById(R.id.inputEmail);
 
         Button nextBtn = rootView.findViewById(R.id.nextBtn);
@@ -40,18 +38,15 @@ public class RegisterFragment5 extends Fragment {
             public void onClick(View v) {
                 email = inputEmail.getText().toString();
 
-                if(email.equals(tmpEamil)){
+                if(checkDuplicateEmail(email)){
+                    emailErrorTxt.setText("이미 등록된 이메일 입니다.");
                     emailErrorTxt.setVisibility(View.VISIBLE);
-                    emailErrorTxt2.setVisibility(View.INVISIBLE);
-                    emailErrorTxt3.setVisibility(View.INVISIBLE);
-                }else if(email.equals("")){
-                    emailErrorTxt.setVisibility(View.INVISIBLE);
-                    emailErrorTxt2.setVisibility(View.VISIBLE);
-                    emailErrorTxt3.setVisibility(View.INVISIBLE);
+                }else if(Utils.blankCheck(email)){
+                    emailErrorTxt.setText("이메일을 입력해주세요.");
+                    emailErrorTxt.setVisibility(View.VISIBLE);
                 }else if(!(email.contains("@"))){
-                    emailErrorTxt.setVisibility(View.INVISIBLE);
-                    emailErrorTxt2.setVisibility(View.INVISIBLE);
-                    emailErrorTxt3.setVisibility(View.VISIBLE);
+                    emailErrorTxt.setText("잘못된 이메일 형식입니다.");
+                    emailErrorTxt.setVisibility(View.VISIBLE);
                 }else{
                     registerActivity.user.setEmail(email);
                     registerActivity.onFragmentChanged(5);
@@ -74,5 +69,16 @@ public class RegisterFragment5 extends Fragment {
         };
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    }
+
+    // 이메일 중복 체크
+    public boolean checkDuplicateEmail(String str){
+        String tmpEamil = "test@test"; // 확인용 임시 이메일
+
+        if(str.equals(tmpEamil)){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

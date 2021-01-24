@@ -40,7 +40,7 @@ public class RegisterFragment4 extends Fragment {
             @Override
             public void onClick(View v) {
                 phone = Utils.phone(inputPhone.getText().toString()); // 자동 하이픈 입력 후 전화번호 저장
-                if(phone.equals("")){
+                if(Utils.blankCheck(phone)){
                     phoneErrorTxt.setVisibility(View.VISIBLE);
                 }else{
                     registerActivity.user.setPhone(phone);

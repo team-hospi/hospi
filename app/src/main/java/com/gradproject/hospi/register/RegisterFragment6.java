@@ -22,7 +22,7 @@ import com.gradproject.hospi.Utils;
 public class RegisterFragment6 extends Fragment {
     RegisterActivity registerActivity;
     EditText inputPW, inputPW2; // 1: 비밀번호 2: 비밀번호 확인
-    TextView pwErrorTxt, pwErrorTxt2; // 1: 중복체크 2: 빈칸 체크
+    TextView pwErrorTxt;
 
     String pw; // 비밀번호 저장
 
@@ -35,18 +35,17 @@ public class RegisterFragment6 extends Fragment {
         inputPW = rootView.findViewById(R.id.inputPW);
         inputPW2 = rootView.findViewById(R.id.inputPW2);
         pwErrorTxt = rootView.findViewById(R.id.pwErrorTxt);
-        pwErrorTxt2 = rootView.findViewById(R.id.pwErrorTxt2);
 
         Button nextBtn = rootView.findViewById(R.id.nextBtn);
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(inputPW.getText().toString().equals("") || inputPW2.getText().toString().equals("")){
-                    pwErrorTxt2.setVisibility(View.VISIBLE);
-                    pwErrorTxt.setVisibility(View.INVISIBLE);
-                }else if(!(inputPW.getText().toString().equals(inputPW2.getText().toString()))){
+                if(Utils.blankCheck(inputPW.getText().toString()) || Utils.blankCheck(inputPW2.getText().toString())){
+                    pwErrorTxt.setText("비밀번호를 입력해주세요.");
                     pwErrorTxt.setVisibility(View.VISIBLE);
-                    pwErrorTxt2.setVisibility(View.INVISIBLE);
+                }else if(!(inputPW.getText().toString().equals(inputPW2.getText().toString()))){
+                    pwErrorTxt.setText("비밀번호가 일치하지 않습니다.");
+                    pwErrorTxt.setVisibility(View.VISIBLE);
                 }else{
                     pw = Utils.getEncrypt(registerActivity.user.getEmail(), inputPW2.getText().toString());
                     registerActivity.user.setPassword(pw);
