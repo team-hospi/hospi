@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gradproject.hospi.home.HomeActivity;
 import com.gradproject.hospi.register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -36,9 +37,8 @@ public class LoginActivity extends AppCompatActivity {
                 if(!processedLogin(id, pw)){
                     loginFail();
                 }else{
-                    Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_LONG).show();
-                    //startActivity();
-                    //finish();
+                    startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                    finish();
                 }
             }
         });

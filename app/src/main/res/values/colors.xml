@@ -11,4 +11,5 @@
     <color name="main_color_dark">#00831A</color>
     <color name="red">#FF0000</color>
     <color name="blue">#0000FF</color>
+    <color name="white_gray">#B8B8B8</color>
 </resources>
