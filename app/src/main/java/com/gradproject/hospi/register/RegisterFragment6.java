@@ -13,11 +13,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.gradproject.hospi.LoginFailPopUp;
 import com.gradproject.hospi.R;
-import com.gradproject.hospi.Utils;
+import com.gradproject.hospi.utils.Encrypt;
 
 public class RegisterFragment6 extends Fragment {
     RegisterActivity registerActivity;
@@ -47,7 +45,7 @@ public class RegisterFragment6 extends Fragment {
                     pwErrorTxt.setText("비밀번호가 일치하지 않습니다.");
                     pwErrorTxt.setVisibility(View.VISIBLE);
                 }else{
-                    pw = Utils.getEncrypt(registerActivity.user.getEmail(), inputPW2.getText().toString());
+                    pw = Encrypt.getEncrypt(registerActivity.user.getEmail(), inputPW2.getText().toString());
                     registerActivity.user.setPassword(pw);
                     getActivity().finish();
                     registerSuccess();

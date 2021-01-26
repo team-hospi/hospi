@@ -15,9 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.gradproject.hospi.R;
-import com.gradproject.hospi.Utils;
 
-public class SearchWaitFragment extends Fragment {
+public class SearchWindowFragment extends Fragment {
     ImageView searchBtn, removeBtn;
     LinearLayout backBtn;
     EditText searchEdt;
@@ -25,7 +24,7 @@ public class SearchWaitFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search_wait, container,false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search_window, container,false);
 
         backBtn = rootView.findViewById(R.id.backBtn);
         searchBtn = rootView.findViewById(R.id.searchBtn);

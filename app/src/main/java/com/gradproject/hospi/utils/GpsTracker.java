@@ -1,4 +1,4 @@
-package com.gradproject.hospi;
+package com.gradproject.hospi.utils;
 
 import android.Manifest;
 import android.app.Service;

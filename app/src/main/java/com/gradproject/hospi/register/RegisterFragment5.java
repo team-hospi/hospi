@@ -14,7 +14,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.gradproject.hospi.R;
-import com.gradproject.hospi.Utils;
 
 public class RegisterFragment5 extends Fragment {
     RegisterActivity registerActivity;

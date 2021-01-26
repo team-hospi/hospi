@@ -7,16 +7,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.R;
-import com.gradproject.hospi.Utils;
-
-import org.w3c.dom.Text;
+import com.gradproject.hospi.utils.PhoneNumberHyphen;
 
 public class RegisterFragment4 extends Fragment {
     RegisterActivity registerActivity;
@@ -39,7 +36,7 @@ public class RegisterFragment4 extends Fragment {
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                phone = Utils.phone(inputPhone.getText().toString()); // 자동 하이픈 입력 후 전화번호 저장
+                phone = PhoneNumberHyphen.phone(inputPhone.getText().toString()); // 자동 하이픈 입력 후 전화번호 저장
                 if(phone.equals("")){
                     phoneErrorTxt.setVisibility(View.VISIBLE);
                 }else{

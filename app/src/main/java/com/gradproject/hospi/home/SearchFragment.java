@@ -10,12 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.gradproject.hospi.GpsTracker;
-import com.gradproject.hospi.MainActivity;
+import com.gradproject.hospi.utils.GpsTracker;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.home.search.ResultActivity;
+import com.gradproject.hospi.utils.CurrentAddress;
 
 public class SearchFragment extends Fragment {
     private GpsTracker gpsTracker;
@@ -35,14 +34,13 @@ public class SearchFragment extends Fragment {
         double latitude = gpsTracker.getLatitude();
         double longitude = gpsTracker.getLongitude();
 
-        String address = "";
-        String[] addrArr = MainActivity.getCurrentAddress(getContext() ,latitude, longitude).split(" ");
+        String address = CurrentAddress.getCurrentAddress(getContext() ,latitude, longitude);
 
-        for(int i=addrArr.length-2; i>0; i--){
-            address = addrArr[i].concat(" " + address);
+        if(address.equals(CurrentAddress.NO_LOCATION_INFORMATION)){
+            locationTxt.setText(address);
+        }else{
+            locationTxt.setText("현위치: " + address);
         }
-
-        locationTxt.setText("현위치: " + address);
 
         searchBox = rootView.findViewById(R.id.searchBox);
         searchBox.setOnClickListener(new View.OnClickListener() {

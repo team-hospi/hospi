@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.gradproject.hospi.home.HomeActivity;
 import com.gradproject.hospi.register.RegisterActivity;
+import com.gradproject.hospi.utils.Encrypt;
 
 public class LoginActivity extends AppCompatActivity {
     public static final String Email = "test";   // 임시 아이디
@@ -35,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 id = inputEmail.getText().toString();
-                pw = Utils.getEncrypt(id, inputPW.getText().toString());
+                pw = Encrypt.getEncrypt(id, inputPW.getText().toString());
                 if(!processedLogin(id, pw)){
                     loginFail();
                 }else{

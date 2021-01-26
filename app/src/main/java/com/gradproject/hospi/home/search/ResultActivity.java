@@ -7,15 +7,15 @@ import android.os.Bundle;
 import com.gradproject.hospi.R;
 
 public class ResultActivity extends AppCompatActivity {
-    SearchWaitFragment searchWaitFragment;
+    SearchWindowFragment searchWindowFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
-        searchWaitFragment = new SearchWaitFragment();
+        searchWindowFragment = new SearchWindowFragment();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.resultContainer, searchWaitFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.resultContainer, searchWindowFragment).commit();
     }
 }
