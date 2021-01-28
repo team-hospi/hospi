@@ -84,12 +84,12 @@
                 android:background="@drawable/border"/>
 
             <Button
-                android:id="@+id/privatePolicyBtn"
+                android:id="@+id/termsBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
                 android:gravity="left|center_vertical"
-                android:text="개인정보 처리방침"
+                android:text="이용약관"
                 android:textSize="17sp"
                 android:textColor="@color/black"/>
 
