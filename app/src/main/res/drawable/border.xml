@@ -1,18 +1,18 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:bottom="-2dp"
-        android:left="-2dp"
-        android:right="-2dp"
-        android:top="2dp">
+        android:bottom="1dp"
+        android:left="1dp"
+        android:right="1dp"
+        android:top="1dp">
         <shape android:shape="rectangle" >
 
             <!-- 테두리 두께 및 색상 설정 -->
             <stroke
-                android:width="2dp"
+                android:width="1dp"
                 android:color="#CCCCCC" />
 
             <solid
-                android:color="#00FFFFFF"/>
+                android:color="#CCCCCC"/>
         </shape>
     </item>
 
