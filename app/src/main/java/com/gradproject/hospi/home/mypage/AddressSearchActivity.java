@@ -10,13 +10,13 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.gradproject.hospi.R;
 
 public class AddressSearchActivity extends AppCompatActivity {
     private WebView webView;
-    private WebSettings mWebSettings;
     private Handler handler;
 
     LinearLayout closeBtn;  // 닫기 버튼
@@ -32,6 +32,7 @@ public class AddressSearchActivity extends AppCompatActivity {
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setResult(RESULT_CANCELED);
                 finish();
             }
         });
@@ -42,6 +43,8 @@ public class AddressSearchActivity extends AppCompatActivity {
         // 핸들러를 통한 JavaScript 이벤트 반응
         handler = new Handler();
     }
+
+
 
     public void init_webView() {
         // WebView 설정
@@ -73,9 +76,9 @@ public class AddressSearchActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     address = String.format("(%s) %s %s", arg1, arg2, arg3);
-                    Intent intent = new Intent(getApplicationContext(), WriteAddressActivity.class);
+                    Intent intent = new Intent();
                     intent.putExtra("address", address);
-                    startActivity(intent);
+                    setResult(RESULT_OK, intent);
                     finish();
 
                     // WebView를 초기화 하지않으면 재사용할 수 없음

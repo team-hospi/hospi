@@ -11,15 +11,18 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.R;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 public class EditMyInfoFragment extends Fragment {
+    private static final int REQUEST_WRITE_ADDRESS_ACTIVITY_CODE = 100;
 
     LinearLayout backBtn; // 뒤로가기 버튼
     FrameLayout changePhNumBtn, changeBirthBtn, changeAddressBtn; // 전화번호 변경, 생년월일 변경, 주소 변경 버튼
@@ -62,9 +65,7 @@ public class EditMyInfoFragment extends Fragment {
         changeAddressBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO - 주소 변경
-                startActivity(new Intent(getContext(), AddressSearchActivity.class));
-                getActivity().finish();
+                startActivityForResult(new Intent(getContext(), WriteAddressActivity.class), REQUEST_WRITE_ADDRESS_ACTIVITY_CODE);
             }
         });
 
@@ -100,5 +101,18 @@ public class EditMyInfoFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==REQUEST_WRITE_ADDRESS_ACTIVITY_CODE) {
+            if (resultCode == RESULT_OK) {
+                String address = data.getStringExtra("address");
+                addressTxt.setText(address);
+                // TODO - 받아온 주소 서버 저장
+            }
+        }
     }
 }
