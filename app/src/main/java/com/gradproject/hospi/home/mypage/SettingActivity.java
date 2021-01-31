@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.gradproject.hospi.R;
 
 public class SettingActivity extends AppCompatActivity {
-    public static String address = "주소를 입력해주세요";
 
     // 마이페이지 각 목록과 연결되는 화면
     EditMyInfoFragment editMyInfoFragment; FavoriteFragment favoriteFragment;

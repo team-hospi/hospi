@@ -1,20 +1,18 @@
-package com.gradproject.hospi.register;
-
-import java.util.Date;
+package com.gradproject.hospi;
 
 public class User {
     private String name;
     private String birth;
     private String phone;
     private String email;
-    private String password;
+    private String address;
 
     public User() {
         this.name = "";
         this.birth = "";
         this.phone = "";
         this.email = "";
-        this.password = "";
+        this.address = "";
     }
 
     public String getName() {
@@ -49,11 +47,11 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getAddress() {
+        return address;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
