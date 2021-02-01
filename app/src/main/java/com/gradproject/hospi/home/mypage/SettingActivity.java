@@ -1,10 +1,25 @@
 package com.gradproject.hospi.home.mypage;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.User;
+import com.gradproject.hospi.home.HomeActivity;
 
 public class SettingActivity extends AppCompatActivity {
 

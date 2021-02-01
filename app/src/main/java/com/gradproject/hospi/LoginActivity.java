@@ -19,10 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.gradproject.hospi.home.HomeActivity;
 import com.gradproject.hospi.register.RegisterActivity;
-import com.gradproject.hospi.utils.Encrypt;
 import com.gradproject.hospi.utils.Loading;
-
-import io.grpc.okhttp.internal.Util;
 
 public class LoginActivity extends AppCompatActivity {
     Loading loading;
@@ -48,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 id = inputEmail.getText().toString();
-                pw = Encrypt.getEncrypt(id, inputPW.getText().toString());
+                pw = inputPW.getText().toString();
 
                 loading.start();
 
@@ -74,12 +71,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // 아이디, 비밀번호 찾기 버튼
+        // 비밀번호 찾기 버튼
         TextView accountFindBtn = findViewById(R.id.accountFindBtn);
         accountFindBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO - 계정 찾기 화면 이동
+                startActivity(new Intent(getApplicationContext(), FindPasswordActivity.class));
             }
         });
 
@@ -111,9 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setMessage("아이디 및 비밀번호가 일치하지 않습니다.")
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
+                    @Override public void onClick(DialogInterface dialogInterface, int i) { /* empty */ }
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

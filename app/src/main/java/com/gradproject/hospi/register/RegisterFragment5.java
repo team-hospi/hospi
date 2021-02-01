@@ -114,9 +114,7 @@ public class RegisterFragment5 extends Fragment {
                 .setCancelable(false)
                 .setMessage("이미 존재하는 이메일입니다.")
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
+                    @Override public void onClick(DialogInterface dialogInterface, int i) { /* empty */ }
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

@@ -1,6 +1,7 @@
 package com.gradproject.hospi.register;
 
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -9,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +24,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.R;
-import com.gradproject.hospi.utils.Encrypt;
 import com.gradproject.hospi.utils.Loading;
 
 public class RegisterFragment6 extends Fragment {
@@ -68,7 +71,7 @@ public class RegisterFragment6 extends Fragment {
                     pwErrorTxt.setVisibility(View.VISIBLE);
                 }else{
                     loading.start();
-                    pw = Encrypt.getEncrypt(registerActivity.user.getEmail(), inputPW2.getText().toString());
+                    pw = inputPW2.getText().toString();
 
                     firebaseAuth.createUserWithEmailAndPassword(registerActivity.user.getEmail(), pw)
                             .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
@@ -76,6 +79,20 @@ public class RegisterFragment6 extends Fragment {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if(task.isSuccessful()){
                                         //아이디 생성이 완료 되었을 때
+                                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                .setDisplayName(registerActivity.user.getName())
+                                                .build();
+
+                                        firebaseAuth.getCurrentUser().updateProfile(profileUpdates)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Log.d("profile", "User profile updated.");
+                                                        }
+                                                    }
+                                                });
+
                                         db.collection("user_list")
                                                 .document(registerActivity.user.getEmail())
                                                 .set(registerActivity.user)
