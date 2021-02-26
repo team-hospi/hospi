@@ -64,7 +64,9 @@ public class AddressSearchActivity extends AppCompatActivity {
         webView.setWebChromeClient(new WebChromeClient());
 
         // webview url load. php 파일 주소
-        webView.loadUrl("hospi.iptime.org/getAddress.php");
+        webView.loadUrl("http://104.197.236.75/getAddress.php");
+        //테스트용 주소
+        //webView.loadUrl("hospi.iptime.org/getAddress.php");
 
     }
 
