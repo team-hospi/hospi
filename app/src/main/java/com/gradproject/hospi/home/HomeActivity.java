@@ -2,26 +2,23 @@ package com.gradproject.hospi.home;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
-import android.content.Intent;
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.BackPressHandler;
-import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.R;
-import com.gradproject.hospi.User;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import static com.kakao.util.maps.helper.Utility.getPackageInfo;
 
 public class HomeActivity extends AppCompatActivity {
     private BackPressHandler backPressHandler = new BackPressHandler(this);
@@ -34,6 +31,8 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        Log.d("KEY", getKeyHash(getApplicationContext()));
 
         searchFragment = new SearchFragment();
         historyFragment = new HistoryFragment();
@@ -65,5 +64,22 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         backPressHandler.onBackPressed();
+    }
+
+    public static String getKeyHash(final Context context) {
+        PackageInfo packageInfo = getPackageInfo(context, PackageManager.GET_SIGNATURES);
+        if (packageInfo == null)
+            return null;
+
+        for (Signature signature : packageInfo.signatures) {
+            try {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                return android.util.Base64.encodeToString(md.digest(), android.util.Base64.NO_WRAP);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }
