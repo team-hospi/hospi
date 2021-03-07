@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.gradproject.hospi.IpAddress;
 import com.gradproject.hospi.R;
 
 public class AddressSearchActivity extends AppCompatActivity {
@@ -64,9 +65,7 @@ public class AddressSearchActivity extends AppCompatActivity {
         webView.setWebChromeClient(new WebChromeClient());
 
         // webview url load. php 파일 주소
-        webView.loadUrl("http://104.197.236.75/getAddress.php");
-        //테스트용 주소
-        //webView.loadUrl("hospi.iptime.org/getAddress.php");
+        webView.loadUrl(IpAddress.getIP()+"getAddress.php");
 
     }
 

@@ -2,8 +2,6 @@ package com.gradproject.hospi.home.mypage;
 
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -13,12 +11,12 @@ import android.widget.LinearLayout;
 
 import com.gradproject.hospi.R;
 
-public class InquiryFragment extends Fragment {
+public class InquiryListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_inquiry, container,false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_inquiry_list, container,false);
 
         LinearLayout backBtn = rootView.findViewById(R.id.backBtn);
         backBtn.setOnClickListener(new View.OnClickListener() {

@@ -11,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.gradproject.hospi.home.reservation.HopitalInfoFragment;
-import com.gradproject.hospi.home.reservation.ReservationActivity;
 import com.gradproject.hospi.utils.GpsTracker;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.home.search.ResultActivity;
@@ -48,10 +46,7 @@ public class SearchFragment extends Fragment {
         searchBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //startActivity(new Intent(getContext(), ResultActivity.class));
-
-                // 테스트
-                startActivity(new Intent(getContext(), ReservationActivity.class));
+                startActivity(new Intent(getContext(), ResultActivity.class));
             }
         });
 

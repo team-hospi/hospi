@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".home.reservation.ReservationActivity">
+    tools:context=".home.hospital.HospitalActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout4"
@@ -50,7 +50,7 @@
         android:id="@+id/hospitalName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="50dp"
         android:text="병원이름"
         android:textAlignment="center"
         android:textColor="@color/black"
@@ -72,7 +72,7 @@
         app:layout_constraintTop_toBottomOf="@+id/hospitalName" />
 
     <TextView
-        android:id="@+id/weekdayOpenTxt"
+        android:id="@+id/weekdayBusinessHours"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
@@ -83,15 +83,26 @@
         app:layout_constraintTop_toBottomOf="@+id/departmentTxt" />
 
     <TextView
-        android:id="@+id/weekendTxt"
+        android:id="@+id/saturdayBusinessHours"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
-        android:text="토요일 00:00 ~ 00:00"
+        android:text="토요일 휴무"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weekdayOpenTxt" />
+        app:layout_constraintTop_toBottomOf="@+id/weekdayBusinessHours" />
+
+    <TextView
+        android:id="@+id/holidayBusinessHours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:text="공휴일 휴무"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/saturdayBusinessHours" />
 
     <TextView
         android:id="@+id/addressTxt"
@@ -102,85 +113,87 @@
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weekendTxt" />
+        app:layout_constraintTop_toBottomOf="@+id/holidayBusinessHours" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addressTxt">
 
         <LinearLayout
             android:id="@+id/reservationBtn"
+            android:clickable="true"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
             android:background="@drawable/reservation_btn_border"
+            android:gravity="center"
             android:orientation="vertical">
 
-            <ImageButton
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_today"
-                android:background="@null"/>
+                android:src="@drawable/ic_action_today" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="예약"/>
+                android:text="예약" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/inquiryBtn"
+            android:clickable="true"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
             android:background="@drawable/inquiry_btn_border"
+            android:gravity="center"
             android:orientation="vertical">
 
-            <ImageButton
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_question"
-                android:background="@null"/>
+                android:src="@drawable/ic_action_question" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="문의"/>
+                android:text="문의" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/callBtn"
+            android:clickable="true"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
             android:background="@drawable/call_btn_border"
+            android:gravity="center"
             android:orientation="vertical">
 
-            <ImageButton
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_call"
-                android:background="@null"/>
+                android:src="@drawable/ic_action_call" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="전화"/>
+                android:text="전화" />
         </LinearLayout>
     </LinearLayout>
 
     <FrameLayout
         android:id="@+id/mapView"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>
