@@ -26,9 +26,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.MainActivity;
+import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 
-public class RegisterFragment5 extends Fragment {
+public class RegisterFragment5 extends Fragment implements OnBackPressedListener {
     RegisterActivity registerActivity;
     TextView emailErrorTxt;
     EditText inputEmail;
@@ -67,17 +68,8 @@ public class RegisterFragment5 extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                registerActivity.onFragmentChanged(3);
-            }
-        };
-
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    public void onBackPressed() {
+        registerActivity.onFragmentChanged(3);
     }
 
     // 이메일 중복 체크

@@ -12,9 +12,10 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 
-public class RegisterFragment1 extends Fragment {
+public class RegisterFragment1 extends Fragment implements OnBackPressedListener {
     RegisterActivity registerActivity;
     RadioButton agree, noAgree;  // 동의, 미동의
     TextView radioErrorTxt; // 미동의 및 체크 안했을때 표시할 경고 메시지
@@ -46,16 +47,7 @@ public class RegisterFragment1 extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                getActivity().finish();
-            }
-        };
-
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback); // 뒤로가기
+    public void onBackPressed() {
+        getActivity().finish();
     }
 }

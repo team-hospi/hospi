@@ -28,6 +28,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.home.hospital.HospitalActivity;
 
+import java.util.ArrayList;
+
 public class SearchWindowFragment extends Fragment {
     private static final String COLLECTION_NAME = "hospitals";
 
@@ -138,17 +140,26 @@ public class SearchWindowFragment extends Fragment {
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        ArrayList<Hospital> tmpArrList = new ArrayList<>();
+
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d("DB", document.getId() + " => " + document.getData());
                                 Hospital hospital = document.toObject(Hospital.class);
                                 if(hospital.getName().contains(searchStr)){
-                                    hospitalAdapter.addItem(hospital);
-                                    noSearchTxt.setVisibility(View.INVISIBLE);
-                                }else{
-                                    noSearchTxt.setVisibility(View.VISIBLE);
+                                    tmpArrList.add(hospital);
                                 }
                             }
+
+                            if(tmpArrList.size()==0){
+                                noSearchTxt.setVisibility(View.VISIBLE);
+                            }else{
+                                noSearchTxt.setVisibility(View.INVISIBLE);
+                                for(int i=0; i<tmpArrList.size(); i++){
+                                    hospitalAdapter.addItem(tmpArrList.get(i));
+                                }
+                            }
+
                             hospitalRecyclerView.setAdapter(hospitalAdapter);
                         } else {
                             Log.d("DB", "Error getting documents: ", task.getException());

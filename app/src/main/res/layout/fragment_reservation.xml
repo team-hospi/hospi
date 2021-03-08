@@ -180,7 +180,6 @@
             android:id="@+id/setDateBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_gravity="center_vertical|right"
             android:text="날짜 설정" />
     </FrameLayout>

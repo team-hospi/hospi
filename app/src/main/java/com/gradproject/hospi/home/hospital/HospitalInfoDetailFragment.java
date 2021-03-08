@@ -29,7 +29,6 @@ import java.util.List;
 
 import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
 
-
 public class HospitalInfoDetailFragment extends Fragment implements OnBackPressedListener {
     HospitalActivity hospitalActivity;
 

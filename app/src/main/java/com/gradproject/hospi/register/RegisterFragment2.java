@@ -12,9 +12,10 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 
-public class RegisterFragment2 extends Fragment {
+public class RegisterFragment2 extends Fragment implements OnBackPressedListener {
     RegisterActivity registerActivity;
     EditText inputName; // 입력한 이름 받아오기
     TextView nameErrorTxt; // 빈칸 에러 메시지
@@ -49,16 +50,7 @@ public class RegisterFragment2 extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                registerActivity.onFragmentChanged(0);
-            }
-        };
-
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    public void onBackPressed() {
+        registerActivity.onFragmentChanged(0);
     }
 }
