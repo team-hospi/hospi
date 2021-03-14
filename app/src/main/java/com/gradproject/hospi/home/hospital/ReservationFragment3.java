@@ -1,14 +1,13 @@
 package com.gradproject.hospi.home.hospital;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+
+import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
@@ -38,7 +37,7 @@ public class ReservationFragment3 extends Fragment implements OnBackPressedListe
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //hospitalActivity.onReservationFragmentChanged(4);
+                hospitalActivity.onReservationFragmentChanged(4);
             }
         });
 

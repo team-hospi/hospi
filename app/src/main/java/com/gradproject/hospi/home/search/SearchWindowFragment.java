@@ -2,12 +2,6 @@ package com.gradproject.hospi.home.search;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -19,6 +13,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -38,7 +37,6 @@ public class SearchWindowFragment extends Fragment {
     EditText searchEdt;
     TextView noSearchTxt;
     RecyclerView hospitalRecyclerView;
-
     LinearLayoutManager layoutManager;
     HospitalAdapter hospitalAdapter = new HospitalAdapter();
 
@@ -73,7 +71,7 @@ public class SearchWindowFragment extends Fragment {
 
         searchEdt.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* empty */ }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -87,7 +85,7 @@ public class SearchWindowFragment extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) { /* empty */ }
         });
 
         searchEdt.setOnEditorActionListener(new TextView.OnEditorActionListener() {

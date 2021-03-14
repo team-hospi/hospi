@@ -1,15 +1,12 @@
 package com.gradproject.hospi.home.mypage;
 
 import android.os.Bundle;
-
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.R;
 

@@ -1,9 +1,9 @@
 package com.gradproject.hospi.home.hospital;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-
-import android.os.Bundle;
 
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
@@ -14,7 +14,7 @@ import java.util.List;
 public class HospitalActivity extends AppCompatActivity {
     HospitalInfoDetailFragment hospitalInfoDetailFragment;
     ReservationFragment reservationFragment; ReservationFragment2 reservationFragment2;
-    ReservationFragment3 reservationFragment3;
+    ReservationFragment3 reservationFragment3; ReservationSuccessFragment reservationSuccessFragment;
     InquiryFragment inquiryFragment;
 
     static Hospital hospital;
@@ -28,7 +28,7 @@ public class HospitalActivity extends AppCompatActivity {
 
         hospitalInfoDetailFragment = new HospitalInfoDetailFragment();
         reservationFragment = new ReservationFragment(); reservationFragment2 = new ReservationFragment2();
-        reservationFragment3 = new ReservationFragment3();
+        reservationFragment3 = new ReservationFragment3(); reservationSuccessFragment = new ReservationSuccessFragment();
         inquiryFragment = new InquiryFragment();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.Container, hospitalInfoDetailFragment).commit();
@@ -43,6 +43,8 @@ public class HospitalActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.Container, reservationFragment2).commit();
         }else if(index == 3){
             getSupportFragmentManager().beginTransaction().replace(R.id.Container, reservationFragment3).commit();
+        }else if(index == 4){
+            getSupportFragmentManager().beginTransaction().replace(R.id.Container, reservationSuccessFragment).commit();
         }
     }
 

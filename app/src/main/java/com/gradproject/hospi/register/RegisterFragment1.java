@@ -8,8 +8,6 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.OnBackPressedListener;
