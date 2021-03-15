@@ -50,7 +50,7 @@
         android:id="@+id/hospitalName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="45dp"
         android:text="병원이름"
         android:textAlignment="center"
         android:textColor="@color/black"
@@ -130,7 +130,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/reservation_btn_border"
+            android:background="@drawable/left_btn_border"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -151,7 +151,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/inquiry_btn_border"
+            android:background="@drawable/left_btn_border"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -172,7 +172,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/call_btn_border"
+            android:background="@drawable/left_btn_border"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -185,6 +185,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="전화" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/favoriteBtn"
+            android:clickable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/right_btn_border"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/favoriteImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_action_favorite_border" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="찜" />
         </LinearLayout>
     </LinearLayout>
 

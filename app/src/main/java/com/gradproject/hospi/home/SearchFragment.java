@@ -50,6 +50,8 @@ public class SearchFragment extends Fragment {
             }
         });
 
+        // TODO: 현위치 근처 병원 구현
+
         return rootView;
     }
 }

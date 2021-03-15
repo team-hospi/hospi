@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,7 +31,8 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
 
     TextView hospitalName, departmentTxt, weekdayBusinessHours;
     TextView saturdayBusinessHours, holidayBusinessHours, addressTxt;
-    LinearLayout backBtn, reservationBtn, inquiryBtn, callBtn;
+    LinearLayout backBtn, reservationBtn, inquiryBtn, callBtn, favoriteBtn;
+    ImageView favoriteImg;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,7 +50,10 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         reservationBtn = rootView.findViewById(R.id.reservationBtn);
         inquiryBtn = rootView.findViewById(R.id.inquiryBtn);
         callBtn = rootView.findViewById(R.id.callBtn);
+        favoriteBtn = rootView.findViewById(R.id.favoriteBtn);
+        favoriteImg = rootView.findViewById(R.id.favoriteImg);
 
+        // 뒤로가기 버튼
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,6 +61,7 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
             }
         });
 
+        // 예약 버튼
         reservationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +69,7 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
             }
         });
 
+        // 문의 버튼
         inquiryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,10 +77,20 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
             }
         });
 
+        // 전화 버튼
         callBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + hospital.getTel())));
+            }
+        });
+
+        // 찜 버튼
+        favoriteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: 찜버튼 구현
+                favoriteImg.setImageResource(R.drawable.ic_action_favorite);
             }
         });
 
