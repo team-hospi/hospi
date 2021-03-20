@@ -8,9 +8,10 @@ import android.widget.ImageButton;
 
 import androidx.fragment.app.Fragment;
 
+import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 
-public class TermsFragment extends Fragment {
+public class TermsFragment extends Fragment implements OnBackPressedListener {
     ImageButton backBtn;
 
     @Override
@@ -22,10 +23,15 @@ public class TermsFragment extends Fragment {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().finish();
+                onBackPressed();
             }
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onBackPressed() {
+        getActivity().finish();
     }
 }

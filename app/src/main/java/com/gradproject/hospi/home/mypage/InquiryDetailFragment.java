@@ -1,30 +1,35 @@
 package com.gradproject.hospi.home.mypage;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.Inquiry;
+import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 
-public class InquiryDetailActivity extends AppCompatActivity {
+public class InquiryDetailFragment extends Fragment implements OnBackPressedListener {
     Inquiry inquiry;
     FirebaseFirestore db;
+    SettingActivity settingActivity;
 
     Toolbar toolbar;
     ImageButton backBtn;
@@ -33,23 +38,32 @@ public class InquiryDetailActivity extends AppCompatActivity {
     int pos;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inquiry_detail);
 
+        settingActivity = (SettingActivity) getActivity();
         db = FirebaseFirestore.getInstance();
-        inquiry = (Inquiry) getIntent().getSerializableExtra("inquiry");
-        pos = getIntent().getIntExtra("pos", -1);
+        if(getArguments()!=null){
+            inquiry = (Inquiry) getArguments().getSerializable("inquiry");
+            pos = getArguments().getInt("pos", -1);
+        }
+    }
 
-        toolbar = findViewById(R.id.toolbar);
-        hospitalNameTxt = findViewById(R.id.hospitalNameTxt);
-        titleTxt = findViewById(R.id.titleTxt);
-        contentTxt = findViewById(R.id.contentTxt);
-        answerTxt = findViewById(R.id.answerTxt);
-        backBtn = findViewById(R.id.backBtn);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_inquiry_detail, container,false);
 
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar = rootView.findViewById(R.id.toolbar);
+        hospitalNameTxt = rootView.findViewById(R.id.hospitalNameTxt);
+        titleTxt = rootView.findViewById(R.id.titleTxt);
+        contentTxt = rootView.findViewById(R.id.contentTxt);
+        answerTxt = rootView.findViewById(R.id.answerTxt);
+        backBtn = rootView.findViewById(R.id.backBtn);
+
+        setHasOptionsMenu(true);
+        settingActivity.setSupportActionBar(toolbar);
+        settingActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,18 +81,20 @@ public class InquiryDetailActivity extends AppCompatActivity {
         }else{
             answerTxt.setText(inquiry.getAnswer());
         }
+
+        return rootView;
     }
 
     @Override
     public void onBackPressed() {
-        setResult(RESULT_CANCELED);
-        finish();
+        settingActivity.getSupportFragmentManager().beginTransaction()
+                .replace(R.id.settingContainer, settingActivity.inquiryListFragment).commit();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_inquiry, menu);
-        return true;
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_inquiry, menu);
     }
 
     @Override
@@ -97,7 +113,18 @@ public class InquiryDetailActivity extends AppCompatActivity {
     }
 
     public void editBtnProcess(){
-        // TODO: 문의 수정 버튼
+        if(!(inquiry.isCheckedAnswer())){
+            FragmentTransaction transaction = ((SettingActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+            InquiryEditFragment inquiryEditFragment = new InquiryEditFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("inquiry", inquiry);
+            inquiryEditFragment.setArguments(bundle);
+            transaction.replace(R.id.settingContainer, inquiryEditFragment);
+            transaction.commit();
+        }else{
+            String msg = "답변 완료된 문의는 수정하실 수 없습니다.";
+            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+        }
     }
 
     public void delBtnProcess(){
@@ -114,13 +141,14 @@ public class InquiryDetailActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("DB", "Error deleting document", e);
-                        Toast.makeText(getApplicationContext(), "삭제에 실패하였습니다.\n잠시 후 다시 진행해주세요.", Toast.LENGTH_LONG).show();
+                        String msg = "삭제에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
+                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                     }
                 });
     }
 
     public void deletePopUp(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(InquiryDetailActivity.this)
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("해당 문의를 삭제하시겠습니까?")
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -137,15 +165,18 @@ public class InquiryDetailActivity extends AppCompatActivity {
     }
 
     public void deleteSuccessPopUp(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(InquiryDetailActivity.this)
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("삭제되었습니다.")
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override public void onClick(DialogInterface dialog, int i) {
-                        Intent intent = new Intent();
-                        intent.putExtra("pos", pos);
-                        setResult(RESULT_OK, intent);
-                        finish();
+                        FragmentTransaction transaction = settingActivity.getSupportFragmentManager().beginTransaction();
+                        InquiryListFragment inquiryListFragment = settingActivity.inquiryListFragment;
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("pos", pos);
+                        inquiryListFragment.setArguments(bundle);
+                        transaction.replace(R.id.settingContainer, inquiryListFragment);
+                        transaction.commit();
                     }
                 });
         AlertDialog alertDialog = builder.create();

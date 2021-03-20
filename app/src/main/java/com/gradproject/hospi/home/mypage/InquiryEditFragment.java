@@ -1,7 +1,6 @@
-package com.gradproject.hospi.home.hospital;
+package com.gradproject.hospi.home.mypage;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,10 +12,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,37 +26,42 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
-import com.gradproject.hospi.utils.Loading;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import static com.gradproject.hospi.home.HomeActivity.user;
-import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
-
-public class InquiryFragment extends Fragment implements OnBackPressedListener {
-    HospitalActivity hospitalActivity;
-
-    Button writeBtn;
+public class InquiryEditFragment extends Fragment implements OnBackPressedListener {
     ImageButton closeBtn;
+    Button updateBtn;
     EditText inquiryTitleEdt, inquiryContentEdt;
     TextView hospitalNameTxt, titleEmptyTxt, contentEmptyTxt;
+
+    SettingActivity settingActivity;
+    Inquiry inquiry;
+    FirebaseFirestore db;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        settingActivity = (SettingActivity) getActivity();
+        inquiry = (Inquiry) getArguments().getSerializable("inquiry");
+        db = FirebaseFirestore.getInstance();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_inquiry, container,false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_inquiry_edit, container,false);
 
-        hospitalActivity = (HospitalActivity) getActivity();
         closeBtn = rootView.findViewById(R.id.closeBtn);
-        writeBtn = rootView.findViewById(R.id.writeBtn);
+        updateBtn = rootView.findViewById(R.id.updateBtn);
         inquiryTitleEdt = rootView.findViewById(R.id.inquiryTitleEdt);
         inquiryContentEdt = rootView.findViewById(R.id.inquiryContentEdt);
         hospitalNameTxt = rootView.findViewById(R.id.hospitalNameTxt);
         titleEmptyTxt = rootView.findViewById(R.id.titleEmptyTxt);
         contentEmptyTxt = rootView.findViewById(R.id.contentEmptyTxt);
 
-        hospitalNameTxt.setText(hospital.getName());
+        hospitalNameTxt.setText(inquiry.getHospital_name());
+        inquiryTitleEdt.setText(inquiry.getTitle());
+        inquiryContentEdt.setText(inquiry.getContent());
 
         closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +70,7 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
             }
         });
 
-        writeBtn.setOnClickListener(new View.OnClickListener() {
+        updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String title = inquiryTitleEdt.getText().toString();
@@ -78,7 +84,7 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
                 }else if(content.equals("")){
                     contentEmptyTxt.setVisibility(View.VISIBLE);
                 }else{
-                    inquiryWriteProcess(title, content);
+                    inquiryUpdateProcess(title, content);
                 }
             }
         });
@@ -114,65 +120,53 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
 
     @Override
     public void onBackPressed() {
-        hospitalActivity.onInquiryFragmentChanged(0);
-        inquiryTitleEdt.setText("");
-        inquiryContentEdt.setText("");
+        FragmentTransaction transaction = settingActivity.getSupportFragmentManager().beginTransaction();
+        InquiryDetailFragment inquiryDetailFragment = settingActivity.inquiryDetailFragment;
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("inquiry", inquiry);
+        inquiryDetailFragment.setArguments(bundle);
+        transaction.replace(R.id.settingContainer, inquiryDetailFragment);
+        transaction.commit();
     }
 
-    public void inquiryWriteProcess(String title, String content){
-        Loading loading = new Loading(getContext(), "문의 등록 중...");
-        loading.start();
+    public void inquiryUpdateProcess(String title, String content){
+        inquiry.setTitle(title);
+        inquiry.setContent(content);
 
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String today = sdf.format(date);
-
-        Inquiry inquiry = new Inquiry(user.getEmail(), hospital.getId(), hospital.getName(),
-                today, title, content, "", false);
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("inquiry_list")
-                .add(inquiry)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        DocumentReference documentReference = db.collection("inquiry_list").document(inquiry.getDocumentId());
+        documentReference
+                .set(inquiry)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("DB", "DocumentSnapshot written with ID: " + documentReference.getId());
-                        writeSuccess();
+                    public void onSuccess(Void aVoid) {
+                        Log.d("DB", "DocumentSnapshot successfully updated!");
+                        updateSuccessPopUp();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w("DB", "Error adding document", e);
-                        writeFail();
+                        Log.w("DB", "Error updating document", e);
+                        String msg = "문의 수정에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
+                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                     }
                 });
-
-        loading.end();
     }
 
-    private void writeSuccess(){
+    public void updateSuccessPopUp(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
-                .setMessage("문의가 등록되었습니다.")
+                .setMessage("문의가 수정되었습니다.")
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialogInterface, int i) {
-                        getActivity().finish();
-                        Intent intent = new Intent(getContext(), HospitalActivity.class);
-                        intent.putExtra("hospital", hospital);
-                        startActivity(intent);
+                    @Override public void onClick(DialogInterface dialog, int i) {
+                        FragmentTransaction transaction = settingActivity.getSupportFragmentManager().beginTransaction();
+                        InquiryDetailFragment inquiryDetailFragment = settingActivity.inquiryDetailFragment;
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("inquiry", inquiry);
+                        inquiryDetailFragment.setArguments(bundle);
+                        transaction.replace(R.id.settingContainer, inquiryDetailFragment);
+                        transaction.commit();
                     }
-                });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
-
-    private void writeFail(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
-                .setCancelable(false)
-                .setMessage("문의 등록에 실패하였습니다.\n잠시후 다시 시도해주세요.")
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialogInterface, int i) { /* empty */ }
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

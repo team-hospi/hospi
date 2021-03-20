@@ -28,6 +28,8 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 
 public class HomeActivity extends AppCompatActivity {
+    private final String USER_LIST = "user_list";
+
     private BackPressHandler backPressHandler = new BackPressHandler(this);
 
     SearchFragment searchFragment;
@@ -82,33 +84,14 @@ public class HomeActivity extends AppCompatActivity {
 
     private void getUserInfo(){
         if (firebaseUser != null) {
-            db.collection("user_list")
-                    .whereEqualTo("email", firebaseUser.getEmail())
-                    .get()
+            db.collection(USER_LIST)
+                    .whereEqualTo("email", firebaseUser.getEmail()).get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Log.d("DB", document.getId() + " => " + document.getData());
-                                    DocumentReference docRef = db.collection("user_list")
-                                            .document(document.getId());
-                                    docRef
-                                            .get()
-                                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() { // 유저 정보 받아오는데 성공 할 경우
-                                                @Override
-                                                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                                    user = documentSnapshot.toObject(User.class); // user 인스턴스에 유저 정보 저장
-                                                    Log.d("success", "유저 정보 받기 성공");
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() { // 유저 정보 받아오는데 실패 할 경우
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(getApplicationContext(),
-                                                    "알 수 없는 오류로 인해 유저 정보를 받아오지 못했습니다.",
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                                    setUserInfo(document.getId());
                                 }
                             } else {
                                 Log.d("DB", "Error getting documents: ", task.getException());
@@ -117,10 +100,29 @@ public class HomeActivity extends AppCompatActivity {
                     });
 
         }else{
-            Toast.makeText(getApplicationContext(), "로그인 정보가 존재하지 않습니다.", Toast.LENGTH_LONG).show();
+            final String msg = "로그인 정보가 존재하지 않습니다.";
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
             FirebaseAuth.getInstance().signOut(); // 로그아웃
             ActivityCompat.finishAffinity(this); // 모든 액티비티 종료
             startActivity(new Intent(getApplicationContext(), LoginActivity.class)); // 다시 로그인 화면으로
         }
+    }
+
+    public void setUserInfo(String documentId){
+        DocumentReference docRef = db.collection(USER_LIST).document(documentId);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                user = documentSnapshot.toObject(User.class);
+                user.setDocumentId(documentId);
+                Log.d("success", "유저 정보 받기 성공");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                final String msg = "알 수 없는 오류로 인해 유저 정보를 받아오지 못했습니다.";
+                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

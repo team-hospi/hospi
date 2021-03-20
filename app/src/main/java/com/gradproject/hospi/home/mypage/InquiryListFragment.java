@@ -1,6 +1,5 @@
 package com.gradproject.hospi.home.mypage;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,18 +21,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.gradproject.hospi.Inquiry;
+import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 
 import java.util.ArrayList;
 
-import static android.app.Activity.RESULT_OK;
-
-public class InquiryListFragment extends Fragment {
+public class InquiryListFragment extends Fragment implements OnBackPressedListener {
     RecyclerView inquiryRecyclerView;
     LinearLayoutManager layoutManager;
     InquiryAdapter inquiryAdapter = new InquiryAdapter();
 
     ImageButton backBtn;
+    int pos;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,17 +40,25 @@ public class InquiryListFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_inquiry_list, container,false);
 
         backBtn = rootView.findViewById(R.id.backBtn);
-
         inquiryRecyclerView = rootView.findViewById(R.id.inquiryList);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         inquiryRecyclerView.setLayoutManager(layoutManager);
+
+        if(getArguments()!=null){
+            pos = getArguments().getInt("pos", -1);
+            if(pos!=-1){
+                inquiryAdapter.items.remove(pos);
+                inquiryAdapter.notifyItemRemoved(pos);
+                inquiryAdapter.notifyItemRangeChanged(pos, inquiryAdapter.items.size());
+            }
+        }
 
         getInquiryList();
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().finish();
+                onBackPressed();
             }
         });
 
@@ -59,10 +66,14 @@ public class InquiryListFragment extends Fragment {
             @Override
             public void onItemClick(InquiryAdapter.ViewHolder holder, View view, int position) {
                 Inquiry inquiry = inquiryAdapter.getItem(position);
-                Intent intent = new Intent(getContext(), InquiryDetailActivity.class);
-                intent.putExtra("pos", position);
-                intent.putExtra("inquiry", inquiry);
-                startActivityForResult(intent, 0);
+                FragmentTransaction transaction = ((SettingActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+                InquiryDetailFragment inquiryDetailFragment = new InquiryDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt("pos", position);
+                bundle.putSerializable("inquiry", inquiry);
+                inquiryDetailFragment.setArguments(bundle);
+                transaction.replace(R.id.settingContainer, inquiryDetailFragment);
+                transaction.commit();
             }
         });
 
@@ -70,22 +81,14 @@ public class InquiryListFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode==0){
-            if (resultCode==RESULT_OK) {
-                int pos = data.getIntExtra("pos", -1);
-                if(pos!=-1){
-                    inquiryAdapter.items.remove(pos);
-                    inquiryAdapter.notifyItemRemoved(pos);
-                    inquiryAdapter.notifyItemRangeChanged(pos, inquiryAdapter.items.size());
-                }
-            }
-        }
+    public void onBackPressed() {
+        getActivity().finish();
     }
 
     private void getInquiryList(){
+        inquiryAdapter.items.clear(); // 기존 검색 결과 항목 모두 삭제
+        inquiryAdapter.notifyDataSetChanged(); // 어댑터 갱신
+
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 

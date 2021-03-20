@@ -13,10 +13,11 @@ public class Inquiry implements Serializable {
     private String title;
     private String content;
     private String answer;
+    private boolean checkedAnswer;
 
     public Inquiry(){}
 
-    public Inquiry(String id, String hospital_id, String hospital_name, String date, String title, String content, String answer) {
+    public Inquiry(String id, String hospital_id, String hospital_name, String date, String title, String content, String answer, boolean checkedAnswer) {
         this.id = id;
         this.hospital_id = hospital_id;
         this.hospital_name = hospital_name;
@@ -24,6 +25,7 @@ public class Inquiry implements Serializable {
         this.title = title;
         this.content = content;
         this.answer = answer;
+        this.checkedAnswer = checkedAnswer;
     }
 
     public String getDocumentId() {
@@ -88,5 +90,13 @@ public class Inquiry implements Serializable {
 
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+    public boolean isCheckedAnswer() {
+        return checkedAnswer;
+    }
+
+    public void setCheckedAnswer(boolean checkedAnswer) {
+        this.checkedAnswer = checkedAnswer;
     }
 }

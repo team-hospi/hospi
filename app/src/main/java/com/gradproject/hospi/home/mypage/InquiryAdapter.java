@@ -94,12 +94,12 @@ public class InquiryAdapter extends RecyclerView.Adapter<InquiryAdapter.ViewHold
             dateTxt.setText(item.getDate());
             hospitalNameTxt.setText(item.getHospital_name());
 
-            if(item.getAnswer().equals("")){
-                answerCheckTxt.setText("미답변");
-                answerCheckTxt.setTextColor(Color.parseColor("#ff0000"));
-            }else{
+            if(item.isCheckedAnswer()){
                 answerCheckTxt.setText("답변완료");
                 answerCheckTxt.setTextColor(Color.parseColor("#0000ff"));
+            }else{
+                answerCheckTxt.setText("미답변");
+                answerCheckTxt.setTextColor(Color.parseColor("#ff0000"));
             }
         }
     }

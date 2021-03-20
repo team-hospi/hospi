@@ -34,6 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.gradproject.hospi.LoginActivity;
+import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.utils.Loading;
 import com.gradproject.hospi.utils.PhoneNumberHyphen;
@@ -41,7 +42,7 @@ import com.gradproject.hospi.utils.PhoneNumberHyphen;
 import static android.app.Activity.RESULT_OK;
 import static com.gradproject.hospi.home.HomeActivity.user;
 
-public class EditMyInfoFragment extends Fragment {
+public class EditMyInfoFragment extends Fragment implements OnBackPressedListener {
     private static final int REQUEST_WRITE_ADDRESS_ACTIVITY_CODE = 100; // 주소 입력 화면 식별 코드
 
     ImageButton backBtn; // 뒤로가기 버튼
@@ -71,22 +72,15 @@ public class EditMyInfoFragment extends Fragment {
         birthTxt = rootView.findViewById(R.id.birthTxt);
         addressTxt = rootView.findViewById(R.id.addressTxt);
 
-        if(firebaseUser != null){
-            emailTxt.setText(user.getEmail());
-            nameTxt.setText(user.getName());
-            phoneTxt.setText(user.getPhone());
-            birthTxt.setText(user.getBirth());
-            // 주소가 입력되었는지 검사
-            if(user.getAddress().equals("")){
-                addressTxt.setText("주소를 입력해주세요");
-            }else{
-                addressTxt.setText(user.getAddress());
-            }
+        emailTxt.setText(user.getEmail());
+        nameTxt.setText(user.getName());
+        phoneTxt.setText(user.getPhone());
+        birthTxt.setText(user.getBirth());
+        // 주소가 입력되었는지 검사
+        if(user.getAddress().equals("")){
+            addressTxt.setText("주소를 입력해주세요");
         }else{
-            Toast.makeText(getContext(), "로그인 정보가 존재하지 않습니다.", Toast.LENGTH_LONG).show();
-            FirebaseAuth.getInstance().signOut(); // 로그아웃
-            ActivityCompat.finishAffinity(getActivity()); // 모든 액티비티 종료
-            startActivity(new Intent(getContext(), LoginActivity.class)); // 다시 로그인 화면으로
+            addressTxt.setText(user.getAddress());
         }
 
         // 뒤로가기 버튼
@@ -94,7 +88,7 @@ public class EditMyInfoFragment extends Fragment {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().finish();
+                onBackPressed();
             }
         });
 
@@ -158,10 +152,13 @@ public class EditMyInfoFragment extends Fragment {
     }
 
     @Override
+    public void onBackPressed() {
+        getActivity().finish();
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if(requestCode==REQUEST_WRITE_ADDRESS_ACTIVITY_CODE) {
             if (resultCode == RESULT_OK) {

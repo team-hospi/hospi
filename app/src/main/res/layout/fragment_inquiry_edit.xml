@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical"
+    tools:context=".home.hospital.InquiryFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -15,27 +18,39 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/backBtn"
+            android:id="@+id/closeBtn"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/ic_action_back"
-            android:background="?selectableItemBackgroundBorderless"/>
+            android:layout_gravity="right"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/ic_action_close"
+            android:background="?selectableItemBackgroundBorderless" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="35dp"
-            android:text="병원 문의 상세"
+            android:layout_marginLeft="65dp"
+            android:text="병원 문의 수정"
             android:textColor="@color/black"
             android:textSize="17sp"/>
     </androidx.appcompat.widget.Toolbar>
+
+    <Button
+        android:id="@+id/updateBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:text="수정"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/inquiryHospital"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:text="문의 병원:"
         android:textColor="@color/black"
         android:textSize="17sp"
@@ -46,7 +61,7 @@
         android:id="@+id/hospitalNameTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:layout_marginLeft="3dp"
         android:textColor="@color/black"
         android:textSize="17sp"
@@ -57,78 +72,73 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="15sp"
         android:layout_marginTop="20dp"
-        android:text="제목:"
+        android:text="제목"
         android:textSize="17sp"
-        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inquiryHospital" />
 
+    <EditText
+        android:id="@+id/inquiryTitleEdt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:singleLine="true"
+        android:background="@drawable/edit_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
     <TextView
-        android:id="@+id/titleTxt"
+        android:id="@+id/titleEmptyTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="3dp"
-        android:layout_marginTop="20dp"
-        android:textSize="17sp"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@+id/title"
-        app:layout_constraintTop_toBottomOf="@+id/inquiryHospital" />
+        android:layout_marginLeft="15dp"
+        android:text="제목을 입력해주세요."
+        android:textColor="@color/red"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inquiryTitleEdt" />
 
     <TextView
         android:id="@+id/inquiryContentTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         android:text="내용"
         android:textSize="17sp"
-        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
+        app:layout_constraintTop_toBottomOf="@+id/titleEmptyTxt" />
 
-    <TextView
-        android:id="@+id/contentTxt"
+    <EditText
+        android:id="@+id/inquiryContentEdt"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="100dp"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="5dp"
         android:layout_marginRight="15dp"
+        android:layout_marginTop="10dp"
+        android:gravity="left"
         android:padding="5dp"
         android:background="@drawable/edit_text"
-        android:gravity="left"
-        android:textSize="17sp"
-        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inquiryContentTxt" />
 
     <TextView
-        android:id="@+id/answer"
+        android:id="@+id/contentEmptyTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="15dp"
-        android:text="답변"
-        android:textSize="17sp"
-        android:textColor="@color/black"
+        android:text="내용을 입력해주세요."
+        android:textColor="@color/red"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/contentTxt" />
-
-    <TextView
-        android:id="@+id/answerTxt"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="15dp"
-        android:padding="5dp"
-        android:background="@drawable/edit_text"
-        android:gravity="left"
-        android:textSize="17sp"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/answer" />
+        app:layout_constraintTop_toBottomOf="@+id/inquiryContentEdt" />
 </androidx.constraintlayout.widget.ConstraintLayout>

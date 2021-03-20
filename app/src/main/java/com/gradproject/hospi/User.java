@@ -1,6 +1,7 @@
 package com.gradproject.hospi;
 
 public class User {
+    private String documentId;
     private String name;
     private String birth;
     private String phone;
@@ -13,6 +14,14 @@ public class User {
         this.phone = "";
         this.email = "";
         this.address = "";
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 
     public String getName() {
