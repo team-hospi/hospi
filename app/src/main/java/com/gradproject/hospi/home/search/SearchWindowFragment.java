@@ -10,8 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,8 +31,7 @@ import java.util.ArrayList;
 public class SearchWindowFragment extends Fragment {
     private static final String COLLECTION_NAME = "hospitals";
 
-    ImageView searchBtn, removeBtn;
-    LinearLayout backBtn;
+    ImageButton backBtn, searchBtn, removeBtn;
     EditText searchEdt;
     TextView noSearchTxt;
     RecyclerView hospitalRecyclerView;

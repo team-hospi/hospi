@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,7 +32,8 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
 
     TextView hospitalName, departmentTxt, weekdayBusinessHours;
     TextView saturdayBusinessHours, holidayBusinessHours, addressTxt;
-    LinearLayout backBtn, reservationBtn, inquiryBtn, callBtn, favoriteBtn;
+    ImageButton backBtn;
+    LinearLayout reservationBtn, inquiryBtn, callBtn, favoriteBtn;
     ImageView favoriteImg;
 
     @Override

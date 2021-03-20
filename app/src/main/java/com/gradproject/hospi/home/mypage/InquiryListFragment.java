@@ -6,9 +6,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,17 +26,21 @@ import com.gradproject.hospi.R;
 
 import java.util.ArrayList;
 
+import static android.app.Activity.RESULT_OK;
+
 public class InquiryListFragment extends Fragment {
     RecyclerView inquiryRecyclerView;
     LinearLayoutManager layoutManager;
     InquiryAdapter inquiryAdapter = new InquiryAdapter();
+
+    ImageButton backBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_inquiry_list, container,false);
 
-        LinearLayout backBtn = rootView.findViewById(R.id.backBtn);
+        backBtn = rootView.findViewById(R.id.backBtn);
 
         inquiryRecyclerView = rootView.findViewById(R.id.inquiryList);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -55,12 +60,29 @@ public class InquiryListFragment extends Fragment {
             public void onItemClick(InquiryAdapter.ViewHolder holder, View view, int position) {
                 Inquiry inquiry = inquiryAdapter.getItem(position);
                 Intent intent = new Intent(getContext(), InquiryDetailActivity.class);
+                intent.putExtra("pos", position);
                 intent.putExtra("inquiry", inquiry);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
             }
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==0){
+            if (resultCode==RESULT_OK) {
+                int pos = data.getIntExtra("pos", -1);
+                if(pos!=-1){
+                    inquiryAdapter.items.remove(pos);
+                    inquiryAdapter.notifyItemRemoved(pos);
+                    inquiryAdapter.notifyItemRangeChanged(pos, inquiryAdapter.items.size());
+                }
+            }
+        }
     }
 
     private void getInquiryList(){
@@ -79,6 +101,7 @@ public class InquiryListFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d("DB", document.getId() + " => " + document.getData());
                                 Inquiry inquiry = document.toObject(Inquiry.class);
+                                inquiry.setDocumentId(document.getId());
                                 tmpArrList.add(inquiry);
                             }
 

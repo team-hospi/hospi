@@ -1,18 +1,18 @@
 package com.gradproject.hospi.home.mypage;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,7 +23,7 @@ import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.R;
 
 public class WithdrawalActivity extends AppCompatActivity {
-    LinearLayout backBtn;
+    ImageButton backBtn;
     Button okBtn;
 
     FirebaseFirestore db;

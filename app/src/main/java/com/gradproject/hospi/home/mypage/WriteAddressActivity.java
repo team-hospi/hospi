@@ -7,7 +7,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -22,7 +22,7 @@ public class WriteAddressActivity extends AppCompatActivity {
     TextView addressTxt;
     EditText detailAddressEdt;
     Button okBtn;
-    LinearLayout backBtn;
+    ImageButton backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

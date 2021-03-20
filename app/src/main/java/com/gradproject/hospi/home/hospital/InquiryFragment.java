@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,8 +20,6 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.Inquiry;
@@ -32,13 +30,14 @@ import com.gradproject.hospi.utils.Loading;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.gradproject.hospi.home.HomeActivity.user;
 import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
 
 public class InquiryFragment extends Fragment implements OnBackPressedListener {
     HospitalActivity hospitalActivity;
 
     Button writeBtn;
-    LinearLayout exitBtn;
+    ImageButton closeBtn;
     EditText inquiryTitleEdt, inquiryContentEdt;
     TextView hospitalNameTxt, titleEmptyTxt, contentEmptyTxt;
 
@@ -48,7 +47,7 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_inquiry, container,false);
 
         hospitalActivity = (HospitalActivity) getActivity();
-        exitBtn = rootView.findViewById(R.id.exitBtn);
+        closeBtn = rootView.findViewById(R.id.closeBtn);
         writeBtn = rootView.findViewById(R.id.writeBtn);
         inquiryTitleEdt = rootView.findViewById(R.id.inquiryTitleEdt);
         inquiryContentEdt = rootView.findViewById(R.id.inquiryContentEdt);
@@ -58,7 +57,7 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
 
         hospitalNameTxt.setText(hospital.getName());
 
-        exitBtn.setOnClickListener(new View.OnClickListener() {
+        closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
@@ -124,13 +123,11 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
         Loading loading = new Loading(getContext(), "문의 등록 중...");
         loading.start();
 
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String today = sdf.format(date);
 
-        Inquiry inquiry = new Inquiry(firebaseUser.getEmail(), hospital.getId(), hospital.getName(),
+        Inquiry inquiry = new Inquiry(user.getEmail(), hospital.getId(), hospital.getName(),
                 today, title, content, "");
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();

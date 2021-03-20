@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 
 import androidx.fragment.app.Fragment;
 
@@ -15,7 +15,7 @@ import com.gradproject.hospi.R;
 import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
 
 public class ReservationSuccessFragment extends Fragment implements OnBackPressedListener {
-    LinearLayout exitBtn;
+    ImageButton closeBtn;
 
     HospitalActivity hospitalActivity;
 
@@ -25,9 +25,9 @@ public class ReservationSuccessFragment extends Fragment implements OnBackPresse
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_reservation_success, container,false);
 
         hospitalActivity = (HospitalActivity) getActivity();
-        exitBtn = rootView.findViewById(R.id.exitBtn);
+        closeBtn = rootView.findViewById(R.id.closeBtn);
 
-        exitBtn.setOnClickListener(new View.OnClickListener() {
+        closeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();

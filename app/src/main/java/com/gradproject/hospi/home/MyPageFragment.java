@@ -13,17 +13,17 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.home.mypage.SettingActivity;
+
+import static com.gradproject.hospi.home.HomeActivity.user;
+
 
 public class MyPageFragment extends Fragment {
     TextView version, nameTxt;
 
     Button myInfoEditBtn, favoritesBtn, prescriptionBtn,
             inquiryDetailsBtn, termsBtn, noticeBtn;
-
-    FirebaseAuth firebaseAuth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,9 +39,7 @@ public class MyPageFragment extends Fragment {
         termsBtn = rootView.findViewById(R.id.termsBtn);
         noticeBtn = rootView.findViewById(R.id.noticeBtn);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        nameTxt.setText(firebaseAuth.getCurrentUser().getDisplayName());
-
+        nameTxt.setText(user.getName());
         version.setText(getVersionInfo(getContext()));
 
         myInfoEditBtn.setOnClickListener(new View.OnClickListener() {

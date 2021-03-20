@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Inquiry implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private String documentId;
     private String id;
     private String hospital_id;
     private String hospital_name;
@@ -23,6 +24,14 @@ public class Inquiry implements Serializable {
         this.title = title;
         this.content = content;
         this.answer = answer;
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 
     public String getId() {
