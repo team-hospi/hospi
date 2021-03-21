@@ -3,9 +3,13 @@ package com.gradproject.hospi.register;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
+import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
+
+import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -28,6 +32,18 @@ public class RegisterActivity extends AppCompatActivity {
         registerFragment5 = new RegisterFragment5(); registerFragment6 = new RegisterFragment6();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.registerContainer, registerFragment1).commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+        if(fragmentList!=null){
+            for(Fragment fragment : fragmentList) {
+                if (fragment instanceof OnBackPressedListener) {
+                    ((OnBackPressedListener) fragment).onBackPressed();
+                }
+            }
+        }
     }
 
     // 프래그먼트 화면 이동

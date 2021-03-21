@@ -1,15 +1,7 @@
 package com.gradproject.hospi.register;
 
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,18 +11,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.utils.Loading;
 
-public class RegisterFragment6 extends Fragment {
+public class RegisterFragment6 extends Fragment implements OnBackPressedListener {
     RegisterActivity registerActivity;
     EditText inputPW, inputPW2; // 1: 비밀번호 2: 비밀번호 확인
     TextView pwErrorTxt;
@@ -94,11 +91,10 @@ public class RegisterFragment6 extends Fragment {
                                                 });
 
                                         db.collection("user_list")
-                                                .document(registerActivity.user.getEmail())
-                                                .set(registerActivity.user)
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                .add(registerActivity.user)
+                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                     @Override
-                                                    public void onSuccess(Void aVoid) {
+                                                    public void onSuccess(DocumentReference documentReference) {
                                                         loading.end();
                                                         registerSuccess();
                                                     }
@@ -118,17 +114,8 @@ public class RegisterFragment6 extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                registerActivity.onFragmentChanged(4);
-            }
-        };
-
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    public void onBackPressed() {
+        registerActivity.onFragmentChanged(4);
     }
 
     // 회원가입 완료 팝업

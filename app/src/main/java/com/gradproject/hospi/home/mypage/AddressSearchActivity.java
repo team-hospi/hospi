@@ -6,21 +6,19 @@ import android.os.Handler;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.gradproject.hospi.IpAddress;
 import com.gradproject.hospi.R;
 
 public class AddressSearchActivity extends AppCompatActivity {
     private WebView webView;
     private Handler handler;
 
-    LinearLayout closeBtn;  // 닫기 버튼
-
+    ImageButton closeBtn;  // 닫기 버튼
     String address = "";
 
     @Override
@@ -44,8 +42,6 @@ public class AddressSearchActivity extends AppCompatActivity {
         handler = new Handler();
     }
 
-
-
     public void init_webView() {
         // WebView 설정
         webView = (WebView) findViewById(R.id.webView_address);
@@ -64,10 +60,9 @@ public class AddressSearchActivity extends AppCompatActivity {
         webView.setWebChromeClient(new WebChromeClient());
 
         // webview url load. php 파일 주소
-        webView.loadUrl("hospi.iptime.org/getAddress.php");
+        webView.loadUrl(IpAddress.getIP()+"getAddress.php");
 
     }
-
 
     private class AndroidBridge {
         @JavascriptInterface

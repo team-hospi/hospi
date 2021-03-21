@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,26 +25,27 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.gradproject.hospi.LoginActivity;
+import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
-import com.gradproject.hospi.User;
 import com.gradproject.hospi.utils.Loading;
 import com.gradproject.hospi.utils.PhoneNumberHyphen;
 
 import static android.app.Activity.RESULT_OK;
+import static com.gradproject.hospi.home.HomeActivity.user;
 
-public class EditMyInfoFragment extends Fragment {
+public class EditMyInfoFragment extends Fragment implements OnBackPressedListener {
     private static final int REQUEST_WRITE_ADDRESS_ACTIVITY_CODE = 100; // 주소 입력 화면 식별 코드
 
-    LinearLayout backBtn; // 뒤로가기 버튼
+    ImageButton backBtn; // 뒤로가기 버튼
     FrameLayout changePhNumBtn, changeBirthBtn, changeAddressBtn; // 전화번호 변경, 생년월일 변경, 주소 변경 버튼
     Button changePwBtn, logoutBtn, withdrawalBtn; // 비밀번호 변경, 로그아웃, 회원탈퇴 버튼
     TextView emailTxt, nameTxt, phoneTxt, birthTxt, addressTxt;
@@ -51,7 +53,13 @@ public class EditMyInfoFragment extends Fragment {
     FirebaseFirestore db;
     FirebaseUser firebaseUser;
 
-    User user;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,18 +72,15 @@ public class EditMyInfoFragment extends Fragment {
         birthTxt = rootView.findViewById(R.id.birthTxt);
         addressTxt = rootView.findViewById(R.id.addressTxt);
 
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        db = FirebaseFirestore.getInstance();
-
-        if(firebaseUser != null){
-            emailTxt.setText(firebaseUser.getEmail());
-            nameTxt.setText(firebaseUser.getDisplayName());
-            getUserInfo();
+        emailTxt.setText(user.getEmail());
+        nameTxt.setText(user.getName());
+        phoneTxt.setText(user.getPhone());
+        birthTxt.setText(user.getBirth());
+        // 주소가 입력되었는지 검사
+        if(user.getAddress().equals("")){
+            addressTxt.setText("주소를 입력해주세요");
         }else{
-            Toast.makeText(getContext(), "로그인 정보가 존재하지 않습니다.", Toast.LENGTH_LONG).show();
-            FirebaseAuth.getInstance().signOut(); // 로그아웃
-            ActivityCompat.finishAffinity(getActivity()); // 모든 액티비티 종료
-            startActivity(new Intent(getContext(), LoginActivity.class)); // 다시 로그인 화면으로
+            addressTxt.setText(user.getAddress());
         }
 
         // 뒤로가기 버튼
@@ -83,7 +88,7 @@ public class EditMyInfoFragment extends Fragment {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().finish();
+                onBackPressed();
             }
         });
 
@@ -111,7 +116,8 @@ public class EditMyInfoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // 주소 입력 화면으로 이동
-                startActivityForResult(new Intent(getContext(), WriteAddressActivity.class), REQUEST_WRITE_ADDRESS_ACTIVITY_CODE);
+                startActivityForResult(new Intent(getContext(), WriteAddressActivity.class),
+                        REQUEST_WRITE_ADDRESS_ACTIVITY_CODE);
             }
         });
 
@@ -146,63 +152,47 @@ public class EditMyInfoFragment extends Fragment {
     }
 
     @Override
+    public void onBackPressed() {
+        getActivity().finish();
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if(requestCode==REQUEST_WRITE_ADDRESS_ACTIVITY_CODE) {
             if (resultCode == RESULT_OK) {
                 String address = data.getStringExtra("address"); // 주소 받아와서 address에 저장
+                user.setAddress(address);
                 addressTxt.setText(address); // 주소 설정
 
-                DocumentReference washingtonRef = db.collection("user_list").document(firebaseUser.getEmail()); // 해당 이메일 유저 문서 열기
-                washingtonRef
-                        .update("address", address) // 주소 업데이트
-                        .addOnSuccessListener(new OnSuccessListener<Void>() { // 업데이트에 성공 했을때 호출
+                db.collection("user_list")
+                        .whereEqualTo("email", firebaseUser.getEmail())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("update", "주소 정보 업데이트 성공");
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                        Log.d("DB", document.getId() + " => " + document.getData());
+                                        DocumentReference documentReference = db
+                                                .collection("user_list")
+                                                .document(document.getId()); // 해당 이메일 유저 문서 열기
+                                        documentReference
+                                                .update("address", address) // 주소 업데이트
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() { // 업데이트에 성공 했을때 호출
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d("update", "주소 정보 업데이트 성공");
+                                                    }
+                                                });
+                                    }
+                                } else {
+                                    Log.d("DB", "Error getting documents: ", task.getException());
+                                }
                             }
                         });
             }
-        }
-    }
-
-    private void getUserInfo(){
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser(); // 현재 로그인한 유저 정보 받기
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        if (firebaseUser != null) {
-            // User is signed in
-            String email = firebaseUser.getEmail(); // 현재 로그인한 유저 이메일 가져오기
-
-            DocumentReference docRef = db.collection("user_list").document(email);
-            docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() { // 유저 정보 받아오는데 성공 할 경우
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    user = documentSnapshot.toObject(User.class); // user 인스턴스에 유저 정보 저장
-                    phoneTxt.setText(user.getPhone());
-                    birthTxt.setText(user.getBirth());
-                    // 주소가 입력되었는지 검사
-                    if(user.getAddress().equals("")){
-                        addressTxt.setText("주소를 입력해주세요");
-                    }else{
-                        addressTxt.setText(user.getAddress());
-                    }
-                    Log.d("success", "유저 정보 받기 성공");
-                }
-            }).addOnFailureListener(new OnFailureListener() { // 유저 정보 받아오는데 실패 할 경우
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getContext(), "알 수 없는 오류로 인해 유저 정보를 받아오지 못했습니다.", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }else{
-            Toast.makeText(getContext(), "로그인 정보가 존재하지 않습니다.", Toast.LENGTH_LONG).show();
-            FirebaseAuth.getInstance().signOut(); // 로그아웃
-            ActivityCompat.finishAffinity(getActivity()); // 모든 액티비티 종료
-            startActivity(new Intent(getContext(), LoginActivity.class)); // 다시 로그인 화면으로
         }
     }
 
@@ -222,7 +212,8 @@ public class EditMyInfoFragment extends Fragment {
         LinearLayout container = new LinearLayout(getContext());
         container.setOrientation(LinearLayout.VERTICAL);
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
         params.setMargins(100, 0, 100, 0);
         phone.setLayoutParams(params);
         err.setLayoutParams(params);
@@ -258,17 +249,35 @@ public class EditMyInfoFragment extends Fragment {
                     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
                     if(firebaseUser!=null){
-                        DocumentReference washingtonRef = db.collection("user_list").document(firebaseUser.getEmail()); // 해당 이메일 유저 문서 열기
-                        washingtonRef
-                                .update("phone", num) // 전화번호 업데이트
-                                .addOnSuccessListener(new OnSuccessListener<Void>() { // 업데이트에 성공 했을때 호출
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("user_list")
+                                .whereEqualTo("email", firebaseUser.getEmail())
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
-                                    public void onSuccess(Void aVoid) {
-                                        phoneTxt = getActivity().findViewById(R.id.phoneTxt);
-                                        phoneTxt.setText(num);
-                                        user.setPhone(num);
-                                        alertDialog.dismiss();
-                                        Log.d("update", "전화번호 정보 업데이트 성공");
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                Log.d("DB", document.getId() + " => " + document.getData());
+                                                DocumentReference documentReference = db
+                                                        .collection("user_list")
+                                                        .document(document.getId()); // 해당 이메일 유저 문서 열기
+                                                documentReference
+                                                        .update("phone", num) // 전화번호 업데이트
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() { // 업데이트에 성공 했을때 호출
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                phoneTxt = getActivity().findViewById(R.id.phoneTxt);
+                                                                phoneTxt.setText(num);
+                                                                user.setPhone(num);
+                                                                alertDialog.dismiss();
+                                                                Log.d("update", "전화번호 정보 업데이트 성공");
+                                                            }
+                                                        });
+                                            }
+                                        } else {
+                                            Log.d("DB", "Error getting documents: ", task.getException());
+                                        }
                                     }
                                 });
                     }else{
@@ -296,18 +305,35 @@ public class EditMyInfoFragment extends Fragment {
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
                 if(firebaseUser!=null){
-                    DocumentReference washingtonRef = db.collection("user_list").document(firebaseUser.getEmail()); // 해당 이메일 유저 문서 열기
-                    washingtonRef
-                            .update("birth", date) // 생년월일 업데이트
-                            .addOnSuccessListener(new OnSuccessListener<Void>() { // 업데이트에 성공 했을때 호출
+                    db.collection("user_list")
+                            .whereEqualTo("email", firebaseUser.getEmail())
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
-                                public void onSuccess(Void aVoid) {
-                                    birthTxt = getActivity().findViewById(R.id.birthTxt);
-                                    user.setBirth(date);
-                                    birthTxt.setText(date);
-                                    Log.d("update", "생년월일 정보 업데이트 성공");
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Log.d("DB", document.getId() + " => " + document.getData());
+                                            DocumentReference documentReference = db.collection("user_list")
+                                                    .document(document.getId()); // 해당 이메일 유저 문서 열기
+                                            documentReference
+                                                    .update("birth", date) // 생년월일 업데이트
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() { // 업데이트에 성공 했을때 호출
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            birthTxt = getActivity().findViewById(R.id.birthTxt);
+                                                            user.setBirth(date);
+                                                            birthTxt.setText(date);
+                                                            Log.d("update", "생년월일 정보 업데이트 성공");
+                                                        }
+                                                    });
+                                        }
+                                    } else {
+                                        Log.d("DB", "Error getting documents: ", task.getException());
+                                    }
                                 }
                             });
+
                 }else{
                     Toast.makeText(getContext(), "로그인 정보가 존재하지 않습니다.", Toast.LENGTH_LONG).show();
                     FirebaseAuth.getInstance().signOut(); // 로그아웃

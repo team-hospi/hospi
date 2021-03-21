@@ -2,13 +2,6 @@ package com.gradproject.hospi.register;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,19 +9,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.gradproject.hospi.MainActivity;
+import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 
-public class RegisterFragment5 extends Fragment {
+public class RegisterFragment5 extends Fragment implements OnBackPressedListener {
     RegisterActivity registerActivity;
     TextView emailErrorTxt;
     EditText inputEmail;
@@ -67,17 +61,8 @@ public class RegisterFragment5 extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                registerActivity.onFragmentChanged(3);
-            }
-        };
-
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    public void onBackPressed() {
+        registerActivity.onFragmentChanged(3);
     }
 
     // 이메일 중복 체크

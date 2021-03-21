@@ -8,14 +8,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.utils.PhoneNumberHyphen;
 
-public class RegisterFragment4 extends Fragment {
+public class RegisterFragment4 extends Fragment implements OnBackPressedListener {
     RegisterActivity registerActivity;
     EditText inputPhone; // 전화번호 입력받기
     TextView phoneErrorTxt; // 전화번호 빈칸 에러메시지
@@ -50,16 +49,7 @@ public class RegisterFragment4 extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                registerActivity.onFragmentChanged(2);
-            }
-        };
-
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+    public void onBackPressed() {
+        registerActivity.onFragmentChanged(2);
     }
 }

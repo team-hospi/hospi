@@ -1,32 +1,22 @@
 package com.gradproject.hospi.home.mypage;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.gradproject.hospi.LoginActivity;
+import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
-import com.gradproject.hospi.User;
-import com.gradproject.hospi.home.HomeActivity;
 
-public class SettingActivity extends AppCompatActivity {
+import java.util.List;
+
+public class SettingActivity extends AppCompatActivity implements OnBackPressedListener {
 
     // 마이페이지 각 목록과 연결되는 화면
     EditMyInfoFragment editMyInfoFragment; FavoriteFragment favoriteFragment;
-    InquiryFragment inquiryFragment; NoticeFragment noticeFragment;
+    InquiryListFragment inquiryListFragment; NoticeFragment noticeFragment;
     PrescriptionFragment prescriptionFragment; TermsFragment termsFragment;
+    InquiryDetailFragment inquiryDetailFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +24,9 @@ public class SettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
 
         editMyInfoFragment = new EditMyInfoFragment(); favoriteFragment = new FavoriteFragment();
-        inquiryFragment = new InquiryFragment(); noticeFragment = new NoticeFragment();
+        inquiryListFragment = new InquiryListFragment(); noticeFragment = new NoticeFragment();
         prescriptionFragment = new PrescriptionFragment(); termsFragment = new TermsFragment();
+        inquiryDetailFragment = new InquiryDetailFragment();
 
         String select = getIntent().getStringExtra("selectBtn");
 
@@ -50,7 +41,7 @@ public class SettingActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.settingContainer, prescriptionFragment).commit();
                 break;
             case "inquiryDetailsBtn":
-                getSupportFragmentManager().beginTransaction().replace(R.id.settingContainer, inquiryFragment).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.settingContainer, inquiryListFragment).commit();
                 break;
             case "termsBtn":
                 getSupportFragmentManager().beginTransaction().replace(R.id.settingContainer, termsFragment).commit();
@@ -59,5 +50,23 @@ public class SettingActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.settingContainer, noticeFragment).commit();
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+        if(fragmentList!=null){
+            for(Fragment fragment : fragmentList) {
+                if (fragment instanceof OnBackPressedListener) {
+                    ((OnBackPressedListener) fragment).onBackPressed();
+                }
+            }
+        }else{
+            super.onBackPressed();
+        }
+    }
+
+    private void showInquiryDetail(){
+        getSupportFragmentManager().beginTransaction().replace(R.id.settingContainer, inquiryDetailFragment).commit();
     }
 }

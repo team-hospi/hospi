@@ -5,45 +5,31 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-
-import android.os.TestLooperManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import androidx.fragment.app.Fragment;
+
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.R;
-import com.gradproject.hospi.User;
 import com.gradproject.hospi.home.mypage.SettingActivity;
 
 public class MyPageFragment extends Fragment {
     TextView version, nameTxt;
-
     Button myInfoEditBtn, favoritesBtn, prescriptionBtn,
             inquiryDetailsBtn, termsBtn, noticeBtn;
 
-    FirebaseAuth firebaseAuth;
+    FirebaseAuth firebaseUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_my_page, container,false);
 
+        firebaseUser = FirebaseAuth.getInstance();
         version = rootView.findViewById(R.id.version);
         nameTxt = rootView.findViewById(R.id.nameTxt);
         myInfoEditBtn = rootView.findViewById(R.id.myInfoEditBtn);
@@ -53,9 +39,7 @@ public class MyPageFragment extends Fragment {
         termsBtn = rootView.findViewById(R.id.termsBtn);
         noticeBtn = rootView.findViewById(R.id.noticeBtn);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        nameTxt.setText(firebaseAuth.getCurrentUser().getDisplayName());
-
+        nameTxt.setText(firebaseUser.getCurrentUser().getDisplayName());
         version.setText(getVersionInfo(getContext()));
 
         myInfoEditBtn.setOnClickListener(new View.OnClickListener() {
