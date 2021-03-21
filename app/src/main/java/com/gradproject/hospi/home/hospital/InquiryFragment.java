@@ -27,7 +27,7 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.utils.Loading;
 
-import java.text.SimpleDateFormat;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
@@ -123,12 +123,10 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
         Loading loading = new Loading(getContext(), "문의 등록 중...");
         loading.start();
 
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String today = sdf.format(date);
+        long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
 
         Inquiry inquiry = new Inquiry(user.getEmail(), hospital.getId(), hospital.getName(),
-                today, title, content, "", false);
+                timestamp, title, content, "", false);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("inquiry_list")

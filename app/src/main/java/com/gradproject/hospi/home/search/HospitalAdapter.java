@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHolder>
                             implements OnHospitalItemClickListener {
-    ArrayList<Hospital> items = new ArrayList<Hospital>();
+    public ArrayList<Hospital> items = new ArrayList<Hospital>();
     OnHospitalItemClickListener listener;
 
     public void addItem(Hospital item){
@@ -64,7 +64,7 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHo
         }
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         TextView hospitalName, weekdayBusinessHours, saturdayBusinessHours;
         TextView holidayBusinessHours, addressTxt;
 

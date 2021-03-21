@@ -1,5 +1,7 @@
 package com.gradproject.hospi;
 
+import java.util.List;
+
 public class User {
     private String documentId;
     private String name;
@@ -7,14 +9,9 @@ public class User {
     private String phone;
     private String email;
     private String address;
+    private List<String> favorites;
 
-    public User() {
-        this.name = "";
-        this.birth = "";
-        this.phone = "";
-        this.email = "";
-        this.address = "";
-    }
+    public User() { }
 
     public String getDocumentId() {
         return documentId;
@@ -62,5 +59,13 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public List<String> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<String> favorites) {
+        this.favorites = favorites;
     }
 }

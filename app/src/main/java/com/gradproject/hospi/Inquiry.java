@@ -9,7 +9,7 @@ public class Inquiry implements Serializable {
     private String id;
     private String hospital_id;
     private String hospital_name;
-    private String date;
+    private long timestamp;
     private String title;
     private String content;
     private String answer;
@@ -17,11 +17,11 @@ public class Inquiry implements Serializable {
 
     public Inquiry(){}
 
-    public Inquiry(String id, String hospital_id, String hospital_name, String date, String title, String content, String answer, boolean checkedAnswer) {
+    public Inquiry(String id, String hospital_id, String hospital_name, long timestamp, String title, String content, String answer, boolean checkedAnswer) {
         this.id = id;
         this.hospital_id = hospital_id;
         this.hospital_name = hospital_name;
-        this.date = date;
+        this.timestamp = timestamp;
         this.title = title;
         this.content = content;
         this.answer = answer;
@@ -60,12 +60,12 @@ public class Inquiry implements Serializable {
         this.hospital_name = hospital_name;
     }
 
-    public String getDate() {
-        return date;
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getTitle() {

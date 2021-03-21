@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,6 +40,13 @@ public class SearchWindowFragment extends Fragment {
     HospitalAdapter hospitalAdapter = new HospitalAdapter();
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search_window, container,false);
@@ -50,7 +58,6 @@ public class SearchWindowFragment extends Fragment {
         noSearchTxt = rootView.findViewById(R.id.noSearchTxt);
         hospitalRecyclerView = rootView.findViewById(R.id.hospitalList);
 
-        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         hospitalRecyclerView.setLayoutManager(layoutManager);
 
         backBtn.setOnClickListener(new View.OnClickListener() {

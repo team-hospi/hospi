@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +14,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 
@@ -23,18 +30,33 @@ import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import static com.gradproject.hospi.home.HomeActivity.user;
 import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
 
 public class HospitalInfoDetailFragment extends Fragment implements OnBackPressedListener {
     HospitalActivity hospitalActivity;
+    FirebaseFirestore db;
 
     TextView hospitalName, departmentTxt, weekdayBusinessHours;
     TextView saturdayBusinessHours, holidayBusinessHours, addressTxt;
     ImageButton backBtn;
     LinearLayout reservationBtn, inquiryBtn, callBtn, favoriteBtn;
     ImageView favoriteImg;
+
+    ArrayList<String> favorites;
+    boolean isFavorite = false;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        db = FirebaseFirestore.getInstance();
+        favorites = (ArrayList) user.getFavorites();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,6 +76,12 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         callBtn = rootView.findViewById(R.id.callBtn);
         favoriteBtn = rootView.findViewById(R.id.favoriteBtn);
         favoriteImg = rootView.findViewById(R.id.favoriteImg);
+
+        favoriteCheck(); // 찜한 병원인지 확인
+
+        if(isFavorite){
+            favoriteImg.setImageResource(R.drawable.ic_action_favorite);
+        }
 
         // 뒤로가기 버튼
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -91,8 +119,15 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         favoriteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: 찜버튼 구현
-                favoriteImg.setImageResource(R.drawable.ic_action_favorite);
+                if(isFavorite){
+                    isFavorite = false;
+                    favoriteImg.setImageResource(R.drawable.ic_action_favorite_border);
+                    removeFavoriteList();
+                }else{
+                    isFavorite = true;
+                    favoriteImg.setImageResource(R.drawable.ic_action_favorite);
+                    addFavoriteList();
+                }
             }
         });
 
@@ -146,6 +181,59 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         }
 
         return strArr;
+    }
+
+    public void favoriteCheck(){
+        for(String str : favorites){
+            if(str.equals(hospital.getId())){
+                isFavorite = true;
+            }
+        }
+    }
+
+    public void addFavoriteList(){
+        favorites.add(hospital.getId());
+        user.setFavorites(favorites);
+        DocumentReference documentReference = db.collection("user_list").document(user.getDocumentId());
+        documentReference
+                .update("favorites", user.getFavorites())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("DB", "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("DB", "Error updating document", e);
+                    }
+                });
+    }
+
+    public void removeFavoriteList(){
+        for(int i=0; i<favorites.size(); i++){
+            if(favorites.get(i).equals(hospital.getId())){
+                favorites.remove(i);
+            }
+        }
+        user.setFavorites(favorites);
+
+        DocumentReference documentReference = db.collection("user_list").document(user.getDocumentId());
+        documentReference
+                .update("favorites", user.getFavorites())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("DB", "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("DB", "Error updating document", e);
+                    }
+                });
     }
 
     private void showHospitalLocation(ViewGroup rootView){

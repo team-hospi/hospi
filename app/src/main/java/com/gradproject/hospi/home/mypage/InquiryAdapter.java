@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class InquiryAdapter extends RecyclerView.Adapter<InquiryAdapter.ViewHolder>
         implements OnInquiryItemClickListener {
@@ -90,8 +92,11 @@ public class InquiryAdapter extends RecyclerView.Adapter<InquiryAdapter.ViewHold
         }
 
         public void setItem(Inquiry item){
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            String date = sdf.format(new Date(item.getTimestamp()));
+
+            dateTxt.setText(date);
             titleTxt.setText(item.getTitle());
-            dateTxt.setText(item.getDate());
             hospitalNameTxt.setText(item.getHospital_name());
 
             if(item.isCheckedAnswer()){
