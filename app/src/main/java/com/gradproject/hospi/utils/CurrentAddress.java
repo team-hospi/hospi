@@ -1,18 +1,41 @@
 package com.gradproject.hospi.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.view.View;
+
+import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapReverseGeoCoder;
+
+import org.w3c.dom.Document;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-public class CurrentAddress {
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
+public class CurrentAddress implements MapReverseGeoCoder.ReverseGeoCodingResultListener {
+    public static MapReverseGeoCoder.ReverseGeoCodingResultListener reverseGeoCodingResultListener;
     public static final String NO_LOCATION_INFORMATION = "위치정보 없음";
+
 
     // 현재 주소 얻기
     public static String getCurrentAddress(Context context, double latitude, double longitude) {
+        /*
+        MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude);
+
+        MapReverseGeoCoder reverseGeoCoder = new MapReverseGeoCoder("07d563b8fc089510a0c926182cf35b1f", mapPoint, reverseGeoCodingResultListener, activity);
+        reverseGeoCoder.startFindingAddress();
+        return reverseGeoCoder.findAddressForMapPointSync("07d563b8fc089510a0c926182cf35b1f", mapPoint);
+*/
 
         //지오코더... GPS를 주소로 변환
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
@@ -20,7 +43,6 @@ public class CurrentAddress {
         List<Address> addresses;
 
         try {
-
             addresses = geocoder.getFromLocation(
                     latitude,
                     longitude,
@@ -31,15 +53,11 @@ public class CurrentAddress {
         } catch (IllegalArgumentException illegalArgumentException) {
             // 잘못된 GPS 좌표
             return NO_LOCATION_INFORMATION;
-
         }
-
-
 
         if (addresses == null || addresses.size() == 0) {
             // 주소 미발견
             return NO_LOCATION_INFORMATION;
-
         }
 
         Address address = addresses.get(0);
@@ -59,5 +77,16 @@ public class CurrentAddress {
         }
 
         return addr;
+
+    }
+
+    @Override
+    public void onReverseGeoCoderFoundAddress(MapReverseGeoCoder mapReverseGeoCoder, String s) {
+
+    }
+
+    @Override
+    public void onReverseGeoCoderFailedToFindAddress(MapReverseGeoCoder mapReverseGeoCoder) {
+
     }
 }

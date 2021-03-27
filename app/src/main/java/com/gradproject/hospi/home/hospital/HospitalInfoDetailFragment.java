@@ -24,6 +24,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.User;
+import com.gradproject.hospi.home.LocationPoint;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -164,19 +166,19 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         String[] strArr = {"", "토요일 휴무", "공휴일 휴무"};
         String open, close;
 
-        open = hospital.getWeekday_open();
-        close = hospital.getWeekday_close();
+        open = hospital.getWeekdayOpen();
+        close = hospital.getWeekdayClose();
         strArr[0] = "평일 " + open + " ~ " + close;
 
-        if(hospital.isSaturday_status()){
-            open = hospital.getSaturday_open();
-            close = hospital.getSaturday_close();
+        if(hospital.isSaturdayStatus()){
+            open = hospital.getSaturdayOpen();
+            close = hospital.getSaturdayClose();
             strArr[1] = "토요일 " + open + " ~ " + close;
         }
 
-        if(hospital.isHoliday_status()){
-            open = hospital.getHoliday_open();
-            close = hospital.getHoliday_close();
+        if(hospital.isHolidayStatus()){
+            open = hospital.getHolidayOpen();
+            close = hospital.getHolidayClose();
             strArr[2] = "공휴일 " + open + " ~ " + close;
         }
 
@@ -194,7 +196,7 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
     public void addFavoriteList(){
         favorites.add(hospital.getId());
         user.setFavorites(favorites);
-        DocumentReference documentReference = db.collection("user_list").document(user.getDocumentId());
+        DocumentReference documentReference = db.collection(User.DB_NAME).document(user.getDocumentId());
         documentReference
                 .update("favorites", user.getFavorites())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -219,7 +221,7 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         }
         user.setFavorites(favorites);
 
-        DocumentReference documentReference = db.collection("user_list").document(user.getDocumentId());
+        DocumentReference documentReference = db.collection(User.DB_NAME).document(user.getDocumentId());
         documentReference
                 .update("favorites", user.getFavorites())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -237,7 +239,7 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
     }
 
     private void showHospitalLocation(ViewGroup rootView){
-        Point point = getPointFromGeoCoder(hospital.getAddress());
+        LocationPoint point = getPointFromGeoCoder(hospital.getAddress());
 
         MapView mapView = new MapView(getContext());
         mapView.setZoomLevel(2, false);
@@ -257,8 +259,8 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         mapView.addPOIItem(marker);
     }
 
-    private Point getPointFromGeoCoder(String addr) {
-        Point point = new Point();
+    private LocationPoint getPointFromGeoCoder(String addr) {
+        LocationPoint point = new LocationPoint();
         point.addr = addr;
 
         Geocoder geocoder = new Geocoder(getContext());
@@ -280,28 +282,5 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         point.longitude = listAddress.get(0).getLongitude();
         point.latitude = listAddress.get(0).getLatitude();
         return point;
-    }
-
-    class Point {
-        // 위도
-        public double longitude;
-        // 경도
-        public double latitude;
-        public String addr;
-        // 포인트를 받았는지 여부
-        public boolean havePoint;
-
-        @Override
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("x : ");
-            builder.append(longitude);
-            builder.append(" y : ");
-            builder.append(latitude);
-            builder.append(" addr : ");
-            builder.append(addr);
-
-            return builder.toString();
-        }
     }
 }

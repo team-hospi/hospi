@@ -98,9 +98,9 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
         hospitalAdapter.items.clear(); // 기존 항목 모두 삭제
         hospitalAdapter.notifyDataSetChanged(); // 어댑터 갱신
 
-        for(String hospital_id : favorites){
-            db.collection("hospitals")
-                    .whereEqualTo("id", hospital_id)
+        for(String hospitalId : favorites){
+            db.collection(Hospital.DB_NAME)
+                    .whereEqualTo("id", hospitalId)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override

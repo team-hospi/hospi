@@ -59,7 +59,7 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
         titleEmptyTxt = rootView.findViewById(R.id.titleEmptyTxt);
         contentEmptyTxt = rootView.findViewById(R.id.contentEmptyTxt);
 
-        hospitalNameTxt.setText(inquiry.getHospital_name());
+        hospitalNameTxt.setText(inquiry.getHospitalName());
         inquiryTitleEdt.setText(inquiry.getTitle());
         inquiryContentEdt.setText(inquiry.getContent());
 
@@ -133,7 +133,7 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
         inquiry.setTitle(title);
         inquiry.setContent(content);
 
-        DocumentReference documentReference = db.collection("inquiry_list").document(inquiry.getDocumentId());
+        DocumentReference documentReference = db.collection(Inquiry.DB_NAME).document(inquiry.getDocumentId());
         documentReference
                 .set(inquiry)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {

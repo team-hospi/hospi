@@ -27,15 +27,14 @@ import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 
-public class HomeActivity extends AppCompatActivity {
-    private final String USER_LIST = "user_list";
-
+public class HomeActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener{
     private BackPressHandler backPressHandler = new BackPressHandler(this);
 
     SearchFragment searchFragment;
     HistoryFragment historyFragment;
     MyPageFragment myPageFragment;
 
+    FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
     FirebaseFirestore db;
     public static User user;
@@ -45,11 +44,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser(); // 현재 로그인한 유저 정보 받기
         db = FirebaseFirestore.getInstance();
-
-        getUserInfo();
-
+        firebaseAuth = FirebaseAuth.getInstance();
         searchFragment = new SearchFragment();
         historyFragment = new HistoryFragment();
         myPageFragment = new MyPageFragment();
@@ -78,13 +74,21 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        onAuthStateChanged(firebaseAuth);
+    }
+
+    @Override
     public void onBackPressed() {
         backPressHandler.onBackPressed();
     }
 
-    private void getUserInfo(){
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        firebaseUser = firebaseAuth.getCurrentUser();
         if (firebaseUser != null) {
-            db.collection(USER_LIST)
+            db.collection(User.DB_NAME)
                     .whereEqualTo("email", firebaseUser.getEmail()).get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -109,7 +113,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void setUserInfo(String documentId){
-        DocumentReference docRef = db.collection(USER_LIST).document(documentId);
+        DocumentReference docRef = db.collection(User.DB_NAME).document(documentId);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {

@@ -129,7 +129,7 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
                 timestamp, title, content, "", false);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("inquiry_list")
+        db.collection(Inquiry.DB_NAME)
                 .add(inquiry)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override

@@ -21,7 +21,7 @@ import com.gradproject.hospi.home.HomeActivity;
 import com.gradproject.hospi.register.RegisterActivity;
 import com.gradproject.hospi.utils.Loading;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity{
     Loading loading;
     FirebaseAuth firebaseAuth;
     EditText inputEmail, inputPW;
@@ -88,18 +88,6 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null) {
-            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-            finish();
-        }
     }
 
     // 로그인 실패 팝업 띄우기

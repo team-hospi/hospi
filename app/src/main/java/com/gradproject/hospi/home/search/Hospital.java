@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Hospital implements Serializable {
     private static final long serialVersionUID = 1L;
+    public static final String DB_NAME = "hospitals";
 
     private String id; // 병원 아이디
     private String name; // 병원 이름
@@ -12,16 +13,16 @@ public class Hospital implements Serializable {
     private String address; // 병원 주소
     private String tel; // 병원 전화번호
     private String kind; // 병원 종류 (의원, 종합병원, 대학병원)
-    private String weekday_open; // 평일 영업 시작 시간 (예: 0900 -> 오전 9시)
-    private String weekday_close; // 평일 영업 종료 시간
-    private String saturday_open; // 토요일 영업 시작 시간
-    private String saturday_close; // 토요일 영업 종료 시간
-    private String holiday_open; // 공휴일 영업 시작 시간
-    private String holiday_close; // 공휴일 영업 종료 시간
+    private String weekdayOpen; // 평일 영업 시작 시간 (예: 0900 -> 오전 9시)
+    private String weekdayClose; // 평일 영업 종료 시간
+    private String saturdayOpen; // 토요일 영업 시작 시간
+    private String saturdayClose; // 토요일 영업 종료 시간
+    private String holidayOpen; // 공휴일 영업 시작 시간
+    private String holidayClose; // 공휴일 영업 종료 시간
     private boolean status; // 영업 여부
-    private boolean saturday_status; // 토요일 영업 여부
-    private boolean holiday_status; // 공휴일 영업 여부
-    private boolean today_reservation; // 금일 예약 가능 여부
+    private boolean saturdayStatus; // 토요일 영업 여부
+    private boolean holidayStatus; // 공휴일 영업 여부
+    private boolean todayReservation; // 금일 예약 가능 여부
 
     public Hospital() {}
 
@@ -73,52 +74,52 @@ public class Hospital implements Serializable {
         this.kind = kind;
     }
 
-    public String getWeekday_open() {
-        return weekday_open;
+    public String getWeekdayOpen() {
+        return weekdayOpen;
     }
 
-    public void setWeekday_open(String weekday_open) {
-        this.weekday_open = weekday_open;
+    public void setWeekdayOpen(String weekdayOpen) {
+        this.weekdayOpen = weekdayOpen;
     }
 
-    public String getWeekday_close() {
-        return weekday_close;
+    public String getWeekdayClose() {
+        return weekdayClose;
     }
 
-    public void setWeekday_close(String weekday_close) {
-        this.weekday_close = weekday_close;
+    public void setWeekdayClose(String weekdayClose) {
+        this.weekdayClose = weekdayClose;
     }
 
-    public String getSaturday_open() {
-        return saturday_open;
+    public String getSaturdayOpen() {
+        return saturdayOpen;
     }
 
-    public void setSaturday_open(String saturday_open) {
-        this.saturday_open = saturday_open;
+    public void setSaturdayOpen(String saturdayOpen) {
+        this.saturdayOpen = saturdayOpen;
     }
 
-    public String getSaturday_close() {
-        return saturday_close;
+    public String getSaturdayClose() {
+        return saturdayClose;
     }
 
-    public void setSaturday_close(String saturday_close) {
-        this.saturday_close = saturday_close;
+    public void setSaturdayClose(String saturdayClose) {
+        this.saturdayClose = saturdayClose;
     }
 
-    public String getHoliday_open() {
-        return holiday_open;
+    public String getHolidayOpen() {
+        return holidayOpen;
     }
 
-    public void setHoliday_open(String holiday_open) {
-        this.holiday_open = holiday_open;
+    public void setHolidayOpen(String holidayOpen) {
+        this.holidayOpen = holidayOpen;
     }
 
-    public String getHoliday_close() {
-        return holiday_close;
+    public String getHolidayClose() {
+        return holidayClose;
     }
 
-    public void setHoliday_close(String holiday_close) {
-        this.holiday_close = holiday_close;
+    public void setHolidayClose(String holidayClose) {
+        this.holidayClose = holidayClose;
     }
 
     public boolean isStatus() {
@@ -129,27 +130,27 @@ public class Hospital implements Serializable {
         this.status = status;
     }
 
-    public boolean isSaturday_status() {
-        return saturday_status;
+    public boolean isSaturdayStatus() {
+        return saturdayStatus;
     }
 
-    public void setSaturday_status(boolean saturday_status) {
-        this.saturday_status = saturday_status;
+    public void setSaturdayStatus(boolean saturdayStatus) {
+        this.saturdayStatus = saturdayStatus;
     }
 
-    public boolean isHoliday_status() {
-        return holiday_status;
+    public boolean isHolidayStatus() {
+        return holidayStatus;
     }
 
-    public void setHoliday_status(boolean holiday_status) {
-        this.holiday_status = holiday_status;
+    public void setHolidayStatus(boolean holidayStatus) {
+        this.holidayStatus = holidayStatus;
     }
 
-    public boolean isToday_reservation() {
-        return today_reservation;
+    public boolean isTodayReservation() {
+        return todayReservation;
     }
 
-    public void setToday_reservation(boolean today_reservation) {
-        this.today_reservation = today_reservation;
+    public void setTodayReservation(boolean todayReservation) {
+        this.todayReservation = todayReservation;
     }
 }

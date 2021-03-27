@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,8 +24,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.User;
 import com.gradproject.hospi.utils.Loading;
 
 public class RegisterFragment6 extends Fragment implements OnBackPressedListener {
@@ -90,11 +94,12 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
                                                     }
                                                 });
 
-                                        db.collection("user_list")
+                                        db.collection(User.DB_NAME)
                                                 .add(registerActivity.user)
                                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                     @Override
                                                     public void onSuccess(DocumentReference documentReference) {
+                                                        userDocumentIdUpdate();
                                                         loading.end();
                                                         registerSuccess();
                                                     }
@@ -131,5 +136,38 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void userDocumentIdUpdate(){
+        db.collection(User.DB_NAME)
+                .whereEqualTo("email", registerActivity.user.getEmail())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("DB", document.getId() + " => " + document.getData());
+                                DocumentReference documentReference = db.collection(User.DB_NAME).document(document.getId());
+                                documentReference
+                                        .update("documentId", document.getId())
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("DB", "DocumentSnapshot successfully updated!");
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w("DB", "Error updating document", e);
+                                            }
+                                        });
+                            }
+                        } else {
+                            Log.d("DB", "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 }

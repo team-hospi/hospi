@@ -21,6 +21,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.User;
 
 public class RegisterFragment5 extends Fragment implements OnBackPressedListener {
     RegisterActivity registerActivity;
@@ -69,7 +70,7 @@ public class RegisterFragment5 extends Fragment implements OnBackPressedListener
     public void checkDuplicateEmail(String str){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        DocumentReference docRef = db.collection("user_list").document(str);
+        DocumentReference docRef = db.collection(User.DB_NAME).document(str);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

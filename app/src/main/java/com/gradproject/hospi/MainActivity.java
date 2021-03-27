@@ -24,23 +24,29 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.gradproject.hospi.home.HomeActivity;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity
-{
+public class MainActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+
+    FirebaseUser firebaseUser;
+    FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        firebaseAuth = FirebaseAuth.getInstance();
 
         Button setBtn = (Button) findViewById(R.id.setBtn);
         setBtn.setOnClickListener(new View.OnClickListener()
@@ -59,8 +65,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
 
         int hasFineLocationPermission = ContextCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
@@ -69,10 +75,19 @@ public class MainActivity extends AppCompatActivity
 
         if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
                 hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
-
-            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-            finish();
+            onAuthStateChanged(firebaseAuth);
         }
+    }
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        firebaseUser = firebaseAuth.getCurrentUser();
+        if(firebaseUser != null){
+            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+        }else{
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        }
+        finish();
     }
 
     /*
@@ -103,8 +118,7 @@ public class MainActivity extends AppCompatActivity
             if ( check_result ) {
 
                 //위치 값을 가져올 수 있음
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                finish();
+                onAuthStateChanged(firebaseAuth);
             }
             else {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
@@ -144,8 +158,7 @@ public class MainActivity extends AppCompatActivity
 
 
             // 3.  위치 값을 가져올 수 있음
-            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-            finish();
+            onAuthStateChanged(firebaseAuth);
 
         } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
 

@@ -97,7 +97,7 @@ public class InquiryAdapter extends RecyclerView.Adapter<InquiryAdapter.ViewHold
 
             dateTxt.setText(date);
             titleTxt.setText(item.getTitle());
-            hospitalNameTxt.setText(item.getHospital_name());
+            hospitalNameTxt.setText(item.getHospitalName());
 
             if(item.isCheckedAnswer()){
                 answerCheckTxt.setText("답변완료");

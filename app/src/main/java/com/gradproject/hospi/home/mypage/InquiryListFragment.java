@@ -109,7 +109,7 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("inquiry_list")
+        db.collection(Inquiry.DB_NAME)
                 .whereEqualTo("id", firebaseUser.getEmail())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

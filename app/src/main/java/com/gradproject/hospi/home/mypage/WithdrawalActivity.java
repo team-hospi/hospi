@@ -21,11 +21,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.User;
 
-public class WithdrawalActivity extends AppCompatActivity {
+import static com.gradproject.hospi.home.HomeActivity.user;
+
+public class WithdrawalActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener{
     ImageButton backBtn;
     Button okBtn;
 
+    FirebaseUser firebaseUser;
     FirebaseFirestore db;
 
     @Override
@@ -47,34 +51,39 @@ public class WithdrawalActivity extends AppCompatActivity {
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser(); // 현재 로그인한 유저 정보 받기
-                if (firebaseUser != null) {
-                    // User is signed in
-                    String email = firebaseUser.getEmail(); // 현재 로그인한 유저 이메일 가져오기
-                    db.collection("user_list").document(email)
-                            .delete()
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    FirebaseAuth.getInstance().getCurrentUser().delete();
-                                    withdrawalDialog();
-                                    Log.d("withdrawal", "유저 정보 삭제 성공");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w("withdrawal", "유저 정보 삭제 실패", e);
-                                }
-                            });
-                }else{
-                    Toast.makeText(getApplicationContext(), "로그인 정보가 존재하지 않습니다.", Toast.LENGTH_LONG).show();
-                    FirebaseAuth.getInstance().signOut(); // 로그아웃
-                    ActivityCompat.finishAffinity(WithdrawalActivity.this); // 모든 액티비티 종료
-                    startActivity(new Intent(getApplicationContext(), LoginActivity.class)); // 다시 로그인 화면으로
-                }
+                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+                onAuthStateChanged(firebaseAuth);
+                firebaseUser.delete();
+                db.collection(User.DB_NAME).document(user.getDocumentId())
+                        .delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                withdrawalDialog();
+                                Log.d("withdrawal", "유저 정보 삭제 성공");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w("withdrawal", "유저 정보 삭제 실패", e);
+                            }
+                        });
             }
         });
+    }
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        firebaseUser = firebaseAuth.getCurrentUser();
+        if(firebaseUser != null){
+
+        }else{
+            String msg = "유저 정보가 존재하지 않습니다.";
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+            ActivityCompat.finishAffinity(WithdrawalActivity.this); // 모든 액티비티 종료
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class)); // 다시 로그인 화면으로
+        }
     }
 
     private void withdrawalDialog(){

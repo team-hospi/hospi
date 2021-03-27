@@ -72,7 +72,7 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
             }
         });
 
-        hospitalNameTxt.setText(inquiry.getHospital_name());
+        hospitalNameTxt.setText(inquiry.getHospitalName());
         titleTxt.setText(inquiry.getTitle());
         contentTxt.setText(inquiry.getContent());
 
@@ -128,7 +128,7 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
     }
 
     public void delBtnProcess(){
-        db.collection("inquiry_list").document(inquiry.getDocumentId())
+        db.collection(Inquiry.DB_NAME).document(inquiry.getDocumentId())
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

@@ -4,11 +4,12 @@ import java.io.Serializable;
 
 public class Inquiry implements Serializable {
     private static final long serialVersionUID = 1L;
+    public static final String DB_NAME = "inquiryList";
 
     private String documentId;
     private String id;
-    private String hospital_id;
-    private String hospital_name;
+    private String hospitalId;
+    private String hospitalName;
     private long timestamp;
     private String title;
     private String content;
@@ -17,10 +18,10 @@ public class Inquiry implements Serializable {
 
     public Inquiry(){}
 
-    public Inquiry(String id, String hospital_id, String hospital_name, long timestamp, String title, String content, String answer, boolean checkedAnswer) {
+    public Inquiry(String id, String hospitalId, String hospitalName, long timestamp, String title, String content, String answer, boolean checkedAnswer) {
         this.id = id;
-        this.hospital_id = hospital_id;
-        this.hospital_name = hospital_name;
+        this.hospitalId = hospitalId;
+        this.hospitalName = hospitalName;
         this.timestamp = timestamp;
         this.title = title;
         this.content = content;
@@ -44,20 +45,20 @@ public class Inquiry implements Serializable {
         this.id = id;
     }
 
-    public String getHospital_id() {
-        return hospital_id;
+    public String getHospitalId() {
+        return hospitalId;
     }
 
-    public void setHospital_id(String hospital_id) {
-        this.hospital_id = hospital_id;
+    public void setHospitalId(String hospitalId) {
+        this.hospitalId = hospitalId;
     }
 
-    public String getHospital_name() {
-        return hospital_name;
+    public String getHospitalName() {
+        return hospitalName;
     }
 
-    public void setHospital_name(String hospital_name) {
-        this.hospital_name = hospital_name;
+    public void setHospitalName(String hospitalName) {
+        this.hospitalName = hospitalName;
     }
 
     public long getTimestamp() {

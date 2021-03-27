@@ -30,8 +30,6 @@ import com.gradproject.hospi.home.hospital.HospitalActivity;
 import java.util.ArrayList;
 
 public class SearchWindowFragment extends Fragment {
-    private static final String COLLECTION_NAME = "hospitals";
-
     ImageButton backBtn, searchBtn, removeBtn;
     EditText searchEdt;
     TextView noSearchTxt;
@@ -138,7 +136,7 @@ public class SearchWindowFragment extends Fragment {
     private void searchHospital(String searchStr){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection(COLLECTION_NAME)
+        db.collection(Hospital.DB_NAME)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
