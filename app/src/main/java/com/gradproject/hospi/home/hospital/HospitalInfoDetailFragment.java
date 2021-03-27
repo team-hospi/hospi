@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -122,10 +123,14 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
             @Override
             public void onClick(View v) {
                 if(isFavorite){
+                    String msg = "찜이 해제되었습니다.";
+                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                     isFavorite = false;
                     favoriteImg.setImageResource(R.drawable.ic_action_favorite_border);
                     removeFavoriteList();
                 }else{
+                    String msg = "찜이 설정되었습니다.";
+                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                     isFavorite = true;
                     favoriteImg.setImageResource(R.drawable.ic_action_favorite);
                     addFavoriteList();
