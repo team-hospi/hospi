@@ -1,12 +1,14 @@
 package com.gradproject.hospi.home;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -23,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.gradproject.hospi.BackPressHandler;
+import com.gradproject.hospi.InquiryPushService;
 import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
@@ -49,7 +52,10 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
         searchFragment = new SearchFragment();
         historyFragment = new HistoryFragment();
         myPageFragment = new MyPageFragment();
-
+/*
+        Intent intent = new Intent(HomeActivity.this, InquiryPushService.class);
+        startService(intent);
+*/
         getSupportFragmentManager().beginTransaction().replace(R.id.container, searchFragment).commit();
 
         BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
