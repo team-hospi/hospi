@@ -63,29 +63,21 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
         inquiryTitleEdt.setText(inquiry.getTitle());
         inquiryContentEdt.setText(inquiry.getContent());
 
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        closeBtn.setOnClickListener(v -> onBackPressed());
 
-        updateBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String title = inquiryTitleEdt.getText().toString();
-                String content = inquiryContentEdt.getText().toString();
+        updateBtn.setOnClickListener(v -> {
+            String title = inquiryTitleEdt.getText().toString();
+            String content = inquiryContentEdt.getText().toString();
 
-                if(title.equals("") && content.equals("")) {
-                    titleEmptyTxt.setVisibility(View.VISIBLE);
-                    contentEmptyTxt.setVisibility(View.VISIBLE);
-                }else if(title.equals("")){
-                    titleEmptyTxt.setVisibility(View.VISIBLE);
-                }else if(content.equals("")){
-                    contentEmptyTxt.setVisibility(View.VISIBLE);
-                }else{
-                    inquiryUpdateProcess(title, content);
-                }
+            if(title.equals("") && content.equals("")) {
+                titleEmptyTxt.setVisibility(View.VISIBLE);
+                contentEmptyTxt.setVisibility(View.VISIBLE);
+            }else if(title.equals("")){
+                titleEmptyTxt.setVisibility(View.VISIBLE);
+            }else if(content.equals("")){
+                contentEmptyTxt.setVisibility(View.VISIBLE);
+            }else{
+                inquiryUpdateProcess(title, content);
             }
         });
 
@@ -136,20 +128,14 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
         DocumentReference documentReference = db.collection(Inquiry.DB_NAME).document(inquiry.getDocumentId());
         documentReference
                 .set(inquiry)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("DB", "DocumentSnapshot successfully updated!");
-                        updateSuccessPopUp();
-                    }
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("DB", "DocumentSnapshot successfully updated!");
+                    updateSuccessPopUp();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DB", "Error updating document", e);
-                        String msg = "문의 수정에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
-                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                    }
+                .addOnFailureListener(e -> {
+                    Log.w("DB", "Error updating document", e);
+                    String msg = "문의 수정에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
+                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                 });
     }
 
@@ -157,16 +143,14 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("문의가 수정되었습니다.")
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int i) {
-                        FragmentTransaction transaction = settingActivity.getSupportFragmentManager().beginTransaction();
-                        InquiryDetailFragment inquiryDetailFragment = settingActivity.inquiryDetailFragment;
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("inquiry", inquiry);
-                        inquiryDetailFragment.setArguments(bundle);
-                        transaction.replace(R.id.settingContainer, inquiryDetailFragment);
-                        transaction.commit();
-                    }
+                .setPositiveButton("확인", (dialog, i) -> {
+                    FragmentTransaction transaction = settingActivity.getSupportFragmentManager().beginTransaction();
+                    InquiryDetailFragment inquiryDetailFragment = settingActivity.inquiryDetailFragment;
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("inquiry", inquiry);
+                    inquiryDetailFragment.setArguments(bundle);
+                    transaction.replace(R.id.settingContainer, inquiryDetailFragment);
+                    transaction.commit();
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

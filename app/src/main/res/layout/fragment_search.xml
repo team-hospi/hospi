@@ -49,15 +49,24 @@
     </FrameLayout>
 
     <TextView
+        android:id="@+id/location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="10dp"
+        android:text="현위치:"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchBox" />
+
+    <TextView
         android:id="@+id/locationTxt"
-        android:layout_width="315dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="45dp"
-        android:layout_marginRight="45dp"
+        android:layout_marginLeft="5dp"
         android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/location"
         app:layout_constraintTop_toBottomOf="@+id/searchBox" />
 
     <TextView
@@ -69,7 +78,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/locationTxt" />
+        app:layout_constraintTop_toBottomOf="@+id/location" />
 
     <FrameLayout
         android:id="@+id/mapView"
@@ -79,5 +88,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView" >
+
+        <ImageButton
+            android:id="@+id/gpsRefreshBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="left|bottom"
+            android:layout_margin="15dp"
+            android:src="@drawable/ic_action_gps"
+            app:tint="@color/main_color"
+            android:background="@drawable/button_ripple"
+            android:elevation="7dp"/>
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

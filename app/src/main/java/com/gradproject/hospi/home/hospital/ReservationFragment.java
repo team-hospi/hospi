@@ -46,32 +46,16 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         birthTxt.setText(user.getBirth());
         hospitalNameTxt.setText(hospital.getName());
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
+        backBtn.setOnClickListener(v -> onBackPressed());
+
+        nextBtn.setOnClickListener(v -> hospitalActivity.onReservationFragmentChanged(2));
+
+        setDateBtn.setOnClickListener(v -> {
+            // TODO: 예약 날짜 설정
         });
 
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hospitalActivity.onReservationFragmentChanged(2);
-            }
-        });
-
-        setDateBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: 예약 날짜 설정
-            }
-        });
-
-        setTimeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: 예약 시간 설정
-            }
+        setTimeBtn.setOnClickListener(v -> {
+            // TODO: 예약 시간 설정
         });
 
         return rootView;

@@ -69,21 +69,13 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
         favoriteRecyclerView.setLayoutManager(layoutManager);
 
         backBtn = rootView.findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
 
-        hospitalAdapter.setOnItemClickListener(new OnHospitalItemClickListener() {
-            @Override
-            public void onItemClick(HospitalAdapter.ViewHolder holder, View view, int position) {
-                Hospital hospital = hospitalAdapter.getItem(position);
-                Intent intent = new Intent(getContext(), HospitalActivity.class);
-                intent.putExtra("hospital", hospital);
-                startActivity(intent);
-            }
+        hospitalAdapter.setOnItemClickListener((holder, view, position) -> {
+            Hospital hospital = hospitalAdapter.getItem(position);
+            Intent intent = new Intent(getContext(), HospitalActivity.class);
+            intent.putExtra("hospital", hospital);
+            startActivity(intent);
         });
 
         return rootView;
@@ -102,20 +94,17 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
             db.collection(Hospital.DB_NAME)
                     .whereEqualTo("id", hospitalId)
                     .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Log.d("DB", document.getId() + " => " + document.getData());
-                                    Hospital hospital = document.toObject(Hospital.class);
-                                    hospitalAdapter.addItem(hospital);
-                                }
-
-                                favoriteRecyclerView.setAdapter(hospitalAdapter);
-                            } else {
-                                Log.d("DB", "Error getting documents: ", task.getException());
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("DB", document.getId() + " => " + document.getData());
+                                Hospital hospital = document.toObject(Hospital.class);
+                                hospitalAdapter.addItem(hospital);
                             }
+
+                            favoriteRecyclerView.setAdapter(hospitalAdapter);
+                        } else {
+                            Log.d("DB", "Error getting documents: ", task.getException());
                         }
                     });
         }

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,9 @@ import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +40,8 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.MaybeObserver;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableEmitter;
+import io.reactivex.rxjava3.core.ObservableOnSubscribe;
 import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -54,13 +60,13 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
     GpsTracker gpsTracker;
     MapView mapView;
 
+    ImageButton gpsRefreshBtn;
     FrameLayout searchBox;
     TextView locationTxt;
 
     LocationPoint currentPoint;
     String address = "위치정보 없음";
-
-
+    ViewGroup rootView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,102 +83,42 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
         MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(currentPoint.latitude, currentPoint.longitude);
         MapReverseGeoCoder reverseGeoCoder = new MapReverseGeoCoder(OPEN_API_KEY, mapPoint, this, getActivity());
         reverseGeoCoder.startFindingAddress();
+
+        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+
+        Observable.just(mapPoint)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(SearchFragment.this::getCategorySearchResult); // 현위치 기준 1km 이내 병원 표시
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search, container,false);
+        rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search, container,false);
 
         locationTxt = rootView.findViewById(R.id.locationTxt);
         searchBox = rootView.findViewById(R.id.searchBox);
+        gpsRefreshBtn = rootView.findViewById(R.id.gpsRefreshBtn);
 
-        locationTxt.setText("현위치: " + address);
+        searchBox.setOnClickListener(v -> startActivity(new Intent(getContext(), ResultActivity.class)));
 
-        // TODO: 현위치 쓰레드 사용 수정 필요
-        Observable.just("현위치: " + address)
-                .throttleWithTimeout(1000, TimeUnit.MILLISECONDS)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(locationTxt::setText);
-/*
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    Thread.sleep(1000);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
-                if(getActivity() == null)
-                    return;
-
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        locationTxt.setText("현위치: " + address);
-                    }
-                });
-            }
-        }).start();
-*/
-        searchBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getContext(), ResultActivity.class));
-            }
+        gpsRefreshBtn.setOnClickListener(v -> {
+            mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
+            mapView.setZoomLevel(3, true);
+            MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(gpsTracker.getLatitude(), gpsTracker.getLongitude());
+            mapView.setMapCenterPoint(mapPoint, true);
+            mapView.removeAllPOIItems();
+            Observable.just(mapPoint)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(SearchFragment.this::getCategorySearchResult); // 현위치 기준 1km 이내 병원 표시
+            endTrackingModeThread(5000);
         });
 
-        showDisplayCurrentLocation(rootView, currentPoint); // 현재 위치 기준으로 지도 설정
-        getCategorySearchResult(rootView, mapView.getMapCenterPoint()); // 현위치 기준 1km 이내 병원 표시
+        showDisplayCurrentLocation(mapView.getMapCenterPoint());
 
-        mapView.setMapViewEventListener(new MapView.MapViewEventListener() {
-            @Override
-            public void onMapViewInitialized(MapView mapView) {
-
-            }
-
-            @Override
-            public void onMapViewCenterPointMoved(MapView mapView, MapPoint mapPoint) {
-                getCategorySearchResult(rootView, mapPoint);
-            }
-
-            @Override
-            public void onMapViewZoomLevelChanged(MapView mapView, int i) {
-
-            }
-
-            @Override
-            public void onMapViewSingleTapped(MapView mapView, MapPoint mapPoint) {
-
-            }
-
-            @Override
-            public void onMapViewDoubleTapped(MapView mapView, MapPoint mapPoint) {
-
-            }
-
-            @Override
-            public void onMapViewLongPressed(MapView mapView, MapPoint mapPoint) {
-
-            }
-
-            @Override
-            public void onMapViewDragStarted(MapView mapView, MapPoint mapPoint) {
-
-            }
-
-            @Override
-            public void onMapViewDragEnded(MapView mapView, MapPoint mapPoint) {
-
-            }
-
-            @Override
-            public void onMapViewMoveFinished(MapView mapView, MapPoint mapPoint) {
-                getCategorySearchResult(rootView, mapPoint);
-            }
-        });
+        endTrackingModeThread(5000);
 
         return rootView;
     }
@@ -192,23 +138,38 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
             }
         }
         address = tmp;
+        Observable.just(address)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(locationTxt::setText);
     }
 
     @Override
     public void onReverseGeoCoderFailedToFindAddress(MapReverseGeoCoder mapReverseGeoCoder) {
         String msg = "위치정보를 찾는데 실패하였습니다.";
         Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+        locationTxt.setText(address);
     }
 
-    private void showDisplayCurrentLocation(ViewGroup rootView, LocationPoint point){
+    private void endTrackingModeThread(long millis){
+        new Thread(() -> {
+            try {
+                Thread.sleep(millis);
+                mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void showDisplayCurrentLocation(MapPoint mapPoint){
         ViewGroup mapViewContainer = (ViewGroup) rootView.findViewById(R.id.mapView);
         mapViewContainer.addView(mapView);
-        mapView.setZoomLevel(2, false); // 맵 줌레벨 설정
-        MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(point.latitude, point.longitude);
-        mapView.setMapCenterPoint(mapPoint, false);
+        mapView.setZoomLevel(3, true); // 맵 줌레벨 설정
+        mapView.setMapCenterPoint(mapPoint, true);
     }
 
-    private void setMarker(ViewGroup rootView, Double longitude, Double latitude, String itemName){
+    private void setMarker(Double longitude, Double latitude, String itemName){
         MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude);
         MapPOIItem marker = new MapPOIItem();
         marker.setItemName(itemName);
@@ -221,32 +182,7 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
         mapView.addPOIItem(marker);
     }
 
-    private LocationPoint getPointFromGeoCoder(String addr) {
-        LocationPoint point = new LocationPoint();
-        point.addr = addr;
-
-        Geocoder geocoder = new Geocoder(getContext());
-        List<Address> listAddress;
-        try {
-            listAddress = geocoder.getFromLocationName(addr, 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-            point.havePoint = false;
-            return point;
-        }
-
-        if (listAddress.isEmpty()) {
-            point.havePoint = false;
-            return point;
-        }
-
-        point.havePoint = true;
-        point.longitude = listAddress.get(0).getLongitude();
-        point.latitude = listAddress.get(0).getLatitude();
-        return point;
-    }
-
-    private void getCategorySearchResult(ViewGroup rootView, MapPoint mapPoint){
+    private void getCategorySearchResult(MapPoint mapPoint){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -256,33 +192,38 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
         String latitude = String.valueOf(mapPoint.getMapPointGeoCoord().latitude);
 
         RestAPI api = retrofit.create(RestAPI.class);
-        Call<ResultSearchCategory> call = api.getSearchCategory(REST_API_KEY, "HP8", longitude, latitude, "1000");
 
-        call.enqueue(new Callback<ResultSearchCategory>() {
-            @Override
-            public void onResponse(Call<ResultSearchCategory> call, Response<ResultSearchCategory> response) {
-                if(response.isSuccessful()){
-                    Log.d("rest", "Raw: " + response.raw());
-                    Log.d("rest", "Body: " + response.body());
-                    ResultSearchCategory result = response.body();
-                    ArrayList<Document> nearbyHospitalList = (ArrayList) result.getDocuments();
+        for(int i=0; i<5; i++){
+            String page = String.valueOf(i);
+            Call<ResultSearchCategory> call = api.getSearchCategory(REST_API_KEY, "HP8", longitude, latitude, "1000", page);
 
-                    for(int i=0; i<nearbyHospitalList.size(); i++){
-                        Double longitude = Double.parseDouble(nearbyHospitalList.get(i).getX());
-                        Double latitude = Double.parseDouble(nearbyHospitalList.get(i).getY());
-                        String name = nearbyHospitalList.get(i).getPlaceName();
+            call.enqueue(new Callback<ResultSearchCategory>() {
+                @Override
+                public void onResponse(Call<ResultSearchCategory> call, Response<ResultSearchCategory> response) {
+                    if(response.isSuccessful()){
+                        Log.d("rest", "Raw: " + response.raw());
+                        Log.d("rest", "Body: " + response.body());
+                        ResultSearchCategory result = response.body();
+                        ArrayList<Document> nearbyHospitalList = (ArrayList) result.getDocuments();
 
-                        setMarker(rootView, longitude, latitude, name);
+                        for(int i=0; i<nearbyHospitalList.size(); i++){
+                            Double longitude = Double.parseDouble(nearbyHospitalList.get(i).getX());
+                            Double latitude = Double.parseDouble(nearbyHospitalList.get(i).getY());
+                            String name = nearbyHospitalList.get(i).getPlaceName();
+
+
+                            setMarker(longitude, latitude, name);
+                        }
+                    }else{
+                        Log.d("rest", "Error");
                     }
-                }else{
-                    Log.d("rest", "Error");
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ResultSearchCategory> call, Throwable t) {
-                Log.d("rest", "통신 실패: " + t.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Call<ResultSearchCategory> call, Throwable t) {
+                    Log.d("rest", "통신 실패: " + t.getMessage());
+                }
+            });
+        }
     }
 }

@@ -27,12 +27,7 @@ public class ReservationSuccessFragment extends Fragment implements OnBackPresse
         hospitalActivity = (HospitalActivity) getActivity();
         closeBtn = rootView.findViewById(R.id.closeBtn);
 
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        closeBtn.setOnClickListener(v -> onBackPressed());
 
         return rootView;
     }

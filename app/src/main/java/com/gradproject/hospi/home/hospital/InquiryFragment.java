@@ -57,29 +57,21 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
 
         hospitalNameTxt.setText(hospital.getName());
 
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        closeBtn.setOnClickListener(v -> onBackPressed());
 
-        writeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String title = inquiryTitleEdt.getText().toString();
-                String content = inquiryContentEdt.getText().toString();
+        writeBtn.setOnClickListener(v -> {
+            String title = inquiryTitleEdt.getText().toString();
+            String content = inquiryContentEdt.getText().toString();
 
-                if(title.equals("") && content.equals("")) {
-                    titleEmptyTxt.setVisibility(View.VISIBLE);
-                    contentEmptyTxt.setVisibility(View.VISIBLE);
-                }else if(title.equals("")){
-                    titleEmptyTxt.setVisibility(View.VISIBLE);
-                }else if(content.equals("")){
-                    contentEmptyTxt.setVisibility(View.VISIBLE);
-                }else{
-                    inquiryWriteProcess(title, content);
-                }
+            if(title.equals("") && content.equals("")) {
+                titleEmptyTxt.setVisibility(View.VISIBLE);
+                contentEmptyTxt.setVisibility(View.VISIBLE);
+            }else if(title.equals("")){
+                titleEmptyTxt.setVisibility(View.VISIBLE);
+            }else if(content.equals("")){
+                contentEmptyTxt.setVisibility(View.VISIBLE);
+            }else{
+                inquiryWriteProcess(title, content);
             }
         });
 
@@ -131,19 +123,13 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection(Inquiry.DB_NAME)
                 .add(inquiry)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("DB", "DocumentSnapshot written with ID: " + documentReference.getId());
-                        writeSuccess();
-                    }
+                .addOnSuccessListener(documentReference -> {
+                    Log.d("DB", "DocumentSnapshot written with ID: " + documentReference.getId());
+                    writeSuccess();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DB", "Error adding document", e);
-                        writeFail();
-                    }
+                .addOnFailureListener(e -> {
+                    Log.w("DB", "Error adding document", e);
+                    writeFail();
                 });
 
         loading.end();
@@ -153,13 +139,11 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("문의가 등록되었습니다.")
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialogInterface, int i) {
-                        getActivity().finish();
-                        Intent intent = new Intent(getContext(), HospitalActivity.class);
-                        intent.putExtra("hospital", hospital);
-                        startActivity(intent);
-                    }
+                .setPositiveButton("확인", (dialogInterface, i) -> {
+                    getActivity().finish();
+                    Intent intent = new Intent(getContext(), HospitalActivity.class);
+                    intent.putExtra("hospital", hospital);
+                    startActivity(intent);
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -169,9 +153,7 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("문의 등록에 실패하였습니다.\n잠시후 다시 시도해주세요.")
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialogInterface, int i) { /* empty */ }
-                });
+                .setPositiveButton("확인", (dialogInterface, i) -> { /* empty */ });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }

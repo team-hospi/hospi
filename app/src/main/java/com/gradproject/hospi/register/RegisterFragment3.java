@@ -28,14 +28,11 @@ public class RegisterFragment3 extends Fragment implements OnBackPressedListener
         birthDp.setMaxDate(System.currentTimeMillis()); // 현재 날짜를 최대로 지정
 
         Button nextBtn = rootView.findViewById(R.id.nextBtn); // 다음 버튼
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int month = birthDp.getMonth() + 1;
-                date = birthDp.getYear() + "-" + month + "-" + birthDp.getDayOfMonth();
-                registerActivity.user.setBirth(date);
-                registerActivity.onFragmentChanged(3);
-            }
+        nextBtn.setOnClickListener(v -> {
+            int month = birthDp.getMonth() + 1;
+            date = birthDp.getYear() + "-" + month + "-" + birthDp.getDayOfMonth();
+            registerActivity.user.setBirth(date);
+            registerActivity.onFragmentChanged(3);
         });
 
         return rootView;

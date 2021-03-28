@@ -47,47 +47,17 @@ public class MyPageFragment extends Fragment{
         nameTxt.setText(homeActivity.firebaseUser.getDisplayName());
         version.setText(getVersionInfo(getContext()));
 
-        myInfoEditBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSelectedFragment("myInfoEditBtn");
-            }
-        });
+        myInfoEditBtn.setOnClickListener(v -> startSelectedFragment("myInfoEditBtn"));
 
-        favoritesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSelectedFragment("favoritesBtn");
-            }
-        });
+        favoritesBtn.setOnClickListener(v -> startSelectedFragment("favoritesBtn"));
 
-        prescriptionBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSelectedFragment("prescriptionBtn");
-            }
-        });
+        prescriptionBtn.setOnClickListener(v -> startSelectedFragment("prescriptionBtn"));
 
-        inquiryDetailsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSelectedFragment("inquiryDetailsBtn");
-            }
-        });
+        inquiryDetailsBtn.setOnClickListener(v -> startSelectedFragment("inquiryDetailsBtn"));
 
-        termsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSelectedFragment("termsBtn");
-            }
-        });
+        termsBtn.setOnClickListener(v -> startSelectedFragment("termsBtn"));
 
-        noticeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSelectedFragment("noticeBtn");
-            }
-        });
+        noticeBtn.setOnClickListener(v -> startSelectedFragment("noticeBtn"));
 
         return rootView;
     }

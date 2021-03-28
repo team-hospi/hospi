@@ -58,19 +58,9 @@ public class SearchWindowFragment extends Fragment {
 
         hospitalRecyclerView.setLayoutManager(layoutManager);
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().finish();
-            }
-        });
+        backBtn.setOnClickListener(v -> getActivity().finish());
 
-        removeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchEdt.setText("");
-            }
-        });
+        removeBtn.setOnClickListener(v -> searchEdt.setText(""));
 
         searchEdt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -91,29 +81,18 @@ public class SearchWindowFragment extends Fragment {
             public void afterTextChanged(Editable s) { /* empty */ }
         });
 
-        searchEdt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                searchBtnProcess();
-                return true;
-            }
+        searchEdt.setOnEditorActionListener((v, actionId, event) -> {
+            searchBtnProcess();
+            return true;
         });
 
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchBtnProcess();
-            }
-        });
+        searchBtn.setOnClickListener(v -> searchBtnProcess());
 
-        hospitalAdapter.setOnItemClickListener(new OnHospitalItemClickListener() {
-            @Override
-            public void onItemClick(HospitalAdapter.ViewHolder holder, View view, int position) {
-                Hospital hospital = hospitalAdapter.getItem(position);
-                Intent intent = new Intent(getContext(), HospitalActivity.class);
-                intent.putExtra("hospital", hospital);
-                startActivity(intent);
-            }
+        hospitalAdapter.setOnItemClickListener((holder, view, position) -> {
+            Hospital hospital = hospitalAdapter.getItem(position);
+            Intent intent = new Intent(getContext(), HospitalActivity.class);
+            intent.putExtra("hospital", hospital);
+            startActivity(intent);
         });
 
         return rootView;
@@ -138,33 +117,30 @@ public class SearchWindowFragment extends Fragment {
 
         db.collection(Hospital.DB_NAME)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        ArrayList<Hospital> tmpArrList = new ArrayList<>();
+                .addOnCompleteListener(task -> {
+                    ArrayList<Hospital> tmpArrList = new ArrayList<>();
 
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("DB", document.getId() + " => " + document.getData());
-                                Hospital hospital = document.toObject(Hospital.class);
-                                if(hospital.getName().contains(searchStr)){
-                                    tmpArrList.add(hospital);
-                                }
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Log.d("DB", document.getId() + " => " + document.getData());
+                            Hospital hospital = document.toObject(Hospital.class);
+                            if(hospital.getName().contains(searchStr)){
+                                tmpArrList.add(hospital);
                             }
-
-                            if(tmpArrList.size()==0){
-                                noSearchTxt.setVisibility(View.VISIBLE);
-                            }else{
-                                noSearchTxt.setVisibility(View.INVISIBLE);
-                                for(int i=0; i<tmpArrList.size(); i++){
-                                    hospitalAdapter.addItem(tmpArrList.get(i));
-                                }
-                            }
-
-                            hospitalRecyclerView.setAdapter(hospitalAdapter);
-                        } else {
-                            Log.d("DB", "Error getting documents: ", task.getException());
                         }
+
+                        if(tmpArrList.size()==0){
+                            noSearchTxt.setVisibility(View.VISIBLE);
+                        }else{
+                            noSearchTxt.setVisibility(View.INVISIBLE);
+                            for(int i=0; i<tmpArrList.size(); i++){
+                                hospitalAdapter.addItem(tmpArrList.get(i));
+                            }
+                        }
+
+                        hospitalRecyclerView.setAdapter(hospitalAdapter);
+                    } else {
+                        Log.d("DB", "Error getting documents: ", task.getException());
                     }
                 });
     }

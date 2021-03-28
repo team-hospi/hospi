@@ -41,20 +41,17 @@ public class RegisterFragment5 extends Fragment implements OnBackPressedListener
         inputEmail = rootView.findViewById(R.id.inputEmail);
 
         Button nextBtn = rootView.findViewById(R.id.nextBtn);
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                email = inputEmail.getText().toString().trim();
+        nextBtn.setOnClickListener(v -> {
+            email = inputEmail.getText().toString().trim();
 
-                if (email.equals("")) {
-                    emailErrorTxt.setText("이메일을 입력해주세요.");
-                    emailErrorTxt.setVisibility(View.VISIBLE);
-                } else if (!(email.matches(emailRegex))) {
-                    emailErrorTxt.setText("잘못된 이메일 형식입니다.");
-                    emailErrorTxt.setVisibility(View.VISIBLE);
-                }else{
-                    checkDuplicateEmail(email);
-                }
+            if (email.equals("")) {
+                emailErrorTxt.setText("이메일을 입력해주세요.");
+                emailErrorTxt.setVisibility(View.VISIBLE);
+            } else if (!(email.matches(emailRegex))) {
+                emailErrorTxt.setText("잘못된 이메일 형식입니다.");
+                emailErrorTxt.setVisibility(View.VISIBLE);
+            }else{
+                checkDuplicateEmail(email);
             }
         });
 
@@ -71,26 +68,23 @@ public class RegisterFragment5 extends Fragment implements OnBackPressedListener
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         DocumentReference docRef = db.collection(User.DB_NAME).document(str);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        // 문서 발견
-                        duplicateError();
-                        Log.d("duplicate", "중복");
-                    } else {
-                        // 문서 발견 못함
-                        registerActivity.user.setEmail(email);
-                        registerActivity.onFragmentChanged(5);
-                        Log.d("duplicate", "사용가능한 이메일");
-                    }
-                } else {
-                    // 가져오는데 실패
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    // 문서 발견
                     duplicateError();
-                    Log.d("duplicate", "get failed with ", task.getException());
+                    Log.d("duplicate", "중복");
+                } else {
+                    // 문서 발견 못함
+                    registerActivity.user.setEmail(email);
+                    registerActivity.onFragmentChanged(5);
+                    Log.d("duplicate", "사용가능한 이메일");
                 }
+            } else {
+                // 가져오는데 실패
+                duplicateError();
+                Log.d("duplicate", "get failed with ", task.getException());
             }
         });
     }
@@ -99,9 +93,7 @@ public class RegisterFragment5 extends Fragment implements OnBackPressedListener
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("이미 존재하는 이메일입니다.")
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialogInterface, int i) { /* empty */ }
-                });
+                .setPositiveButton("확인", (dialogInterface, i) -> { /* empty */ });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }

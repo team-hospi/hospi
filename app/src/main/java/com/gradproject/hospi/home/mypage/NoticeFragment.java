@@ -20,12 +20,7 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_notice, container,false);
 
         backBtn = rootView.findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
 
         return rootView;
     }

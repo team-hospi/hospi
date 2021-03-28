@@ -20,12 +20,7 @@ public class PrescriptionFragment extends Fragment implements OnBackPressedListe
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_prescription, container,false);
 
         backBtn = rootView.findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
 
         return rootView;
     }

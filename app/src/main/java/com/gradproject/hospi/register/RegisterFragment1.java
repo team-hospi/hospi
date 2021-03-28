@@ -30,14 +30,11 @@ public class RegisterFragment1 extends Fragment implements OnBackPressedListener
 
         // 다음 버튼
         Button nextBtn = rootView.findViewById(R.id.nextBtn);
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(agree.isChecked()){
-                    registerActivity.onFragmentChanged(1);
-                }else{
-                    radioErrorTxt.setVisibility(View.VISIBLE);
-                }
+        nextBtn.setOnClickListener(v -> {
+            if(agree.isChecked()){
+                registerActivity.onFragmentChanged(1);
+            }else{
+                radioErrorTxt.setVisibility(View.VISIBLE);
             }
         });
 

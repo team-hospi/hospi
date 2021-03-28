@@ -87,54 +87,31 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         }
 
         // 뒤로가기 버튼
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
 
         // 예약 버튼
-        reservationBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hospitalActivity.onReservationFragmentChanged(1);
-            }
-        });
+        reservationBtn.setOnClickListener(v -> hospitalActivity.onReservationFragmentChanged(1));
 
         // 문의 버튼
-        inquiryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hospitalActivity.onInquiryFragmentChanged(1);
-            }
-        });
+        inquiryBtn.setOnClickListener(v -> hospitalActivity.onInquiryFragmentChanged(1));
 
         // 전화 버튼
-        callBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + hospital.getTel())));
-            }
-        });
+        callBtn.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + hospital.getTel()))));
 
         // 찜 버튼
-        favoriteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isFavorite){
-                    String msg = "찜이 해제되었습니다.";
-                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                    isFavorite = false;
-                    favoriteImg.setImageResource(R.drawable.ic_action_favorite_border);
-                    removeFavoriteList();
-                }else{
-                    String msg = "찜이 설정되었습니다.";
-                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                    isFavorite = true;
-                    favoriteImg.setImageResource(R.drawable.ic_action_favorite);
-                    addFavoriteList();
-                }
+        favoriteBtn.setOnClickListener(v -> {
+            if(isFavorite){
+                String msg = "찜이 해제되었습니다.";
+                Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                isFavorite = false;
+                favoriteImg.setImageResource(R.drawable.ic_action_favorite_border);
+                removeFavoriteList();
+            }else{
+                String msg = "찜이 설정되었습니다.";
+                Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                isFavorite = true;
+                favoriteImg.setImageResource(R.drawable.ic_action_favorite);
+                addFavoriteList();
             }
         });
 
@@ -204,18 +181,8 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         DocumentReference documentReference = db.collection(User.DB_NAME).document(user.getDocumentId());
         documentReference
                 .update("favorites", user.getFavorites())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("DB", "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DB", "Error updating document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d("DB", "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w("DB", "Error updating document", e));
     }
 
     public void removeFavoriteList(){
@@ -229,18 +196,8 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         DocumentReference documentReference = db.collection(User.DB_NAME).document(user.getDocumentId());
         documentReference
                 .update("favorites", user.getFavorites())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("DB", "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DB", "Error updating document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d("DB", "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w("DB", "Error updating document", e));
     }
 
     private void showHospitalLocation(ViewGroup rootView){

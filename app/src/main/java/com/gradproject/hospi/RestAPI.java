@@ -14,6 +14,7 @@ public interface RestAPI {
             @Query("category_group_code") String query,
             @Query("x") String longitude,
             @Query("y") String latitude,
-            @Query("radius") String radius
+            @Query("radius") String radius,
+            @Query("page") String page
     );
 }

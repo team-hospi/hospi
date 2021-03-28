@@ -40,36 +40,20 @@ public class WithdrawalActivity extends AppCompatActivity implements FirebaseAut
         db = FirebaseFirestore.getInstance();
 
         backBtn = findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
 
         okBtn = findViewById(R.id.okBtn);
-        okBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                onAuthStateChanged(firebaseAuth);
-                firebaseUser.delete();
-                db.collection(User.DB_NAME).document(user.getDocumentId())
-                        .delete()
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                withdrawalDialog();
-                                Log.d("withdrawal", "유저 정보 삭제 성공");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("withdrawal", "유저 정보 삭제 실패", e);
-                            }
-                        });
-            }
+        okBtn.setOnClickListener(v -> {
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            onAuthStateChanged(firebaseAuth);
+            firebaseUser.delete();
+            db.collection(User.DB_NAME).document(user.getDocumentId())
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        withdrawalDialog();
+                        Log.d("withdrawal", "유저 정보 삭제 성공");
+                    })
+                    .addOnFailureListener(e -> Log.w("withdrawal", "유저 정보 삭제 실패", e));
         });
     }
 
@@ -90,11 +74,9 @@ public class WithdrawalActivity extends AppCompatActivity implements FirebaseAut
         AlertDialog.Builder builder = new AlertDialog.Builder(WithdrawalActivity.this)
                 .setCancelable(false)
                 .setMessage("회원탈퇴가 완료 되었습니다.")
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int i) {
-                        ActivityCompat.finishAffinity(WithdrawalActivity.this); // 모든 액티비티 종료
-                        startActivity(new Intent(getApplicationContext(), LoginActivity.class)); // 다시 로그인 화면으로
-                    }
+                .setPositiveButton("확인", (dialog, i) -> {
+                    ActivityCompat.finishAffinity(WithdrawalActivity.this); // 모든 액티비티 종료
+                    startActivity(new Intent(getApplicationContext(), LoginActivity.class)); // 다시 로그인 화면으로
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

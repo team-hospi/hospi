@@ -65,8 +65,4 @@ public class SettingActivity extends AppCompatActivity implements OnBackPressedL
             super.onBackPressed();
         }
     }
-
-    private void showInquiryDetail(){
-        getSupportFragmentManager().beginTransaction().replace(R.id.settingContainer, inquiryDetailFragment).commit();
-    }
 }

@@ -30,19 +30,9 @@ public class ReservationFragment2 extends Fragment implements OnBackPressedListe
         nextBtn = rootView.findViewById(R.id.nextBtn);
         additionalContentEdt = rootView.findViewById(R.id.additionalContentEdt);
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
 
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hospitalActivity.onReservationFragmentChanged(3);
-            }
-        });
+        nextBtn.setOnClickListener(v -> hospitalActivity.onReservationFragmentChanged(3));
 
         return rootView;
     }

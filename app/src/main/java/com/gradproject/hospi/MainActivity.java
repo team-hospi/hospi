@@ -49,17 +49,12 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         firebaseAuth = FirebaseAuth.getInstance();
 
         Button setBtn = (Button) findViewById(R.id.setBtn);
-        setBtn.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View arg0)
-            {
-                if (!checkLocationServicesStatus()) {
+        setBtn.setOnClickListener(arg0 -> {
+            if (!checkLocationServicesStatus()) {
 
-                    showDialogForLocationServiceSetting();
-                }else {
-                    checkRunTimePermission();
-                }
+                showDialogForLocationServiceSetting();
+            }else {
+                checkRunTimePermission();
             }
         });
     }
@@ -191,20 +186,12 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n"
                 + "위치 설정을 수정하실래요?");
         builder.setCancelable(true);
-        builder.setPositiveButton("설정", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                Intent callGPSSettingIntent
-                        = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
-            }
+        builder.setPositiveButton("설정", (dialog, id) -> {
+            Intent callGPSSettingIntent
+                    = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
         });
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton("취소", (dialog, id) -> dialog.cancel());
         builder.create().show();
     }
 

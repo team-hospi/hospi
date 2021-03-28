@@ -65,12 +65,7 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
         settingActivity.setSupportActionBar(toolbar);
         settingActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
 
         hospitalNameTxt.setText(inquiry.getHospitalName());
         titleTxt.setText(inquiry.getTitle());
@@ -130,20 +125,14 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
     public void delBtnProcess(){
         db.collection(Inquiry.DB_NAME).document(inquiry.getDocumentId())
                 .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("DB", "DocumentSnapshot successfully deleted!");
-                        deleteSuccessPopUp();
-                    }
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("DB", "DocumentSnapshot successfully deleted!");
+                    deleteSuccessPopUp();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DB", "Error deleting document", e);
-                        String msg = "삭제에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
-                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                    }
+                .addOnFailureListener(e -> {
+                    Log.w("DB", "Error deleting document", e);
+                    String msg = "삭제에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
+                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                 });
     }
 
@@ -151,15 +140,8 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("해당 문의를 삭제하시겠습니까?")
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int i) {
-                        delBtnProcess();
-                    }
-                })
-                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) { /* empty */ }
-                });
+                .setPositiveButton("확인", (dialog, i) -> delBtnProcess())
+                .setNegativeButton("취소", (dialog, which) -> { /* empty */ });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
@@ -168,16 +150,14 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("삭제되었습니다.")
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int i) {
-                        FragmentTransaction transaction = settingActivity.getSupportFragmentManager().beginTransaction();
-                        InquiryListFragment inquiryListFragment = settingActivity.inquiryListFragment;
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("pos", pos);
-                        inquiryListFragment.setArguments(bundle);
-                        transaction.replace(R.id.settingContainer, inquiryListFragment);
-                        transaction.commit();
-                    }
+                .setPositiveButton("확인", (dialog, i) -> {
+                    FragmentTransaction transaction = settingActivity.getSupportFragmentManager().beginTransaction();
+                    InquiryListFragment inquiryListFragment = settingActivity.inquiryListFragment;
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("pos", pos);
+                    inquiryListFragment.setArguments(bundle);
+                    transaction.replace(R.id.settingContainer, inquiryListFragment);
+                    transaction.commit();
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

@@ -32,16 +32,13 @@ public class RegisterFragment4 extends Fragment implements OnBackPressedListener
 
         // 다음 버튼
         Button nextBtn = rootView.findViewById(R.id.nextBtn);
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                phone = PhoneNumberHyphen.phone(inputPhone.getText().toString()); // 자동 하이픈 입력 후 전화번호 저장
-                if(phone.equals("")){
-                    phoneErrorTxt.setVisibility(View.VISIBLE);
-                }else{
-                    registerActivity.user.setPhone(phone);
-                    registerActivity.onFragmentChanged(4);
-                }
+        nextBtn.setOnClickListener(v -> {
+            phone = PhoneNumberHyphen.phone(inputPhone.getText().toString()); // 자동 하이픈 입력 후 전화번호 저장
+            if(phone.equals("")){
+                phoneErrorTxt.setVisibility(View.VISIBLE);
+            }else{
+                registerActivity.user.setPhone(phone);
+                registerActivity.onFragmentChanged(4);
             }
         });
 

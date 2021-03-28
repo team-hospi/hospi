@@ -53,23 +53,20 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
         getSupportFragmentManager().beginTransaction().replace(R.id.container, searchFragment).commit();
 
         BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
-        bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch(item.getItemId()){
-                    case R.id.search:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.container, searchFragment).commit();
-                        return true;
-                    case R.id.history:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.container, historyFragment).commit();
-                        return true;
-                    case R.id.mypage:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.container, myPageFragment).commit();
-                        return true;
-                }
-
-                return false;
+        bottomNavigation.setOnNavigationItemSelectedListener(item -> {
+            switch(item.getItemId()){
+                case R.id.search:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.container, searchFragment).commit();
+                    return true;
+                case R.id.history:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.container, historyFragment).commit();
+                    return true;
+                case R.id.mypage:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.container, myPageFragment).commit();
+                    return true;
             }
+
+            return false;
         });
     }
 
@@ -90,16 +87,13 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
         if (firebaseUser != null) {
             db.collection(User.DB_NAME)
                     .whereEqualTo("email", firebaseUser.getEmail()).get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    setUserInfo(document.getId());
-                                }
-                            } else {
-                                Log.d("DB", "Error getting documents: ", task.getException());
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                setUserInfo(document.getId());
                             }
+                        } else {
+                            Log.d("DB", "Error getting documents: ", task.getException());
                         }
                     });
 
@@ -114,19 +108,13 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
 
     public void setUserInfo(String documentId){
         DocumentReference docRef = db.collection(User.DB_NAME).document(documentId);
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                user = documentSnapshot.toObject(User.class);
-                user.setDocumentId(documentId);
-                Log.d("success", "유저 정보 받기 성공");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                final String msg = "알 수 없는 오류로 인해 유저 정보를 받아오지 못했습니다.";
-                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-            }
+        docRef.get().addOnSuccessListener(documentSnapshot -> {
+            user = documentSnapshot.toObject(User.class);
+            user.setDocumentId(documentId);
+            Log.d("success", "유저 정보 받기 성공");
+        }).addOnFailureListener(e -> {
+            final String msg = "알 수 없는 오류로 인해 유저 정보를 받아오지 못했습니다.";
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
         });
     }
 }

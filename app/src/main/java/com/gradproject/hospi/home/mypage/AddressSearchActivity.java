@@ -27,12 +27,9 @@ public class AddressSearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_address_search);
 
         closeBtn = findViewById(R.id.closeBtn);
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setResult(RESULT_CANCELED);
-                finish();
-            }
+        closeBtn.setOnClickListener(v -> {
+            setResult(RESULT_CANCELED);
+            finish();
         });
 
         // WebView 초기화
@@ -67,18 +64,15 @@ public class AddressSearchActivity extends AppCompatActivity {
     private class AndroidBridge {
         @JavascriptInterface
         public void setAddress(final String arg1, final String arg2, final String arg3) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    address = String.format("(%s) %s %s", arg1, arg2, arg3);
-                    Intent intent = new Intent();
-                    intent.putExtra("address", address);
-                    setResult(RESULT_OK, intent);
-                    finish();
+            handler.post(() -> {
+                address = String.format("(%s) %s %s", arg1, arg2, arg3);
+                Intent intent = new Intent();
+                intent.putExtra("address", address);
+                setResult(RESULT_OK, intent);
+                finish();
 
-                    // WebView를 초기화 하지않으면 재사용할 수 없음
-                    init_webView();
-                }
+                // WebView를 초기화 하지않으면 재사용할 수 없음
+                init_webView();
             });
         }
     }

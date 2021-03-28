@@ -71,26 +71,18 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
 
         getInquiryList();
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
 
-        inquiryAdapter.setOnItemClickListener(new OnInquiryItemClickListener() {
-            @Override
-            public void onItemClick(InquiryAdapter.ViewHolder holder, View view, int position) {
-                Inquiry inquiry = inquiryAdapter.getItem(position);
-                FragmentTransaction transaction = ((SettingActivity)getActivity()).getSupportFragmentManager().beginTransaction();
-                InquiryDetailFragment inquiryDetailFragment = new InquiryDetailFragment();
-                Bundle bundle = new Bundle();
-                bundle.putInt("pos", position);
-                bundle.putSerializable("inquiry", inquiry);
-                inquiryDetailFragment.setArguments(bundle);
-                transaction.replace(R.id.settingContainer, inquiryDetailFragment);
-                transaction.commit();
-            }
+        inquiryAdapter.setOnItemClickListener((OnInquiryItemClickListener) (holder, view, position) -> {
+            Inquiry inquiry = inquiryAdapter.getItem(position);
+            FragmentTransaction transaction = ((SettingActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+            InquiryDetailFragment inquiryDetailFragment = new InquiryDetailFragment();
+            Bundle bundle = new Bundle();
+            bundle.putInt("pos", position);
+            bundle.putSerializable("inquiry", inquiry);
+            inquiryDetailFragment.setArguments(bundle);
+            transaction.replace(R.id.settingContainer, inquiryDetailFragment);
+            transaction.commit();
         });
 
         return rootView;
@@ -112,31 +104,28 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
         db.collection(Inquiry.DB_NAME)
                 .whereEqualTo("id", firebaseUser.getEmail())
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        ArrayList<Inquiry> tmpArrList = new ArrayList<>();
+                .addOnCompleteListener(task -> {
+                    ArrayList<Inquiry> tmpArrList = new ArrayList<>();
 
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("DB", document.getId() + " => " + document.getData());
-                                Inquiry inquiry = document.toObject(Inquiry.class);
-                                inquiry.setDocumentId(document.getId());
-                                tmpArrList.add(inquiry);
-                            }
-
-                            Collections.sort(tmpArrList, new InquiryComparator());
-
-                            for(int i=0; i<tmpArrList.size(); i++){
-                                inquiryAdapter.addItem(tmpArrList.get(i));
-                            }
-
-                            inquiryRecyclerView.setAdapter(inquiryAdapter);
-                        } else {
-                            Log.d("DB", "Error getting documents: ", task.getException());
-                            String msg = "문의 내역을 불러올 수 없습니다.";
-                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Log.d("DB", document.getId() + " => " + document.getData());
+                            Inquiry inquiry = document.toObject(Inquiry.class);
+                            inquiry.setDocumentId(document.getId());
+                            tmpArrList.add(inquiry);
                         }
+
+                        Collections.sort(tmpArrList, new InquiryComparator());
+
+                        for(int i=0; i<tmpArrList.size(); i++){
+                            inquiryAdapter.addItem(tmpArrList.get(i));
+                        }
+
+                        inquiryRecyclerView.setAdapter(inquiryAdapter);
+                    } else {
+                        Log.d("DB", "Error getting documents: ", task.getException());
+                        String msg = "문의 내역을 불러올 수 없습니다.";
+                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                     }
                 });
         loading.dismiss();

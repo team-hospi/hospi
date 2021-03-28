@@ -35,20 +35,17 @@ public class FindPasswordActivity extends AppCompatActivity {
         inputEmail = findViewById(R.id.inputEmail);
 
         Button nextBtn = findViewById(R.id.nextBtn);
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                email = inputEmail.getText().toString().trim();
+        nextBtn.setOnClickListener(v -> {
+            email = inputEmail.getText().toString().trim();
 
-                if (email.equals("")) {
-                    emailErrorTxt.setText("이메일을 입력해주세요.");
-                    emailErrorTxt.setVisibility(View.VISIBLE);
-                } else if (!(email.matches(emailRegex))) {
-                    emailErrorTxt.setText("잘못된 이메일 형식입니다.");
-                    emailErrorTxt.setVisibility(View.VISIBLE);
-                }else{
-                    sendEmail(email);
-                }
+            if (email.equals("")) {
+                emailErrorTxt.setText("이메일을 입력해주세요.");
+                emailErrorTxt.setVisibility(View.VISIBLE);
+            } else if (!(email.matches(emailRegex))) {
+                emailErrorTxt.setText("잘못된 이메일 형식입니다.");
+                emailErrorTxt.setVisibility(View.VISIBLE);
+            }else{
+                sendEmail(email);
             }
         });
     }
@@ -58,32 +55,27 @@ public class FindPasswordActivity extends AppCompatActivity {
         FirebaseAuth auth = FirebaseAuth.getInstance();
 
         auth.sendPasswordResetEmail(str)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(FindPasswordActivity.this)
-                                    .setCancelable(false)
-                                    .setMessage("입력하신 이메일로 비밀번호 변경 안내 메일이 발송되었습니다.")
-                                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                        @Override public void onClick(DialogInterface dialog, int i) {
-                                            finish();
-                                        }
-                                    });
-                            AlertDialog alertDialog = builder.create();
-                            alertDialog.show();
-                            Log.d("changePassword", "Email sent.");
-                        }else{
-                            AlertDialog.Builder builder = new AlertDialog.Builder(FindPasswordActivity.this)
-                                    .setCancelable(false)
-                                    .setMessage("존재하지 않는 이메일입니다.")
-                                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                        @Override public void onClick(DialogInterface dialog, int i) { /* empty */ }
-                                    });
-                            AlertDialog alertDialog = builder.create();
-                            alertDialog.show();
-                            Log.d("changePassword", "Email sent error.");
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(FindPasswordActivity.this)
+                                .setCancelable(false)
+                                .setMessage("입력하신 이메일로 비밀번호 변경 안내 메일이 발송되었습니다.")
+                                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                    @Override public void onClick(DialogInterface dialog, int i) {
+                                        finish();
+                                    }
+                                });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                        Log.d("changePassword", "Email sent.");
+                    }else{
+                        AlertDialog.Builder builder = new AlertDialog.Builder(FindPasswordActivity.this)
+                                .setCancelable(false)
+                                .setMessage("존재하지 않는 이메일입니다.")
+                                .setPositiveButton("확인", (dialog, i) -> { /* empty */ });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                        Log.d("changePassword", "Email sent error.");
                     }
                 });
     }

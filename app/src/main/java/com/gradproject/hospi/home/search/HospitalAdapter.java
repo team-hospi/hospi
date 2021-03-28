@@ -77,14 +77,11 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHo
             holidayBusinessHours = itemView.findViewById(R.id.holidayBusinessHours);
             addressTxt = itemView.findViewById(R.id.addressTxt);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
 
-                    if(listener != null){
-                        listener.onItemClick(ViewHolder.this, v, position);
-                    }
+                if(listener != null){
+                    listener.onItemClick(ViewHolder.this, v, position);
                 }
             });
         }
