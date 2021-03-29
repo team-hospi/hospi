@@ -52,10 +52,11 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
         searchFragment = new SearchFragment();
         historyFragment = new HistoryFragment();
         myPageFragment = new MyPageFragment();
-/*
+
+        // 문의 답변 알림 서비스 시작
         Intent intent = new Intent(HomeActivity.this, InquiryPushService.class);
         startService(intent);
-*/
+
         getSupportFragmentManager().beginTransaction().replace(R.id.container, searchFragment).commit();
 
         BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
