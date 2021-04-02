@@ -19,4 +19,12 @@
     <style name="AppTheme.OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:tint">@color/black</item>
     </style>
+
+    <style name="Theme.PopUp" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name = "windowActionBar">false</item>
+        <item name = "windowNoTitle">true</item>
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryDark">@color/blue</item>
+        <item name="colorAccent">@color/white</item>
+    </style>
 </resources>

@@ -52,7 +52,7 @@
         android:id="@+id/location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="60dp"
         android:layout_marginTop="10dp"
         android:text="현위치:"
         android:textColor="@color/black"
@@ -80,8 +80,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/location" />
 
-    <FrameLayout
-        android:id="@+id/mapView"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="30dp"
@@ -90,15 +89,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" >
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <ImageButton
             android:id="@+id/gpsRefreshBtn"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="left|bottom"
             android:layout_margin="15dp"
-            android:src="@drawable/ic_action_gps"
-            app:tint="@color/main_color"
             android:background="@drawable/button_ripple"
-            android:elevation="7dp"/>
-    </FrameLayout>
+            android:elevation="7dp"
+            android:src="@drawable/ic_action_gps"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="@color/main_color" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -49,32 +49,36 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
     FrameLayout searchBox;
     TextView locationTxt;
 
-    LocationPoint currentPoint;
-    String address = "위치정보 없음";
     ViewGroup rootView;
+    ViewGroup mapViewContainer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mapView = new MapView(getContext());
         gpsTracker = new GpsTracker(getContext());
-        currentPoint = new LocationPoint();
+    }
 
-        // 현재 위치 좌표 설정
-        currentPoint.latitude = gpsTracker.getLatitude();
-        currentPoint.longitude = gpsTracker.getLongitude();
-
-        // 현위치 기준 읍.면.동까지의 주소 불러오기
-        MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(currentPoint.latitude, currentPoint.longitude);
-        MapReverseGeoCoder reverseGeoCoder = new MapReverseGeoCoder(OPEN_API_KEY, mapPoint, this, getActivity());
-        reverseGeoCoder.startFindingAddress();
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView = new MapView(getContext());
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
 
-        Observable.just(mapPoint)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(SearchFragment.this::getCategorySearchResult); // 현위치 기준 1km 이내 병원 표시
+        // 현위치 기준 읍.면.동까지의 주소 불러오기
+        MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(gpsTracker.getLatitude(), gpsTracker.getLongitude());
+        MapReverseGeoCoder reverseGeoCoder = new MapReverseGeoCoder(OPEN_API_KEY, mapPoint, SearchFragment.this, getActivity());
+        reverseGeoCoder.startFindingAddress();
+        getCategorySearchResult(mapPoint);
+
+        mapViewContainer.addView(mapView);
+        mapView.setZoomLevel(3, true); // 맵 줌레벨 설정
+        mapView.setMapCenterPoint(mapView.getMapCenterPoint(), true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapViewContainer.removeView(mapView);
     }
 
     @Override
@@ -85,6 +89,7 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
         locationTxt = rootView.findViewById(R.id.locationTxt);
         searchBox = rootView.findViewById(R.id.searchBox);
         gpsRefreshBtn = rootView.findViewById(R.id.gpsRefreshBtn);
+        mapViewContainer = rootView.findViewById(R.id.mapView);
 
         searchBox.setOnClickListener(v -> startActivity(new Intent(getContext(), ResultActivity.class)));
 
@@ -94,14 +99,9 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
             MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(gpsTracker.getLatitude(), gpsTracker.getLongitude());
             mapView.setMapCenterPoint(mapPoint, true);
             mapView.removeAllPOIItems();
-            Observable.just(mapPoint)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(SearchFragment.this::getCategorySearchResult); // 현위치 기준 1km 이내 병원 표시
+            getCategorySearchResult(mapPoint);
             endTrackingModeThread(5000);
         });
-
-        showDisplayCurrentLocation(mapView.getMapCenterPoint());
 
         endTrackingModeThread(5000);
 
@@ -112,17 +112,16 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
     public void onReverseGeoCoderFoundAddress(MapReverseGeoCoder mapReverseGeoCoder, String s) {
         // 주소 (읍, 면, 동)까지만 표시
         String strArr[] = s.split(" ");
-        String tmp = "";
+        String address = "";
 
         for(int i=0; i<strArr.length; i++){
             if(strArr[i].endsWith("읍") || strArr[i].endsWith("면") || strArr[i].endsWith("동")){
-                tmp += strArr[i];
+                address += strArr[i];
                 break;
             }else{
-                tmp += strArr[i] + " ";
+                address += strArr[i] + " ";
             }
         }
-        address = tmp;
         Observable.just(address)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -133,25 +132,16 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
     public void onReverseGeoCoderFailedToFindAddress(MapReverseGeoCoder mapReverseGeoCoder) {
         String msg = "위치정보를 찾는데 실패하였습니다.";
         Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-        locationTxt.setText(address);
+        locationTxt.setText("위치정보 없음");
     }
 
     private void endTrackingModeThread(long millis){
         new Thread(() -> {
-            try {
+            try{
                 Thread.sleep(millis);
                 mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            }catch(Exception e){}
         }).start();
-    }
-
-    private void showDisplayCurrentLocation(MapPoint mapPoint){
-        ViewGroup mapViewContainer = (ViewGroup) rootView.findViewById(R.id.mapView);
-        mapViewContainer.addView(mapView);
-        mapView.setZoomLevel(3, true); // 맵 줌레벨 설정
-        mapView.setMapCenterPoint(mapPoint, true);
     }
 
     private void setMarker(Double longitude, Double latitude, String itemName){
@@ -195,7 +185,6 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
                             Double longitude = Double.parseDouble(nearbyHospitalList.get(i).getX());
                             Double latitude = Double.parseDouble(nearbyHospitalList.get(i).getY());
                             String name = nearbyHospitalList.get(i).getPlaceName();
-
 
                             setMarker(longitude, latitude, name);
                         }

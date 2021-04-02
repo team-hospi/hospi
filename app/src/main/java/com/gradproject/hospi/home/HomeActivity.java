@@ -53,6 +53,8 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
         historyFragment = new HistoryFragment();
         myPageFragment = new MyPageFragment();
 
+        new Thread(() -> onAuthStateChanged(firebaseAuth)).start();
+
         // 문의 답변 알림 서비스 시작
         Intent intent = new Intent(HomeActivity.this, InquiryPushService.class);
         startService(intent);
@@ -75,12 +77,6 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
 
             return false;
         });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        onAuthStateChanged(firebaseAuth);
     }
 
     @Override
