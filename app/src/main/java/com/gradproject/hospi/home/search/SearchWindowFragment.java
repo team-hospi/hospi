@@ -1,9 +1,13 @@
 package com.gradproject.hospi.home.search;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.speech.SpeechRecognizer;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -41,7 +46,6 @@ public class SearchWindowFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     }
 
@@ -64,14 +68,11 @@ public class SearchWindowFragment extends Fragment {
         removeBtn.setOnClickListener(v -> searchEdt.setText(""));
 
         voiceInputBtn.setOnClickListener(v -> {
-            // TODO: 퍼미션 수정 필요
-            if ( Build.VERSION.SDK_INT >= 23 ){
-                ActivityCompat.requestPermissions(getActivity(), new String[]{
-                        Manifest.permission.INTERNET, Manifest.permission.RECORD_AUDIO
-                },1);
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+                startActivityForResult(new Intent(getContext(), SpeechRecognitionPopUp.class), 1);
+            }else{
+                micPermissionCheck();
             }
-
-            startActivityForResult(new Intent(getContext(), SpeechRecognitionPopUp.class), 1);
         });
 
         searchEdt.addTextChangedListener(new TextWatcher() {
@@ -118,6 +119,21 @@ public class SearchWindowFragment extends Fragment {
                 searchProcess();
             }
         }
+    }
+
+    private void micPermissionCheck(){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        alertDialog.setTitle("앱 권한");
+        alertDialog.setMessage("음성 인식 검색을 이용하기 위해서는 권한 허용이 필요합니다. 해당 기능을 이용하시려면 애플리케이션 [정보]>[권한] 에서 마이크 액세스 권한을 허용해 주십시오.");
+        alertDialog.setPositiveButton("권한설정",
+                (dialog, which) -> {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + getActivity().getPackageName()));
+                    startActivity(intent);
+                    dialog.cancel();
+                });
+        alertDialog.setNegativeButton("취소",
+                (dialog, which) -> dialog.cancel());
+        alertDialog.show();
     }
 
     private void searchProcess(){
