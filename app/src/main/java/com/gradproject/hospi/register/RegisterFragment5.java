@@ -1,6 +1,5 @@
 package com.gradproject.hospi.register;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,12 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -24,6 +20,8 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 
 public class RegisterFragment5 extends Fragment implements OnBackPressedListener {
+    private static final String TAG = "RegisterFragment5";
+
     RegisterActivity registerActivity;
     TextView emailErrorTxt;
     EditText inputEmail;
@@ -74,17 +72,17 @@ public class RegisterFragment5 extends Fragment implements OnBackPressedListener
                 if (document.exists()) {
                     // 문서 발견
                     duplicateError();
-                    Log.d("duplicate", "중복");
+                    Log.d(TAG, "중복");
                 } else {
                     // 문서 발견 못함
                     registerActivity.user.setEmail(email);
                     registerActivity.onFragmentChanged(5);
-                    Log.d("duplicate", "사용가능한 이메일");
+                    Log.d(TAG, "사용가능한 이메일");
                 }
             } else {
                 // 가져오는데 실패
                 duplicateError();
-                Log.d("duplicate", "get failed with ", task.getException());
+                Log.d(TAG, "get failed with ", task.getException());
             }
         });
     }

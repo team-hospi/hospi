@@ -1,6 +1,5 @@
 package com.gradproject.hospi.home.mypage;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,14 +18,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 
 public class InquiryDetailFragment extends Fragment implements OnBackPressedListener {
+    private static final String TAG = "InquiryDetailFragment";
+
     Inquiry inquiry;
     FirebaseFirestore db;
     SettingActivity settingActivity;
@@ -126,11 +125,11 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
         db.collection(Inquiry.DB_NAME).document(inquiry.getDocumentId())
                 .delete()
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("DB", "DocumentSnapshot successfully deleted!");
+                    Log.d(TAG, "DocumentSnapshot successfully deleted!");
                     deleteSuccessPopUp();
                 })
                 .addOnFailureListener(e -> {
-                    Log.w("DB", "Error deleting document", e);
+                    Log.w(TAG, "Error deleting document", e);
                     String msg = "삭제에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                 });

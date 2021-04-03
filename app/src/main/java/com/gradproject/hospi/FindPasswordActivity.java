@@ -1,6 +1,5 @@
 package com.gradproject.hospi;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,14 +11,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class FindPasswordActivity extends AppCompatActivity {
+    private final String TAG = "FindPasswordActivity";
+
     TextView emailErrorTxt;
     EditText inputEmail;
 
@@ -60,14 +56,10 @@ public class FindPasswordActivity extends AppCompatActivity {
                         AlertDialog.Builder builder = new AlertDialog.Builder(FindPasswordActivity.this)
                                 .setCancelable(false)
                                 .setMessage("입력하신 이메일로 비밀번호 변경 안내 메일이 발송되었습니다.")
-                                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                    @Override public void onClick(DialogInterface dialog, int i) {
-                                        finish();
-                                    }
-                                });
+                                .setPositiveButton("확인", (dialog, i) -> finish());
                         AlertDialog alertDialog = builder.create();
                         alertDialog.show();
-                        Log.d("changePassword", "Email sent.");
+                        Log.d(TAG, "Email sent.");
                     }else{
                         AlertDialog.Builder builder = new AlertDialog.Builder(FindPasswordActivity.this)
                                 .setCancelable(false)
@@ -75,7 +67,7 @@ public class FindPasswordActivity extends AppCompatActivity {
                                 .setPositiveButton("확인", (dialog, i) -> { /* empty */ });
                         AlertDialog alertDialog = builder.create();
                         alertDialog.show();
-                        Log.d("changePassword", "Email sent error.");
+                        Log.d(TAG, "Email sent error.");
                     }
                 });
     }

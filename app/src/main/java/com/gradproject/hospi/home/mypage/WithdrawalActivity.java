@@ -1,10 +1,8 @@
 package com.gradproject.hospi.home.mypage;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -14,8 +12,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,6 +22,8 @@ import com.gradproject.hospi.User;
 import static com.gradproject.hospi.home.HomeActivity.user;
 
 public class WithdrawalActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener{
+    private static final String TAG = "WithdrawalActivity";
+
     ImageButton backBtn;
     Button okBtn;
 
@@ -51,9 +49,9 @@ public class WithdrawalActivity extends AppCompatActivity implements FirebaseAut
                     .delete()
                     .addOnSuccessListener(aVoid -> {
                         withdrawalDialog();
-                        Log.d("withdrawal", "유저 정보 삭제 성공");
+                        Log.d(TAG, "유저 정보 삭제 성공");
                     })
-                    .addOnFailureListener(e -> Log.w("withdrawal", "유저 정보 삭제 실패", e));
+                    .addOnFailureListener(e -> Log.w(TAG, "유저 정보 삭제 실패", e));
         });
     }
 

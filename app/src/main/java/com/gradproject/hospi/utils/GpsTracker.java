@@ -15,7 +15,7 @@ import android.util.Log;
 import androidx.core.content.ContextCompat;
 
 public class GpsTracker extends Service implements LocationListener {
-
+    private final String TAG = "GpsTracker";
     private final Context mContext;
     Location location;
     double latitude;
@@ -94,7 +94,7 @@ public class GpsTracker extends Service implements LocationListener {
         }
         catch (Exception e)
         {
-            Log.d("@@@", ""+e.toString());
+            Log.d(TAG, ""+e.toString());
         }
 
         return location;

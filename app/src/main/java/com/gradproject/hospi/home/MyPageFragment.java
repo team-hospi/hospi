@@ -10,20 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.home.mypage.SettingActivity;
-import com.gradproject.hospi.home.mypage.WithdrawalActivity;
-
-import static com.gradproject.hospi.home.HomeActivity.user;
 
 public class MyPageFragment extends Fragment{
     TextView version, nameTxt;

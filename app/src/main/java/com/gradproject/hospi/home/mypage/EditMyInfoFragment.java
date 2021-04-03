@@ -1,7 +1,6 @@
 package com.gradproject.hospi.home.mypage;
 
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -18,21 +16,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
@@ -44,6 +36,7 @@ import static android.app.Activity.RESULT_OK;
 import static com.gradproject.hospi.home.HomeActivity.user;
 
 public class EditMyInfoFragment extends Fragment implements OnBackPressedListener{
+    private static final String TAG = "EditMyInfoFragment";
     private static final int REQUEST_WRITE_ADDRESS_ACTIVITY_CODE = 100; // 주소 입력 화면 식별 코드
 
     ImageButton backBtn; // 뒤로가기 버튼
@@ -139,7 +132,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
                         .addOnSuccessListener(new OnSuccessListener<Void>() { // 업데이트에 성공 했을때 호출
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Log.d("update", "주소 정보 업데이트 성공");
+                                Log.d(TAG, "주소 정보 업데이트 성공");
                             }
                         });
             }
@@ -198,7 +191,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
                             phoneTxt.setText(phoneNum);
                             user.setPhone(phoneNum);
                             alertDialog.dismiss();
-                            Log.d("update", "전화번호 정보 업데이트 성공");
+                            Log.d(TAG, "전화번호 정보 업데이트 성공");
                         });
             }
         });
@@ -222,7 +215,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
                         birthTxt = getActivity().findViewById(R.id.birthTxt);
                         user.setBirth(date);
                         birthTxt.setText(date);
-                        Log.d("update", "생년월일 정보 업데이트 성공");
+                        Log.d(TAG, "생년월일 정보 업데이트 성공");
                     });
         },cYear, cMonth, cDay);
 
@@ -257,7 +250,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
                                             });
                                     AlertDialog alertDialog2 = builder2.create();
                                     alertDialog2.show();
-                                    Log.d("changePassword", "Email sent.");
+                                    Log.d(TAG, "Email sent.");
                                 }else{
                                     loading.end();
                                     Toast.makeText(getContext(), "진행 중 오류가 발생하였습니다. 잠시 후 다시 진행하여 주십시오.", Toast.LENGTH_LONG).show();

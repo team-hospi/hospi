@@ -38,6 +38,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class SearchFragment extends Fragment implements MapReverseGeoCoder.ReverseGeoCodingResultListener{
+    private static final String TAG = "SearchFragment";
     private static final String OPEN_API_KEY = "07d563b8fc089510a0c926182cf35b1f";
     private static final String URL = "https://dapi.kakao.com/";
     private static final String REST_API_KEY = "KakaoAK 3e2f7063b5718fb7603bc5bbdcea189b";
@@ -176,8 +177,8 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
                 @Override
                 public void onResponse(Call<ResultSearchCategory> call, Response<ResultSearchCategory> response) {
                     if(response.isSuccessful()){
-                        Log.d("rest", "Raw: " + response.raw());
-                        Log.d("rest", "Body: " + response.body());
+                        Log.d(TAG, "Raw: " + response.raw());
+                        Log.d(TAG, "Body: " + response.body());
                         ResultSearchCategory result = response.body();
                         ArrayList<Document> nearbyHospitalList = (ArrayList) result.getDocuments();
 
@@ -189,13 +190,13 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
                             setMarker(longitude, latitude, name);
                         }
                     }else{
-                        Log.d("rest", "Error");
+                        Log.d(TAG, "Error");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResultSearchCategory> call, Throwable t) {
-                    Log.d("rest", "통신 실패: " + t.getMessage());
+                    Log.d(TAG, "통신 실패: " + t.getMessage());
                 }
             });
         }

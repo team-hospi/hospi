@@ -1,6 +1,5 @@
 package com.gradproject.hospi.home.mypage;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,13 +13,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.Inquiry;
@@ -28,6 +24,8 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 
 public class InquiryEditFragment extends Fragment implements OnBackPressedListener {
+    private static final String TAG = "InquiryEditFragment";
+
     ImageButton closeBtn;
     Button updateBtn;
     EditText inquiryTitleEdt, inquiryContentEdt;
@@ -129,11 +127,11 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
         documentReference
                 .set(inquiry)
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("DB", "DocumentSnapshot successfully updated!");
+                    Log.d(TAG, "DocumentSnapshot successfully updated!");
                     updateSuccessPopUp();
                 })
                 .addOnFailureListener(e -> {
-                    Log.w("DB", "Error updating document", e);
+                    Log.w(TAG, "Error updating document", e);
                     String msg = "문의 수정에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                 });

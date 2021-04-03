@@ -1,14 +1,11 @@
 package com.gradproject.hospi.home.search;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.speech.SpeechRecognizer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -36,6 +33,8 @@ import java.util.ArrayList;
 import static android.app.Activity.RESULT_OK;
 
 public class SearchWindowFragment extends Fragment {
+    private static final String TAG = "SearchWindowFragment";
+
     ImageButton backBtn, voiceInputBtn, removeBtn;
     EditText searchEdt;
     TextView noSearchTxt;
@@ -160,7 +159,7 @@ public class SearchWindowFragment extends Fragment {
 
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Log.d("DB", document.getId() + " => " + document.getData());
+                            Log.d(TAG, document.getId() + " => " + document.getData());
                             Hospital hospital = document.toObject(Hospital.class);
                             if(hospital.getName().contains(searchStr)){
                                 tmpArrList.add(hospital);
@@ -178,7 +177,7 @@ public class SearchWindowFragment extends Fragment {
 
                         hospitalRecyclerView.setAdapter(hospitalAdapter);
                     } else {
-                        Log.d("DB", "Error getting documents: ", task.getException());
+                        Log.d(TAG, "Error getting documents: ", task.getException());
                     }
                 });
     }

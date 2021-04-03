@@ -10,22 +10,16 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.ProgressDialog;
@@ -35,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class InquiryListFragment extends Fragment implements OnBackPressedListener {
+    private static final String TAG = "InquiryListFragment";
+
     RecyclerView inquiryRecyclerView;
     LinearLayoutManager layoutManager;
     InquiryAdapter inquiryAdapter = new InquiryAdapter();
@@ -75,9 +71,9 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
 
         backBtn.setOnClickListener(v -> onBackPressed());
 
-        inquiryAdapter.setOnItemClickListener((OnInquiryItemClickListener) (holder, view, position) -> {
+        inquiryAdapter.setOnItemClickListener((holder, view, position) -> {
             Inquiry inquiry = inquiryAdapter.getItem(position);
-            FragmentTransaction transaction = ((SettingActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             InquiryDetailFragment inquiryDetailFragment = new InquiryDetailFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("pos", position);
@@ -111,7 +107,7 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
 
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Log.d("DB", document.getId() + " => " + document.getData());
+                            Log.d(TAG, document.getId() + " => " + document.getData());
                             Inquiry inquiry = document.toObject(Inquiry.class);
                             inquiry.setDocumentId(document.getId());
                             tmpArrList.add(inquiry);
@@ -125,7 +121,7 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
 
                         inquiryRecyclerView.setAdapter(inquiryAdapter);
                     } else {
-                        Log.d("DB", "Error getting documents: ", task.getException());
+                        Log.d(TAG, "Error getting documents: ", task.getException());
                         String msg = "문의 내역을 불러올 수 없습니다.";
                         Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                     }

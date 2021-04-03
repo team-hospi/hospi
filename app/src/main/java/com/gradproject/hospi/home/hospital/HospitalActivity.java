@@ -1,6 +1,7 @@
 package com.gradproject.hospi.home.hospital;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -12,9 +13,11 @@ import com.gradproject.hospi.home.search.Hospital;
 import java.util.List;
 
 public class HospitalActivity extends AppCompatActivity {
+    private static final String TAG = "HospitalActivity";
+
     HospitalInfoDetailFragment hospitalInfoDetailFragment;
-    ReservationFragment reservationFragment; ReservationFragment2 reservationFragment2;
-    ReservationFragment3 reservationFragment3; ReservationSuccessFragment reservationSuccessFragment;
+    ReservationFragment reservationFragment;
+    ReservationSuccessFragment reservationSuccessFragment;
     InquiryFragment inquiryFragment;
 
     static Hospital hospital;
@@ -27,32 +30,41 @@ public class HospitalActivity extends AppCompatActivity {
         hospital = (Hospital) getIntent().getSerializableExtra("hospital");
 
         hospitalInfoDetailFragment = new HospitalInfoDetailFragment();
-        reservationFragment = new ReservationFragment(); reservationFragment2 = new ReservationFragment2();
-        reservationFragment3 = new ReservationFragment3(); reservationSuccessFragment = new ReservationSuccessFragment();
+        reservationFragment = new ReservationFragment();
+        reservationSuccessFragment = new ReservationSuccessFragment();
         inquiryFragment = new InquiryFragment();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.Container, hospitalInfoDetailFragment).commit();
     }
 
     public void onReservationFragmentChanged(int index){
-        if(index == 0){
-            getSupportFragmentManager().beginTransaction().replace(R.id.Container, hospitalInfoDetailFragment).commit();
-        }else if(index == 1){
-            getSupportFragmentManager().beginTransaction().replace(R.id.Container, reservationFragment).commit();
-        }else if(index == 2){
-            getSupportFragmentManager().beginTransaction().replace(R.id.Container, reservationFragment2).commit();
-        }else if(index == 3){
-            getSupportFragmentManager().beginTransaction().replace(R.id.Container, reservationFragment3).commit();
-        }else if(index == 4){
-            getSupportFragmentManager().beginTransaction().replace(R.id.Container, reservationSuccessFragment).commit();
+        switch (index){
+            case 0:
+                getSupportFragmentManager().beginTransaction().replace(R.id.Container, hospitalInfoDetailFragment).commit();
+                break;
+            case 1:
+                getSupportFragmentManager().beginTransaction().replace(R.id.Container, reservationFragment).commit();
+                break;
+            case 2:
+                getSupportFragmentManager().beginTransaction().replace(R.id.Container, reservationSuccessFragment).commit();
+                break;
+            default:
+                Log.d(TAG, "잘못된 프래그먼트 인덱스 선택");
+                break;
         }
     }
 
     public void onInquiryFragmentChanged(int index){
-        if(index == 0){
-            getSupportFragmentManager().beginTransaction().replace(R.id.Container, hospitalInfoDetailFragment).commit();
-        }else if(index == 1){
-            getSupportFragmentManager().beginTransaction().replace(R.id.Container, inquiryFragment).commit();
+        switch (index) {
+            case 0:
+                getSupportFragmentManager().beginTransaction().replace(R.id.Container, hospitalInfoDetailFragment).commit();
+                break;
+            case 1:
+                getSupportFragmentManager().beginTransaction().replace(R.id.Container, inquiryFragment).commit();
+                break;
+            default:
+                Log.d(TAG, "잘못된 프래그먼트 인덱스 선택");
+                break;
         }
     }
 

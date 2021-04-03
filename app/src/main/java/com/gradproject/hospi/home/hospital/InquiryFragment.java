@@ -1,6 +1,5 @@
 package com.gradproject.hospi.home.hospital;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,13 +13,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.OnBackPressedListener;
@@ -28,12 +23,13 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.utils.Loading;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
 
 public class InquiryFragment extends Fragment implements OnBackPressedListener {
+    private static final String TAG ="InquiryFragment";
+
     HospitalActivity hospitalActivity;
 
     Button writeBtn;
@@ -124,11 +120,11 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
         db.collection(Inquiry.DB_NAME)
                 .add(inquiry)
                 .addOnSuccessListener(documentReference -> {
-                    Log.d("DB", "DocumentSnapshot written with ID: " + documentReference.getId());
+                    Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
                     writeSuccess();
                 })
                 .addOnFailureListener(e -> {
-                    Log.w("DB", "Error adding document", e);
+                    Log.w(TAG, "Error adding document", e);
                     writeFail();
                 });
 

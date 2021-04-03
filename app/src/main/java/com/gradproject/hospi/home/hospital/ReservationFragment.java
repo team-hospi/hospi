@@ -5,8 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import androidx.fragment.app.Fragment;
 
@@ -19,10 +25,19 @@ import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
 public class ReservationFragment extends Fragment implements OnBackPressedListener {
     HospitalActivity hospitalActivity;
 
-    Button nextBtn, setDateBtn, setTimeBtn;
+    Button reservationBtn;
     ImageButton backBtn;
-    TextView nameTxt, phoneTxt, birthTxt, hospitalNameTxt;
-    TextView reservationDateTxt, reservationTimeTxt;
+    EditText additionalContentEdt;
+    TextView dateTxt, timeTxt, departmentTxt;
+    TextView userNameTxt, userPhoneTxt, userBirthTxt;
+    TextView hospitalNameTxt, hospitalTelTxt, hospitalAddressTxt;
+    FrameLayout dateSetBtn, timeSetBtn, departmentSetBtn;
+    LinearLayout calendar, time, department;
+    ImageView calendarExpandImg, timeExpandImg, departmentExpandImg;
+
+    boolean isClickDateSetBtn = false;
+    boolean isClickTimeSetBtn = false;
+    boolean isClickDepartmentSetBtn = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,32 +45,78 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_reservation, container,false);
 
         hospitalActivity = (HospitalActivity) getActivity();
+        reservationBtn = rootView.findViewById(R.id.reservationBtn);
         backBtn = rootView.findViewById(R.id.backBtn);
-        nextBtn = rootView.findViewById(R.id.nextBtn);
-        setDateBtn = rootView.findViewById(R.id.setDateBtn);
-        setTimeBtn = rootView.findViewById(R.id.setTimeBtn);
-        nameTxt = rootView.findViewById(R.id.nameTxt);
-        phoneTxt = rootView.findViewById(R.id.phoneTxt);
-        birthTxt = rootView.findViewById(R.id.birthTxt);
+        additionalContentEdt = rootView.findViewById(R.id.additionalContentEdt);
+        userNameTxt = rootView.findViewById(R.id.userNameTxt);
+        userPhoneTxt = rootView.findViewById(R.id.userPhoneTxt);
+        userBirthTxt = rootView.findViewById(R.id.userBirthTxt);
         hospitalNameTxt = rootView.findViewById(R.id.hospitalNameTxt);
-        reservationDateTxt = rootView.findViewById(R.id.reservationDateTxt);
-        reservationTimeTxt = rootView.findViewById(R.id.reservationTimeTxt);
+        hospitalTelTxt = rootView.findViewById(R.id.hospitalTelTxt);
+        hospitalAddressTxt = rootView.findViewById(R.id.hospitalAddressTxt);
+        dateTxt = rootView.findViewById(R.id.dateTxt);
+        dateSetBtn = rootView.findViewById(R.id.dateSetBtn);
+        calendar = rootView.findViewById(R.id.calendar);
+        calendarExpandImg = rootView.findViewById(R.id.calendarExpandImg);
+        timeTxt = rootView.findViewById(R.id.timeTxt);
+        timeSetBtn = rootView.findViewById(R.id.timeSetBtn);
+        time = rootView.findViewById(R.id.time);
+        timeExpandImg = rootView.findViewById(R.id.timeExpandImg);
+        departmentTxt = rootView.findViewById(R.id.departmentTxt);
+        departmentSetBtn = rootView.findViewById(R.id.departmentSetBtn);
+        department = rootView.findViewById(R.id.department);
+        departmentExpandImg = rootView.findViewById(R.id.departmentExpandImg);
 
-        nameTxt.setText(user.getName());
-        phoneTxt.setText(user.getPhone());
-        birthTxt.setText(user.getBirth());
+        userNameTxt.setText(user.getName());
+        userPhoneTxt.setText(user.getPhone());
+        userBirthTxt.setText(user.getBirth());
         hospitalNameTxt.setText(hospital.getName());
+        hospitalTelTxt.setText(hospital.getTel());
+        hospitalAddressTxt.setText(hospital.getAddress());
 
         backBtn.setOnClickListener(v -> onBackPressed());
 
-        nextBtn.setOnClickListener(v -> hospitalActivity.onReservationFragmentChanged(2));
-
-        setDateBtn.setOnClickListener(v -> {
-            // TODO: 예약 날짜 설정
+        dateSetBtn.setOnClickListener(v -> {
+            if(!(isClickDateSetBtn)){
+                CalendarView calendarView = new CalendarView(getContext());
+                calendar.addView(calendarView);
+                isClickDateSetBtn = true;
+                calendarExpandImg.setImageResource(R.drawable.ic_action_expand_more);
+            }else{
+                calendar.removeAllViews();
+                isClickDateSetBtn = false;
+                calendarExpandImg.setImageResource(R.drawable.ic_action_expand_less);
+            }
         });
 
-        setTimeBtn.setOnClickListener(v -> {
-            // TODO: 예약 시간 설정
+        timeSetBtn.setOnClickListener(v -> {
+            if(!(isClickTimeSetBtn)){
+                TimePicker timePicker = new TimePicker(getContext());
+                time.addView(timePicker);
+                isClickTimeSetBtn = true;
+                timeExpandImg.setImageResource(R.drawable.ic_action_expand_more);
+            }else{
+                time.removeAllViews();
+                isClickTimeSetBtn = false;
+                timeExpandImg.setImageResource(R.drawable.ic_action_expand_less);
+            }
+        });
+
+        departmentSetBtn.setOnClickListener(v -> {
+            if(!(isClickDepartmentSetBtn)){
+
+                isClickDepartmentSetBtn = true;
+                departmentExpandImg.setImageResource(R.drawable.ic_action_expand_more);
+            }else{
+
+                isClickDepartmentSetBtn = false;
+                departmentExpandImg.setImageResource(R.drawable.ic_action_expand_less);
+            }
+        });
+
+        reservationBtn.setOnClickListener(v -> {
+            // TODO: 예약 구현
+            hospitalActivity.onReservationFragmentChanged(2);
         });
 
         return rootView;
@@ -64,7 +125,5 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     @Override
     public void onBackPressed(){
         hospitalActivity.onReservationFragmentChanged(0);
-        reservationDateTxt.setText("날짜를 설정해주세요.");
-        reservationTimeTxt.setText("시간을 설정해주세요.");
     }
 }

@@ -35,8 +35,6 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
     FirebaseFirestore db;
     public static User user;
 
-    Intent serviceIntent;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,15 +69,6 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (null != serviceIntent) {
-            stopService(serviceIntent);
-            serviceIntent = null;
-        }
-    }
-
-    @Override
     public void onBackPressed() {
         backPressHandler.onBackPressed();
     }
@@ -99,7 +88,6 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     });
-
         }else{
             final String msg = "로그인 정보가 존재하지 않습니다.";
             Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();

@@ -15,12 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.OnBackPressedListener;
@@ -34,13 +31,14 @@ import net.daum.mf.map.api.MapView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
 
 public class HospitalInfoDetailFragment extends Fragment implements OnBackPressedListener {
+    private static final String TAG ="HospitalInfoDetailFragment";
+
     HospitalActivity hospitalActivity;
     FirebaseFirestore db;
 
@@ -181,8 +179,8 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         DocumentReference documentReference = db.collection(User.DB_NAME).document(user.getDocumentId());
         documentReference
                 .update("favorites", user.getFavorites())
-                .addOnSuccessListener(aVoid -> Log.d("DB", "DocumentSnapshot successfully updated!"))
-                .addOnFailureListener(e -> Log.w("DB", "Error updating document", e));
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
     public void removeFavoriteList(){
@@ -196,8 +194,8 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         DocumentReference documentReference = db.collection(User.DB_NAME).document(user.getDocumentId());
         documentReference
                 .update("favorites", user.getFavorites())
-                .addOnSuccessListener(aVoid -> Log.d("DB", "DocumentSnapshot successfully updated!"))
-                .addOnFailureListener(e -> Log.w("DB", "Error updating document", e));
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
     private void showHospitalLocation(ViewGroup rootView){

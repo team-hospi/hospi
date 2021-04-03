@@ -9,29 +9,26 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.home.hospital.HospitalActivity;
 import com.gradproject.hospi.home.search.Hospital;
 import com.gradproject.hospi.home.search.HospitalAdapter;
-import com.gradproject.hospi.home.search.OnHospitalItemClickListener;
 
 import java.util.ArrayList;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 
 public class FavoriteFragment extends Fragment implements OnBackPressedListener {
+    private static final String TAG = "FavoriteFragment";
+
     ImageButton backBtn;
     TextView noFavoriteTxt;
 
@@ -97,14 +94,14 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("DB", document.getId() + " => " + document.getData());
+                                Log.d(TAG, document.getId() + " => " + document.getData());
                                 Hospital hospital = document.toObject(Hospital.class);
                                 hospitalAdapter.addItem(hospital);
                             }
 
                             favoriteRecyclerView.setAdapter(hospitalAdapter);
                         } else {
-                            Log.d("DB", "Error getting documents: ", task.getException());
+                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     });
         }

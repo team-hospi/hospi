@@ -1,6 +1,5 @@
 package com.gradproject.hospi.register;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,27 +10,22 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 import com.gradproject.hospi.utils.Loading;
 
 public class RegisterFragment6 extends Fragment implements OnBackPressedListener {
+    private static final String TAG = "RegisterFragment6";
+
     RegisterActivity registerActivity;
     EditText inputPW, inputPW2; // 1: 비밀번호 2: 비밀번호 확인
     TextView pwErrorTxt;
@@ -83,7 +77,7 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
                                 firebaseAuth.getCurrentUser().updateProfile(profileUpdates)
                                         .addOnCompleteListener(task1 -> {
                                             if (task1.isSuccessful()) {
-                                                Log.d("profile", "User profile updated.");
+                                                Log.d(TAG, "User profile updated.");
                                             }
                                         });
 
@@ -131,15 +125,15 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Log.d("DB", document.getId() + " => " + document.getData());
+                            Log.d(TAG, document.getId() + " => " + document.getData());
                             DocumentReference documentReference = db.collection(User.DB_NAME).document(document.getId());
                             documentReference
                                     .update("documentId", document.getId())
-                                    .addOnSuccessListener(aVoid -> Log.d("DB", "DocumentSnapshot successfully updated!"))
-                                    .addOnFailureListener(e -> Log.w("DB", "Error updating document", e));
+                                    .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
                         }
                     } else {
-                        Log.d("DB", "Error getting documents: ", task.getException());
+                        Log.d(TAG, "Error getting documents: ", task.getException());
                     }
                 });
     }
