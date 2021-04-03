@@ -1,36 +1,29 @@
 package com.gradproject.hospi.home;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.gradproject.hospi.BackPressHandler;
-import com.gradproject.hospi.InquiryPushService;
 import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 
 public class HomeActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener{
+    private static final String TAG = "HomeActivity";
+
     private BackPressHandler backPressHandler = new BackPressHandler(this);
 
     SearchFragment searchFragment;
@@ -41,6 +34,8 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
     FirebaseUser firebaseUser;
     FirebaseFirestore db;
     public static User user;
+
+    Intent serviceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +49,6 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
         myPageFragment = new MyPageFragment();
 
         new Thread(() -> onAuthStateChanged(firebaseAuth)).start();
-
-        // 문의 답변 알림 서비스 시작
-        Intent intent = new Intent(HomeActivity.this, InquiryPushService.class);
-        startService(intent);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.container, searchFragment).commit();
 
@@ -80,6 +71,15 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (null != serviceIntent) {
+            stopService(serviceIntent);
+            serviceIntent = null;
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         backPressHandler.onBackPressed();
     }
@@ -96,7 +96,7 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
                                 setUserInfo(document.getId());
                             }
                         } else {
-                            Log.d("DB", "Error getting documents: ", task.getException());
+                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     });
 
@@ -114,10 +114,34 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             user = documentSnapshot.toObject(User.class);
             user.setDocumentId(documentId);
-            Log.d("success", "유저 정보 받기 성공");
+            setUserToken();
+            Log.d(TAG, "유저 정보 받기 성공");
         }).addOnFailureListener(e -> {
             final String msg = "알 수 없는 오류로 인해 유저 정보를 받아오지 못했습니다.";
             Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
         });
+    }
+
+    public void setUserToken(){
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                        return;
+                    }
+
+                    // Get new FCM registration token
+                    String token = task.getResult();
+
+                    DocumentReference documentReference = db.collection(User.DB_NAME).document(user.getDocumentId());
+                    documentReference
+                            .update("token", token)
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                            .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+
+                    // Log and toast
+                    String msg = token;
+                    Log.d(TAG, msg);
+                });
     }
 }

@@ -17,6 +17,7 @@ public class User {
     private String phone;
     private String email;
     private String address;
+    private String token;
     private List<String> favorites;
 
     public User() {
@@ -26,6 +27,7 @@ public class User {
         this.phone = "";
         this.email = "";
         this.address = "";
+        this.token = null;
         this.favorites = new List<String>() {
             @Override
             public int size() {
@@ -196,6 +198,14 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public List<String> getFavorites() {
