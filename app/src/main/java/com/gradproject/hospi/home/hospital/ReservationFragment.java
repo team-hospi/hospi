@@ -11,13 +11,18 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+
+import java.util.Calendar;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
@@ -35,14 +40,34 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     LinearLayout calendar, time, department;
     ImageView calendarExpandImg, timeExpandImg, departmentExpandImg;
 
-    boolean isClickDateSetBtn = false;
+    Calendar cal, selectCal;
+    CalendarView calendarView;
+    TableLayout tableLayout;
+    TableRow tableRow[];
+
+    String date;
+
+    boolean isClickDateSetBtn = true;
     boolean isClickTimeSetBtn = false;
     boolean isClickDepartmentSetBtn = false;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        cal = Calendar.getInstance();
+        calendarView = new CalendarView(getContext());
+        calendarView.setMinDate(cal.getTimeInMillis());
+        Calendar tmpCal = Calendar.getInstance();
+        tmpCal.add(Calendar.MONTH, 1);
+        calendarView.setMaxDate(tmpCal.getTimeInMillis());
+
+        tableLayout = new TableLayout(getContext());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_reservation, container,false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_reservation, container, false);
 
         hospitalActivity = (HospitalActivity) getActivity();
         reservationBtn = rootView.findViewById(R.id.reservationBtn);
@@ -67,47 +92,61 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         department = rootView.findViewById(R.id.department);
         departmentExpandImg = rootView.findViewById(R.id.departmentExpandImg);
 
+        // 예약자 정보
         userNameTxt.setText(user.getName());
         userPhoneTxt.setText(user.getPhone());
         userBirthTxt.setText(user.getBirth());
+
+        // 병원 정보
         hospitalNameTxt.setText(hospital.getName());
         hospitalTelTxt.setText(hospital.getTel());
         hospitalAddressTxt.setText(hospital.getAddress());
 
         backBtn.setOnClickListener(v -> onBackPressed());
 
+        calendar.addView(calendarView);
+        cal = Calendar.getInstance();
+        cal.setTimeInMillis(calendarView.getDate());
+        date = cal.get(Calendar.MONTH)+1 + "." + cal.get(Calendar.DATE) + "(" + getDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)) + ")";
+        dateTxt.setText(date);
+
         dateSetBtn.setOnClickListener(v -> {
-            if(!(isClickDateSetBtn)){
-                CalendarView calendarView = new CalendarView(getContext());
+            if (!(isClickDateSetBtn)) {
                 calendar.addView(calendarView);
                 isClickDateSetBtn = true;
                 calendarExpandImg.setImageResource(R.drawable.ic_action_expand_more);
-            }else{
+            } else {
                 calendar.removeAllViews();
                 isClickDateSetBtn = false;
                 calendarExpandImg.setImageResource(R.drawable.ic_action_expand_less);
             }
         });
 
+        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
+            selectCal = Calendar.getInstance();
+            selectCal.set(year, month, dayOfMonth);
+            date = month+1 + "." + dayOfMonth + "(" + getDayOfWeek(selectCal.get(Calendar.DAY_OF_WEEK)) + ")";
+            dateTxt.setText(date);
+        });
+
         timeSetBtn.setOnClickListener(v -> {
-            if(!(isClickTimeSetBtn)){
-                TimePicker timePicker = new TimePicker(getContext());
-                time.addView(timePicker);
+            if (!(isClickTimeSetBtn)) {
+                setTimeTable(selectCal.get(Calendar.DAY_OF_WEEK));
                 isClickTimeSetBtn = true;
                 timeExpandImg.setImageResource(R.drawable.ic_action_expand_more);
-            }else{
-                time.removeAllViews();
+            } else {
+
                 isClickTimeSetBtn = false;
                 timeExpandImg.setImageResource(R.drawable.ic_action_expand_less);
             }
         });
 
         departmentSetBtn.setOnClickListener(v -> {
-            if(!(isClickDepartmentSetBtn)){
+            if (!(isClickDepartmentSetBtn)) {
 
                 isClickDepartmentSetBtn = true;
                 departmentExpandImg.setImageResource(R.drawable.ic_action_expand_more);
-            }else{
+            } else {
 
                 isClickDepartmentSetBtn = false;
                 departmentExpandImg.setImageResource(R.drawable.ic_action_expand_less);
@@ -123,7 +162,67 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         hospitalActivity.onReservationFragmentChanged(0);
+    }
+
+    public String getDayOfWeek(int date) {
+        switch (date) {
+            case 1:
+                return "일";
+            case 2:
+                return "월";
+            case 3:
+                return "화";
+            case 4:
+                return "수";
+            case 5:
+                return "목";
+            case 6:
+                return "금";
+            case 7:
+                return "토";
+            default:
+                return null;
+        }
+    }
+
+    public void setTimeTable(int date){
+        switch(date){
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+                weekdayTimeTable(hospital.isStatus());
+                break;
+            case 7:
+                saturdayTimeTable(hospital.isSaturdayStatus());
+                break;
+            default:
+                holidayTimeTable(hospital.isHolidayStatus());
+                break;
+        }
+    }
+
+    public void weekdayTimeTable(boolean isStatus){
+        if(isStatus){
+            int openHr = Integer.parseInt(hospital.getWeekdayOpen().substring(0,2));
+            int openMin = Integer.parseInt(hospital.getWeekdayOpen().substring(3));
+            int closeHr = Integer.parseInt(hospital.getWeekdayClose().substring(0,2));
+            int closeMin = Integer.parseInt(hospital.getWeekdayClose().substring(3));
+        }
+    }
+
+    public void saturdayTimeTable(boolean isStatus){
+        if(isStatus){
+
+        }
+    }
+
+    public void holidayTimeTable(boolean isStatus){
+        if(isStatus){
+
+        }
     }
 }

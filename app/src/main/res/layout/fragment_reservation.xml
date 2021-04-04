@@ -205,6 +205,7 @@
                     </LinearLayout>
                 </LinearLayout>
             </FrameLayout>
+
             <LinearLayout
                 android:id="@+id/department"
                 android:layout_width="match_parent"
