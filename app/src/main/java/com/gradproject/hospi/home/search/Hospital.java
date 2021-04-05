@@ -13,7 +13,8 @@ public class Hospital implements Serializable {
     private String address; // 병원 주소
     private String tel; // 병원 전화번호
     private String kind; // 병원 종류 (의원, 종합병원, 대학병원)
-    private String weekdayOpen; // 평일 영업 시작 시간 (예: 0900 -> 오전 9시)
+    private String lunchTime; // 점심 시간 시작 (1시간)
+    private String weekdayOpen; // 평일 영업 시작 시간
     private String weekdayClose; // 평일 영업 종료 시간
     private String saturdayOpen; // 토요일 영업 시작 시간
     private String saturdayClose; // 토요일 영업 종료 시간
@@ -72,6 +73,14 @@ public class Hospital implements Serializable {
 
     public void setKind(String kind) {
         this.kind = kind;
+    }
+
+    public String getLunchTime() {
+        return lunchTime;
+    }
+
+    public void setLunchTime(String lunchTime) {
+        this.lunchTime = lunchTime;
     }
 
     public String getWeekdayOpen() {

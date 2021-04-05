@@ -1,6 +1,7 @@
 package com.gradproject.hospi.home.hospital;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
@@ -158,6 +160,9 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
             hospitalActivity.onReservationFragmentChanged(2);
         });
 
+        // debug test
+        weekdayTimeTable(true);
+
         return rootView;
     }
 
@@ -207,10 +212,13 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
     public void weekdayTimeTable(boolean isStatus){
         if(isStatus){
-            int openHr = Integer.parseInt(hospital.getWeekdayOpen().substring(0,2));
-            int openMin = Integer.parseInt(hospital.getWeekdayOpen().substring(3));
-            int closeHr = Integer.parseInt(hospital.getWeekdayClose().substring(0,2));
-            int closeMin = Integer.parseInt(hospital.getWeekdayClose().substring(3));
+            ArrayList<String>[] timeList;
+            String open = hospital.getWeekdayOpen();
+            String close = hospital.getWeekdayClose();
+            String lunch = hospital.getLunchTime();
+
+            timeList = reservationTimeMaker(open, close, lunch);
+
         }
     }
 
@@ -224,5 +232,67 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         if(isStatus){
 
         }
+    }
+
+    // 예약 시간 30분 간격으로 점심시간 제외해서 구하는 메서드
+    public ArrayList<String>[] reservationTimeMaker(String open, String close, String lunch){
+        ArrayList<String> amTimeList = new ArrayList<>();
+        ArrayList<String> pmTimeList = new ArrayList<>();
+
+        int openHr = Integer.parseInt(open.substring(0,2));
+        int openMin = Integer.parseInt(open.substring(3,5));
+        int closeHr = Integer.parseInt(close.substring(0,2));
+        int closeMin = Integer.parseInt(close.substring(3,5));
+        int lunchHr = Integer.parseInt(lunch.substring(0,2));
+        int lunchMin = Integer.parseInt(lunch.substring(3,5));
+
+        while(openHr<lunchHr){
+            String time;
+
+            if(openMin==30){
+                time = openHr + ":" + openMin;
+                amTimeList.add(time);
+                openMin=0;
+                openHr++;
+            }else{
+                time = openHr + ":" + openMin +"0";
+                amTimeList.add(time);
+                openMin = 30;
+            }
+        }
+
+        if(lunchMin==30){
+            openMin=0;
+            String time = openHr + ":" + openMin + "0";
+            amTimeList.add(time);
+        }
+
+        int tmp = lunchHr+1;
+
+        while(tmp<closeHr){
+            String time;
+            if(lunchMin==30){
+                time = tmp + ":" + lunchMin;
+                pmTimeList.add(time);
+                lunchMin=0;
+                tmp++;
+            }else{
+                time = tmp + ":" + lunchMin +"0";
+                pmTimeList.add(time);
+                lunchMin = 30;
+            }
+        }
+
+        if(closeMin==30){
+            lunchMin=0;
+            String time = tmp + ":" + lunchMin + "0";
+            pmTimeList.add(time);
+        }
+
+        ArrayList<String>[] timeList = new ArrayList[2];
+        timeList[0] = amTimeList;
+        timeList[1] = pmTimeList;
+
+        return timeList;
     }
 }
