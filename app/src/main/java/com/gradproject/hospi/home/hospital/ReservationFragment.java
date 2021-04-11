@@ -1,10 +1,8 @@
 package com.gradproject.hospi.home.hospital;
 
-import android.content.res.Resources;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,31 +19,20 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
-import com.gradproject.hospi.home.search.Hospital;
-import com.gradproject.hospi.utils.Loading;
 
-import java.text.DateFormat;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,12 +44,13 @@ import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
 import static com.gradproject.hospi.home.hospital.HospitalActivity.reservedList;
 
 public class ReservationFragment extends Fragment implements OnBackPressedListener {
+    private static final String TAG = "ReservationFragment";
+
     private static final int WEEKDAY = 0;
     private static final int SATURDAY = 1;
     private static final int HOLIDAY = 2;
 
     HospitalActivity hospitalActivity;
-
     FirebaseFirestore db;
 
     Button reservationBtn;
@@ -81,7 +69,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     CalendarView calendarView;
 
     String date;
-    String selectDepartment;
+    String selectDepartment, selectTime;
 
     boolean isClickDateSetBtn = false;
     boolean isClickTimeSetBtn = false;
@@ -163,6 +151,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         openDateSelect();
         cal = Calendar.getInstance();
         cal.setTimeInMillis(calendarView.getDate());
+        selectCal.setTimeInMillis(calendarView.getDate());
         date = cal.get(Calendar.MONTH)+1 + "." + cal.get(Calendar.DATE) + "(" + getDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)) + ")";
         dateTxt.setText(date);
 
@@ -176,6 +165,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
             selectCal.set(year, month, dayOfMonth);
+
             date = month+1 + "." + dayOfMonth + "(" + getDayOfWeek(selectCal.get(Calendar.DAY_OF_WEEK)) + ")";
             dateTxt.setText(date);
 
@@ -194,8 +184,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         });
 
         reservationBtn.setOnClickListener(v -> {
-            // TODO: 예약 구현
-            hospitalActivity.onReservationFragmentChanged(2);
+            reservationProcess();
         });
 
         return rootView;
@@ -204,6 +193,184 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     @Override
     public void onBackPressed() {
         hospitalActivity.onReservationFragmentChanged(0);
+    }
+
+    public void reservationProcess(){
+        Reservation reservation = new Reservation();
+        reservation.setId(user.getEmail());
+        reservation.setHospitalId(hospital.getId());
+        reservation.setDepartment(selectDepartment);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String date = df.format(selectCal.getTime());
+        reservation.setReservationDate(date);
+        reservation.setReservationTime(selectTime);
+        reservation.setAdditionalContent(additionalContentEdt.getText().toString());
+        long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
+        reservation.setTimestamp(timestamp);
+
+        db.collection(Reservation.DB_NAME)
+                .add(reservation)
+                .addOnSuccessListener(documentReference -> {
+                    Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                    reservedListUpdate(reservation);
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Error adding document", e);
+                    reservationFail();
+                });
+    }
+
+    private void reservationSuccess(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+                .setCancelable(false)
+                .setMessage("예약 신청이 완료되었습니다.\n병원에서 예약 확정이 되는대로 알려드리겠습니다.")
+                .setPositiveButton("확인", (dialogInterface, i) -> {
+                    getActivity().finish();
+                    Intent intent = new Intent(getContext(), HospitalActivity.class);
+                    intent.putExtra("hospital", hospital);
+                    startActivity(intent);
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void reservationFail(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+                .setCancelable(false)
+                .setMessage("예약에 실패하였습니다.\n잠시 후 다시 진행해주세요.")
+                .setPositiveButton("확인", (dialogInterface, i) -> { /* empty */ });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void reservationFailProcess(Reservation reservation){
+        Query query = db.collection(Reservation.DB_NAME)
+                .whereEqualTo("id", reservation.getId())
+                .whereEqualTo("hospitalId", reservation.getHospitalId())
+                .whereEqualTo("timestamp", reservation.getTimestamp());
+
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Log.d(TAG, document.getId() + " => " + document.getData());
+                    db.collection(Reservation.DB_NAME).document(document.getId())
+                            .delete()
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.w(TAG, "Error deleting document", e);
+                            });
+                }
+            } else {
+                Log.d(TAG, "Error getting documents: ", task.getException());
+            }
+        });
+    }
+
+    public void reservedListUpdate(Reservation reservation){
+        Log.d(TAG, "reservedListUpdate 실행");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        String date = df.format(selectCal.getTime());
+        Reserved reserved = null;
+        HashMap<String, List<String>> reservedMap;
+
+        for(int i=0; i<reservedList.size(); i++){
+            Log.d(TAG, "reservedList 루프 시작 i="+i);
+            reserved = reservedList.get(i);
+            reservedMap = (HashMap)reserved.getReservedMap();
+            if(reserved.getDepartment().equals(selectDepartment)){
+                if(reservedMap.containsKey(date)){
+                    Log.d(TAG, "reservedMap 키 찾음");
+                    reservedMap.get(date).add(selectTime);
+                    reserved.setReservedMap(reservedMap);
+                    break;
+                }else{
+                    Log.d(TAG, "reservedMap 키 못찾음");
+                    ArrayList<String> tmpArr = new ArrayList<>();
+                    tmpArr.add(selectTime);
+                    reservedMap.put(date, tmpArr);
+                    reserved.setReservedMap(reservedMap);
+                }
+            }else{
+                Log.d(TAG, "일치하는 department 존재하지 않음 -> reserved 설정");
+                reserved.setHospitalId(hospital.getId());
+                reserved.setDepartment(selectDepartment);
+                ArrayList<String> tmpArr = new ArrayList<>();
+                tmpArr.add(selectTime);
+                HashMap<String, List<String>> tmpMap = new HashMap<>();
+                tmpMap.put(date, tmpArr);
+                reserved.setReservedMap(tmpMap);
+            }
+        }
+
+        if(reserved==null){
+            Log.d(TAG, "reserved가 null임 -> reserved 값을 설정해줌");
+            reserved = new Reserved();
+            reserved.setHospitalId(hospital.getId());
+            reserved.setDepartment(selectDepartment);
+            ArrayList<String> tmpArr = new ArrayList<>();
+            tmpArr.add(selectTime);
+            HashMap<String, List<String>> tmpMap = new HashMap<>();
+            tmpMap.put(date, tmpArr);
+            reserved.setReservedMap(tmpMap);
+        }
+
+        if(reserved != null){
+            Log.d(TAG, "reserved가 null이 아님 :" + reserved.toString());
+            Query query = db.collection(Reserved.DB_NAME)
+                    .whereEqualTo("hospitalId", reserved.getHospitalId())
+                    .whereEqualTo("department", reserved.getDepartment());
+
+            Reserved finalReserved = reserved;
+
+            query.get().addOnCompleteListener(task -> {
+                Log.d(TAG, "query 찾음");
+
+                if (task.isSuccessful()) {
+                    if(task.getResult().size()!=0){
+                        Log.d(TAG, "task 성공 -> " + task.getResult().size());
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Log.d(TAG, document.getId() + " => " + document.getData());
+                            DocumentReference documentReference = db.collection(Reserved.DB_NAME).document(document.getId());
+
+                            documentReference
+                                    .update("reservedMap", finalReserved.getReservedMap())
+                                    .addOnSuccessListener(aVoid -> {
+                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                        reservationSuccess();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.w(TAG, "Error updating document", e);
+                                        reservationFailProcess(reservation);
+                                        reservationFail();
+                                    });
+                        }
+                    }else{
+                        db.collection(Reserved.DB_NAME)
+                                .add(finalReserved)
+                                .addOnSuccessListener(documentReference -> {
+                                    Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                                    reservationSuccess();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.w(TAG, "Error adding document", e);
+                                    reservationFailProcess(reservation);
+                                    reservationFail();
+                                });
+                    }
+                    Log.d(TAG, "task 종료");
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                    reservationFailProcess(reservation);
+                    reservationFail();
+                }
+            });
+        }else{
+            Log.d(TAG, "reserved가 null임");
+            reservationFailProcess(reservation);
+            reservationFail();
+        }
     }
 
     public void openDateSelect(){
@@ -315,6 +482,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
             button[i] = new Button(getContext());
             button[i].setText(timeList.get(i));
             button[i].setOnClickListener(v -> {
+                selectTime = tmp;
                 timeTxt.setText(tmp.substring(0,2) + "시 " + tmp.substring(3,5) + "분");
                 timeTable.removeAllViews();
                 isClickTimeSetBtn = false;
@@ -329,9 +497,11 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
                     HashMap<String, List<String>> reservedMap = (HashMap)reserved.getReservedMap();
                     ArrayList<String> dateArray = (ArrayList)reservedMap.get(date);
 
-                    for(String time : dateArray){
-                        if(timeList.get(i).equals(time)){
-                            button[i].setEnabled(false);
+                    if(dateArray != null){
+                        for(String time : dateArray){
+                            if(timeList.get(i).equals(time)){
+                                button[i].setEnabled(false);
+                            }
                         }
                     }
                 }
@@ -345,10 +515,6 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
     // 예약 시간 30분 간격으로 점심시간 제외해서 구하는 메서드
     public ArrayList<String> reservationTimeMaker(String open, String close, String lunch){
-        /*
-        ArrayList<String> amTimeList = new ArrayList<>();
-        ArrayList<String> pmTimeList = new ArrayList<>();
-         */
 
         ArrayList<String> timeList = new ArrayList<>();
 
