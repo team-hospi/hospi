@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/white"
+        app:cardElevation="5dp"
+        app:cardUseCompatPadding="true">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground">
+
+            <TextView
+                android:id="@+id/titleTxt"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:singleLine="true"
+                android:text="제목"
+                android:textSize="17sp"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/answerCheckTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="right"
+                android:gravity="right"
+                android:text="미답변"
+                android:textColor="@color/red"/>
+
+            <TextView
+                android:id="@+id/dateTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:layout_marginLeft="10dp"
+                android:text="0000-00-00"/>
+
+            <TextView
+                android:id="@+id/hospitalNameTxt"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="55dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="병원이름"/>
+        </FrameLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

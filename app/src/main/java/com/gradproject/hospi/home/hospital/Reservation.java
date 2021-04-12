@@ -2,6 +2,9 @@ package com.gradproject.hospi.home.hospital;
 
 public class Reservation {
     public static final String DB_NAME = "reservationList";
+    public static final int RESERVATION_CANCELED = -1;
+    public static final int CONFIRMING_RESERVATION = 0;
+    public static final int RESERVATION_CONFIRMED = 1;
 
     private String id;
     private String hospitalId;
@@ -10,6 +13,7 @@ public class Reservation {
     private String reservationTime;
     private String additionalContent;
     private long timestamp;
+    private int reservationStatus;
 
     public Reservation() {}
 
@@ -67,5 +71,13 @@ public class Reservation {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public int getReservationStatus() {
+        return reservationStatus;
+    }
+
+    public void setReservationStatus(int reservationStatus) {
+        this.reservationStatus = reservationStatus;
     }
 }

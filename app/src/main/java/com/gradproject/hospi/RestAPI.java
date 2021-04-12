@@ -6,13 +6,10 @@ import retrofit2.http.Header;
 import retrofit2.http.Query;
 
 public interface RestAPI {
-    @GET("v2/local/search/category.json")
-    Call<ResultSearchCategory> getSearchCategory(
+    @GET("v2/local/search/address.json")
+    Call<ResultSearchAddressPoint> getSearchAddressPoint(
             @Header("Authorization") String key,
-            @Query("category_group_code") String query,
-            @Query("x") String longitude,
-            @Query("y") String latitude,
-            @Query("radius") String radius,
-            @Query("page") String page
+            @Query("analyze_type") String analyze_type,
+            @Query("query") String query
     );
 }

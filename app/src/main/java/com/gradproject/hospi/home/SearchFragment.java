@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 import com.gradproject.hospi.Document;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.RestAPI;
-import com.gradproject.hospi.ResultSearchCategory;
+import com.gradproject.hospi.ResultSearchAddressPoint;
 import com.gradproject.hospi.home.search.ResultActivity;
 import com.gradproject.hospi.utils.GpsTracker;
 
@@ -69,7 +69,7 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
         MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(gpsTracker.getLatitude(), gpsTracker.getLongitude());
         MapReverseGeoCoder reverseGeoCoder = new MapReverseGeoCoder(OPEN_API_KEY, mapPoint, SearchFragment.this, getActivity());
         reverseGeoCoder.startFindingAddress();
-        getCategorySearchResult(mapPoint);
+        //getCategorySearchResult(mapPoint);
 
         mapViewContainer.addView(mapView);
         mapView.setZoomLevel(3, true); // 맵 줌레벨 설정
@@ -100,7 +100,7 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
             MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(gpsTracker.getLatitude(), gpsTracker.getLongitude());
             mapView.setMapCenterPoint(mapPoint, true);
             mapView.removeAllPOIItems();
-            getCategorySearchResult(mapPoint);
+            //getCategorySearchResult(mapPoint);
             endTrackingModeThread(5000);
         });
 
@@ -158,47 +158,36 @@ public class SearchFragment extends Fragment implements MapReverseGeoCoder.Rever
         mapView.addPOIItem(marker);
     }
 
-    private void getCategorySearchResult(MapPoint mapPoint){
+    // TODO: 파이어스토어에 저장된 병원 주소로 좌표 값 가져와야함
+    private void getAddressPointSearchResult(String address){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        String longitude = String.valueOf(mapPoint.getMapPointGeoCoord().longitude);
-        String latitude = String.valueOf(mapPoint.getMapPointGeoCoord().latitude);
-
         RestAPI api = retrofit.create(RestAPI.class);
 
-        for(int i=0; i<5; i++){
-            String page = String.valueOf(i);
-            Call<ResultSearchCategory> call = api.getSearchCategory(REST_API_KEY, "HP8", longitude, latitude, "1000", page);
+        Call<ResultSearchAddressPoint> call = api.getSearchAddressPoint(REST_API_KEY, "exact", address);
 
-            call.enqueue(new Callback<ResultSearchCategory>() {
-                @Override
-                public void onResponse(Call<ResultSearchCategory> call, Response<ResultSearchCategory> response) {
-                    if(response.isSuccessful()){
-                        Log.d(TAG, "Raw: " + response.raw());
-                        Log.d(TAG, "Body: " + response.body());
-                        ResultSearchCategory result = response.body();
-                        ArrayList<Document> nearbyHospitalList = (ArrayList) result.getDocuments();
+        call.enqueue(new Callback<ResultSearchAddressPoint>() {
+            @Override
+            public void onResponse(Call<ResultSearchAddressPoint> call, Response<ResultSearchAddressPoint> response) {
+                if(response.isSuccessful()){
+                    Log.d(TAG, "Raw: " + response.raw());
+                    Log.d(TAG, "Body: " + response.body());
+                    ResultSearchAddressPoint result = response.body();
+                    ArrayList<Document> hospitalInfo = (ArrayList) result.getDocuments();
 
-                        for(int i=0; i<nearbyHospitalList.size(); i++){
-                            Double longitude = Double.parseDouble(nearbyHospitalList.get(i).getX());
-                            Double latitude = Double.parseDouble(nearbyHospitalList.get(i).getY());
-                            String name = nearbyHospitalList.get(i).getPlaceName();
 
-                            setMarker(longitude, latitude, name);
-                        }
-                    }else{
-                        Log.d(TAG, "Error");
-                    }
+                }else{
+                    Log.d(TAG, "Error");
                 }
+            }
 
-                @Override
-                public void onFailure(Call<ResultSearchCategory> call, Throwable t) {
-                    Log.d(TAG, "통신 실패: " + t.getMessage());
-                }
-            });
-        }
+            @Override
+            public void onFailure(Call<ResultSearchAddressPoint> call, Throwable t) {
+                Log.d(TAG, "통신 실패: " + t.getMessage());
+            }
+        });
     }
 }

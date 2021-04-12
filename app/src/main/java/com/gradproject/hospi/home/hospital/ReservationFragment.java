@@ -197,16 +197,17 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
     public void reservationProcess(){
         Reservation reservation = new Reservation();
-        reservation.setId(user.getEmail());
-        reservation.setHospitalId(hospital.getId());
-        reservation.setDepartment(selectDepartment);
+        reservation.setId(user.getEmail());    // 유저 이메일 설정
+        reservation.setHospitalId(hospital.getId());     // 병원 아이디 설정
+        reservation.setDepartment(selectDepartment);     // 진료과 설정
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String date = df.format(selectCal.getTime());
-        reservation.setReservationDate(date);
-        reservation.setReservationTime(selectTime);
-        reservation.setAdditionalContent(additionalContentEdt.getText().toString());
+        reservation.setReservationDate(date);      // 예약 날짜 설정
+        reservation.setReservationTime(selectTime);    // 예약 시간 설정
+        reservation.setAdditionalContent(additionalContentEdt.getText().toString());  // 추가 입력한 내용 설정
         long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
-        reservation.setTimestamp(timestamp);
+        reservation.setTimestamp(timestamp);    // 현재 시간 타임스탬프 설정
+        reservation.setReservationStatus(Reservation.CONFIRMING_RESERVATION);     // 예약 신청됨 상태로 설정
 
         db.collection(Reservation.DB_NAME)
                 .add(reservation)
