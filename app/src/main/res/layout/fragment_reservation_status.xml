@@ -5,10 +5,14 @@
     android:layout_height="match_parent"
     tools:context=".home.ReservationStatusFragment">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/reservationList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="예약 현황"
-        android:textSize="40sp"/>
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="15dp"
+        android:overScrollMode="never"/>
 
 </LinearLayout>
