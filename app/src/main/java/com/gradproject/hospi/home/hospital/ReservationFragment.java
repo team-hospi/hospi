@@ -50,6 +50,8 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     private static final int SATURDAY = 1;
     private static final int HOLIDAY = 2;
 
+    final String week[] = {"일", "월", "화", "수", "목", "금", "토"};
+
     HospitalActivity hospitalActivity;
     FirebaseFirestore db;
 
@@ -69,7 +71,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     CalendarView calendarView;
 
     String date;
-    String selectDepartment, selectTime;
+    String selectDepartment, selectTime=null;
 
     boolean isClickDateSetBtn = false;
     boolean isClickTimeSetBtn = false;
@@ -152,7 +154,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         cal = Calendar.getInstance();
         cal.setTimeInMillis(calendarView.getDate());
         selectCal.setTimeInMillis(calendarView.getDate());
-        date = cal.get(Calendar.MONTH)+1 + "." + cal.get(Calendar.DATE) + "(" + getDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)) + ")";
+        date = cal.get(Calendar.MONTH)+1 + "." + cal.get(Calendar.DATE) + "(" + week[cal.get(Calendar.DAY_OF_WEEK)-1] + ")";
         dateTxt.setText(date);
 
         dateSetBtn.setOnClickListener(v -> {
@@ -166,7 +168,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
             selectCal.set(year, month, dayOfMonth);
 
-            date = month+1 + "." + dayOfMonth + "(" + getDayOfWeek(selectCal.get(Calendar.DAY_OF_WEEK)) + ")";
+            date = month+1 + "." + dayOfMonth + "(" + week[selectCal.get(Calendar.DAY_OF_WEEK)-1] + ")";
             dateTxt.setText(date);
 
             closeTimeSelect();
@@ -184,7 +186,11 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         });
 
         reservationBtn.setOnClickListener(v -> {
-            reservationProcess();
+            if(selectTime != null){
+                reservationProcess();
+            }else{
+                notSelectedTimeAlert();
+            }
         });
 
         return rootView;
@@ -195,10 +201,20 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         hospitalActivity.onReservationFragmentChanged(0);
     }
 
+    private void notSelectedTimeAlert(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+                .setCancelable(false)
+                .setMessage("시간을 설정해주세요.")
+                .setPositiveButton("확인", (dialogInterface, i) -> {});
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
     public void reservationProcess(){
         Reservation reservation = new Reservation();
         reservation.setId(user.getEmail());    // 유저 이메일 설정
         reservation.setHospitalId(hospital.getId());     // 병원 아이디 설정
+        reservation.setHospitalName(hospital.getName()); // 병원 이름 설정
         reservation.setDepartment(selectDepartment);     // 진료과 설정
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String date = df.format(selectCal.getTime());
@@ -397,27 +413,6 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         timeTable.removeAllViews();
         isClickTimeSetBtn = false;
         timeExpandImg.setImageResource(R.drawable.ic_action_expand_less);
-    }
-
-    public String getDayOfWeek(int date) {
-        switch (date) {
-            case 1:
-                return "일";
-            case 2:
-                return "월";
-            case 3:
-                return "화";
-            case 4:
-                return "수";
-            case 5:
-                return "목";
-            case 6:
-                return "금";
-            case 7:
-                return "토";
-            default:
-                return null;
-        }
     }
 
     public void setTimeTable(int date){

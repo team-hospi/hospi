@@ -19,6 +19,7 @@ public class User {
     private String address;
     private String token;
     private List<String> favorites;
+    private boolean admin;
 
     public User() {
         this.documentId = "";
@@ -28,6 +29,7 @@ public class User {
         this.email = "";
         this.address = "";
         this.token = null;
+        this.admin = false;
         this.favorites = new List<String>() {
             @Override
             public int size() {
@@ -214,5 +216,13 @@ public class User {
 
     public void setFavorites(List<String> favorites) {
         this.favorites = favorites;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 }

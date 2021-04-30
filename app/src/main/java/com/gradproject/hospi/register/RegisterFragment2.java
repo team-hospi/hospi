@@ -29,6 +29,8 @@ public class RegisterFragment2 extends Fragment implements OnBackPressedListener
         inputName = rootView.findViewById(R.id.inputName);
         nameErrorTxt = rootView.findViewById(R.id.nameErrorTxt);
 
+        registerActivity.user.setAdmin(false); // 일반 사용자로 설정
+
         Button nextBtn = rootView.findViewById(R.id.nextBtn); // 다음 버튼
         nextBtn.setOnClickListener(v -> {
             name = inputName.getText().toString();

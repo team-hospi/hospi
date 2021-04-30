@@ -1,25 +1,35 @@
 package com.gradproject.hospi.home;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.home.hospital.HospitalActivity;
 import com.gradproject.hospi.home.hospital.Reservation;
+import com.gradproject.hospi.home.search.Hospital;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
-public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.ViewHolder>
-        implements OnReservationItemClickListener {
+public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.ViewHolder>{
+    private static final String TAG = "ReservationAdapter";
+
     public ArrayList<Reservation> items = new ArrayList<>();
-    OnReservationItemClickListener listener;
 
     public void addItem(Reservation item){
         items.add(item);
@@ -43,13 +53,15 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.reservation_item, parent, false);
 
-        return new ReservationAdapter.ViewHolder(itemView, this);
+        return new ReservationAdapter.ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ReservationAdapter.ViewHolder holder, int position) {
         Reservation item = items.get(position);
         holder.setItem(item);
+        holder.reservationCancelBtn.setTag(holder.getAdapterPosition());
+        holder.reservationCancelBtn.setOnClickListener(v -> reservationCancelProcess(v, item));
     }
 
     @Override
@@ -57,50 +69,81 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         return items.size();
     }
 
-    public void setOnItemClickListener(OnReservationItemClickListener listener){
-        this.listener = listener;
+    private void reservationCancelProcess(View v, Reservation item){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Query query = db.collection(Reservation.DB_NAME)
+                .whereEqualTo("id", item.getId())
+                .whereEqualTo("hospitalId", item.getHospitalId())
+                .whereEqualTo("timestamp", item.getTimestamp());
+
+        query.get().addOnCompleteListener(task -> {
+            String id = null;
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Log.d(TAG, document.getId() + " => " + document.getData());
+                    id = document.getId();
+                }
+
+                if(id != null){
+                    db.collection(Reservation.DB_NAME).document(id)
+                            .delete()
+                            .addOnSuccessListener(aVoid -> {
+                                Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                cancelSuccess(v);
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.w(TAG, "Error deleting document", e);
+                                final String msg = "알 수 없는 오류로 인해 취소되지 않았습니다.\n잠시 후 다시 시도해주세요.";
+                                Toast.makeText(v.getContext(), msg, Toast.LENGTH_LONG).show();
+                            });
+                }
+            } else {
+                Log.d(TAG, "Error getting documents: ", task.getException());
+            }
+        });
     }
 
-    @Override
-    public void onItemClick(ReservationAdapter.ViewHolder holder, View view, int position) {
-        if(listener != null){
-            listener.onItemClick(holder, view, position);
-        }
+    private void cancelSuccess(View v){
+        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext())
+                .setCancelable(false)
+                .setMessage("예약 취소가 정상적으로 처리되었습니다.")
+                .setPositiveButton("확인", (dialogInterface, i) -> {
+                    int pos = (int) v.getTag();
+                    items.remove(pos);
+                    notifyDataSetChanged();
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        LinearLayout hospitalInfoBtn;
+        final String week[] = {"일", "월", "화", "수", "목", "금", "토"};
+
+        ImageButton hospitalInfoBtn;
         TextView hospitalNameTxt, reservationDateTxt, reservationStatusTxt;
         Button reservationCancelBtn;
 
-        public ViewHolder(View itemView, final OnReservationItemClickListener listener){
+        public ViewHolder(View itemView){
             super(itemView);
-
             hospitalInfoBtn = itemView.findViewById(R.id.hospitalInfoBtn);
             hospitalNameTxt = itemView.findViewById(R.id.hospitalNameTxt);
             reservationDateTxt = itemView.findViewById(R.id.reservationDateTxt);
             reservationStatusTxt = itemView.findViewById(R.id.reservationStatusTxt);
             reservationCancelBtn = itemView.findViewById(R.id.reservationCancelBtn);
-
-            hospitalInfoBtn.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-
-                if(listener != null){
-                    listener.onItemClick(ReservationAdapter.ViewHolder.this, v, position);
-                }
-            });
-
-            reservationCancelBtn.setOnClickListener(v -> {
-                //TODO: 예약 취소 구현
-            });
         }
 
         public void setItem(Reservation item){
-            hospitalNameTxt.setText(getHospitalName(item.getHospitalId()));
+            hospitalNameTxt.setText(item.getHospitalName());
             String date = item.getReservationDate();
             String time = item.getReservationTime();
-            //TODO: 요일 설정 해야함
-            reservationDateTxt.setText(date + " (" + getDayOfWeek(1) + ") " + time);
+            Calendar cal = Calendar.getInstance();
+            int year = Integer.parseInt(date.substring(0, 4));
+            int month = Integer.parseInt(date.substring(5, 7));
+            int day = Integer.parseInt(date.substring(8, 10));
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.MONTH, month-1);
+            cal.set(Calendar.DATE, day);
+            reservationDateTxt.setText(date + " (" + week[cal.get(Calendar.DAY_OF_WEEK)-1] + ") " + time);
 
             switch (item.getReservationStatus()){
                 case Reservation.RESERVATION_CONFIRMED:
@@ -116,32 +159,33 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                     reservationStatusTxt.setTextColor(Color.RED);
                     break;
             }
+
+            hospitalInfoBtn.setOnClickListener(v -> showHospitalInfo(v, item.getHospitalId()));
         }
 
-        public String getHospitalName(String id){
-            //TODO: 병원 이름 구하기
-            return "병원이름";
-        }
+        public void showHospitalInfo(View v, String id){
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection(Hospital.DB_NAME)
+                    .whereEqualTo("id", id)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Hospital hospital = null;
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                hospital = document.toObject(Hospital.class);
+                            }
 
-        public String getDayOfWeek(int date) {
-            switch (date) {
-                case 1:
-                    return "일";
-                case 2:
-                    return "월";
-                case 3:
-                    return "화";
-                case 4:
-                    return "수";
-                case 5:
-                    return "목";
-                case 6:
-                    return "금";
-                case 7:
-                    return "토";
-                default:
-                    return null;
-            }
+                            if(hospital != null){
+                                Intent intent = new Intent(v.getContext(), HospitalActivity.class);
+                                intent.putExtra("hospital", hospital);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                v.getContext().startActivity(intent);
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    });
         }
     }
 }
