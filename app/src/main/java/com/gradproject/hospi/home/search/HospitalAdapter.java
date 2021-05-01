@@ -77,14 +77,11 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHo
             holidayBusinessHours = itemView.findViewById(R.id.holidayBusinessHours);
             addressTxt = itemView.findViewById(R.id.addressTxt);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
 
-                    if(listener != null){
-                        listener.onItemClick(ViewHolder.this, v, position);
-                    }
+                if(listener != null){
+                    listener.onItemClick(ViewHolder.this, v, position);
                 }
             });
         }
@@ -92,13 +89,13 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHo
         public void setItem(Hospital item){
             hospitalName.setText(item.getName());
             if(item.isStatus()){
-                weekdayBusinessHours.setText("평일 " + item.getWeekday_open() + " ~ " + item.getWeekday_close());
+                weekdayBusinessHours.setText("평일 " + item.getWeekdayOpen() + " ~ " + item.getWeekdayClose());
             }
-            if(item.isSaturday_status()){
-                saturdayBusinessHours.setText("토요일 " + item.getSaturday_open() + " ~ " + item.getSaturday_close());
+            if(item.isSaturdayStatus()){
+                saturdayBusinessHours.setText("토요일 " + item.getSaturdayOpen() + " ~ " + item.getSaturdayClose());
             }
-            if(item.isHoliday_status()){
-                holidayBusinessHours.setText("공휴일 " + item.getHoliday_open() + " ~ " + item.getHoliday_close());
+            if(item.isHolidayStatus()){
+                holidayBusinessHours.setText("공휴일 " + item.getHolidayOpen() + " ~ " + item.getHolidayClose());
             }
             addressTxt.setText(item.getAddress());
         }

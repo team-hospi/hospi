@@ -14,11 +14,17 @@
         <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
         <item name="android:actionOverflowButtonStyle">@style/AppTheme.OverFlow</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="AppTheme.OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:tint">@color/black</item>
+    </style>
+
+    <style name="Theme.PopUp" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name = "windowActionBar">false</item>
+        <item name = "windowNoTitle">true</item>
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryDark">@color/blue</item>
+        <item name="colorAccent">@color/white</item>
     </style>
 </resources>

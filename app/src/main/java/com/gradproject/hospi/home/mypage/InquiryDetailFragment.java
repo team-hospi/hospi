@@ -1,6 +1,5 @@
 package com.gradproject.hospi.home.mypage;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,14 +18,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 
 public class InquiryDetailFragment extends Fragment implements OnBackPressedListener {
+    private static final String TAG = "InquiryDetailFragment";
+
     Inquiry inquiry;
     FirebaseFirestore db;
     SettingActivity settingActivity;
@@ -65,14 +64,9 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
         settingActivity.setSupportActionBar(toolbar);
         settingActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
 
-        hospitalNameTxt.setText(inquiry.getHospital_name());
+        hospitalNameTxt.setText(inquiry.getHospitalName());
         titleTxt.setText(inquiry.getTitle());
         contentTxt.setText(inquiry.getContent());
 
@@ -128,22 +122,16 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
     }
 
     public void delBtnProcess(){
-        db.collection("inquiry_list").document(inquiry.getDocumentId())
+        db.collection(Inquiry.DB_NAME).document(inquiry.getDocumentId())
                 .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("DB", "DocumentSnapshot successfully deleted!");
-                        deleteSuccessPopUp();
-                    }
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                    deleteSuccessPopUp();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DB", "Error deleting document", e);
-                        String msg = "삭제에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
-                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                    }
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Error deleting document", e);
+                    String msg = "삭제에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
+                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                 });
     }
 
@@ -151,15 +139,8 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("해당 문의를 삭제하시겠습니까?")
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int i) {
-                        delBtnProcess();
-                    }
-                })
-                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) { /* empty */ }
-                });
+                .setPositiveButton("확인", (dialog, i) -> delBtnProcess())
+                .setNegativeButton("취소", (dialog, which) -> { /* empty */ });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
@@ -168,16 +149,14 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("삭제되었습니다.")
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int i) {
-                        FragmentTransaction transaction = settingActivity.getSupportFragmentManager().beginTransaction();
-                        InquiryListFragment inquiryListFragment = settingActivity.inquiryListFragment;
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("pos", pos);
-                        inquiryListFragment.setArguments(bundle);
-                        transaction.replace(R.id.settingContainer, inquiryListFragment);
-                        transaction.commit();
-                    }
+                .setPositiveButton("확인", (dialog, i) -> {
+                    FragmentTransaction transaction = settingActivity.getSupportFragmentManager().beginTransaction();
+                    InquiryListFragment inquiryListFragment = settingActivity.inquiryListFragment;
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("pos", pos);
+                    inquiryListFragment.setArguments(bundle);
+                    transaction.replace(R.id.settingContainer, inquiryListFragment);
+                    transaction.commit();
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

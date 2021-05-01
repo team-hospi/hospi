@@ -1,27 +1,20 @@
 package com.gradproject.hospi;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.gradproject.hospi.home.HomeActivity;
 import com.gradproject.hospi.register.RegisterActivity;
 import com.gradproject.hospi.utils.Loading;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity{
     Loading loading;
     FirebaseAuth firebaseAuth;
     EditText inputEmail, inputPW;
@@ -41,65 +34,37 @@ public class LoginActivity extends AppCompatActivity {
 
         // 로그인 버튼
         Button loginBtn = findViewById(R.id.loginBtn);
-        loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                id = inputEmail.getText().toString();
-                pw = inputPW.getText().toString();
+        loginBtn.setOnClickListener(v -> {
+            id = inputEmail.getText().toString();
+            pw = inputPW.getText().toString();
 
-                loading.start();
+            loading.start();
 
-                if(!(id.equals("") || pw.equals(""))){
-                    firebaseAuth.signInWithEmailAndPassword(id, pw)
-                            .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>(){
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task){
-                                    if(task.isSuccessful()){
-                                        loading.end();
-                                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                                        finish();
-                                    } else {
-                                        loading.end();
-                                        loginFail();
-                                    }
-                                }
-                            });
-                }else{
-                    loading.end();
-                    loginFail();
-                }
+            if(!(id.equals("") || pw.equals(""))){
+                firebaseAuth.signInWithEmailAndPassword(id, pw)
+                        .addOnCompleteListener(LoginActivity.this, task -> {
+                            if(task.isSuccessful()){
+                                loading.end();
+                                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                                finish();
+                            } else {
+                                loading.end();
+                                loginFail();
+                            }
+                        });
+            }else{
+                loading.end();
+                loginFail();
             }
         });
 
         // 비밀번호 찾기 버튼
         TextView accountFindBtn = findViewById(R.id.accountFindBtn);
-        accountFindBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), FindPasswordActivity.class));
-            }
-        });
+        accountFindBtn.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), FindPasswordActivity.class)));
 
         // 회원가입 버튼
         TextView registerBtn = findViewById(R.id.registerBtn);
-        registerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
-            }
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (user != null) {
-            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-            finish();
-        }
+        registerBtn.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), RegisterActivity.class)));
     }
 
     // 로그인 실패 팝업 띄우기
@@ -107,9 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
                 .setCancelable(false)
                 .setMessage("아이디 및 비밀번호가 일치하지 않습니다.")
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialogInterface, int i) { /* empty */ }
-                });
+                .setPositiveButton("확인", (dialogInterface, i) -> { /* empty */ });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }

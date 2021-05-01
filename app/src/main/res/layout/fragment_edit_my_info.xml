@@ -63,6 +63,7 @@
                         android:id="@+id/emailTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="이메일"
                         android:textSize="17sp"/>
                 </LinearLayout>
             </FrameLayout>
@@ -93,6 +94,7 @@
                         android:id="@+id/nameTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="이름"
                         android:textSize="17sp"/>
                 </LinearLayout>
             </FrameLayout>
@@ -126,6 +128,7 @@
                         android:id="@+id/phoneTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="000-0000-0000"
                         android:textSize="17sp"/>
                 </LinearLayout>
 
@@ -167,6 +170,7 @@
                         android:id="@+id/birthTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="0000-00-00"
                         android:textSize="17sp"/>
                 </LinearLayout>
 
@@ -208,6 +212,7 @@
                         android:id="@+id/addressTxt"
                         android:layout_width="300dp"
                         android:layout_height="wrap_content"
+                        android:text="OO도 OO시 OO구"
                         android:textSize="17sp"/>
                 </LinearLayout>
 

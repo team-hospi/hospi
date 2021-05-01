@@ -79,25 +79,22 @@ public class InquiryAdapter extends RecyclerView.Adapter<InquiryAdapter.ViewHold
             answerCheckTxt = itemView.findViewById(R.id.answerCheckTxt);
             hospitalNameTxt = itemView.findViewById(R.id.hospitalNameTxt);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
 
-                    if(listener != null){
-                        listener.onItemClick(InquiryAdapter.ViewHolder.this, v, position);
-                    }
+                if(listener != null){
+                    listener.onItemClick(ViewHolder.this, v, position);
                 }
             });
         }
 
         public void setItem(Inquiry item){
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             String date = sdf.format(new Date(item.getTimestamp()));
 
             dateTxt.setText(date);
             titleTxt.setText(item.getTitle());
-            hospitalNameTxt.setText(item.getHospital_name());
+            hospitalNameTxt.setText(item.getHospitalName());
 
             if(item.isCheckedAnswer()){
                 answerCheckTxt.setText("답변완료");

@@ -16,7 +16,7 @@ public class SettingActivity extends AppCompatActivity implements OnBackPressedL
     EditMyInfoFragment editMyInfoFragment; FavoriteFragment favoriteFragment;
     InquiryListFragment inquiryListFragment; NoticeFragment noticeFragment;
     PrescriptionFragment prescriptionFragment; TermsFragment termsFragment;
-    InquiryDetailFragment inquiryDetailFragment;
+    InquiryDetailFragment inquiryDetailFragment; NoticeDetailFragment noticeDetailFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class SettingActivity extends AppCompatActivity implements OnBackPressedL
         editMyInfoFragment = new EditMyInfoFragment(); favoriteFragment = new FavoriteFragment();
         inquiryListFragment = new InquiryListFragment(); noticeFragment = new NoticeFragment();
         prescriptionFragment = new PrescriptionFragment(); termsFragment = new TermsFragment();
-        inquiryDetailFragment = new InquiryDetailFragment();
+        inquiryDetailFragment = new InquiryDetailFragment(); noticeDetailFragment = new NoticeDetailFragment();
 
         String select = getIntent().getStringExtra("selectBtn");
 
@@ -64,9 +64,5 @@ public class SettingActivity extends AppCompatActivity implements OnBackPressedL
         }else{
             super.onBackPressed();
         }
-    }
-
-    private void showInquiryDetail(){
-        getSupportFragmentManager().beginTransaction().replace(R.id.settingContainer, inquiryDetailFragment).commit();
     }
 }

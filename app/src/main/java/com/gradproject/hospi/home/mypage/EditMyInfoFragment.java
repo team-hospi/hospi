@@ -1,7 +1,6 @@
 package com.gradproject.hospi.home.mypage;
 
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -18,31 +16,27 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.User;
 import com.gradproject.hospi.utils.Loading;
 import com.gradproject.hospi.utils.PhoneNumberHyphen;
 
 import static android.app.Activity.RESULT_OK;
 import static com.gradproject.hospi.home.HomeActivity.user;
 
-public class EditMyInfoFragment extends Fragment implements OnBackPressedListener {
+public class EditMyInfoFragment extends Fragment implements OnBackPressedListener{
+    private static final String TAG = "EditMyInfoFragment";
     private static final int REQUEST_WRITE_ADDRESS_ACTIVITY_CODE = 100; // 주소 입력 화면 식별 코드
 
     ImageButton backBtn; // 뒤로가기 버튼
@@ -51,13 +45,10 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
     TextView emailTxt, nameTxt, phoneTxt, birthTxt, addressTxt;
 
     FirebaseFirestore db;
-    FirebaseUser firebaseUser;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
     }
 
@@ -85,68 +76,35 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
 
         // 뒤로가기 버튼
         backBtn = rootView.findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
 
         // 전화번호 변경 버튼
         changePhNumBtn = rootView.findViewById(R.id.changePhNumBtn);
-        changePhNumBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changePhone();
-            }
-        });
+        changePhNumBtn.setOnClickListener(v -> changePhone());
 
         // 생년월일 변경 버튼
         changeBirthBtn = rootView.findViewById(R.id.changeBirthBtn);
-        changeBirthBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeBirth();
-            }
-        });
+        changeBirthBtn.setOnClickListener(v -> changeBirth());
 
         // 주소 변경 버튼
         changeAddressBtn = rootView.findViewById(R.id.changeAddressBtn);
-        changeAddressBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 주소 입력 화면으로 이동
-                startActivityForResult(new Intent(getContext(), WriteAddressActivity.class),
-                        REQUEST_WRITE_ADDRESS_ACTIVITY_CODE);
-            }
+        changeAddressBtn.setOnClickListener(v -> {
+            // 주소 입력 화면으로 이동
+            startActivityForResult(new Intent(getContext(), WriteAddressActivity.class),
+                    REQUEST_WRITE_ADDRESS_ACTIVITY_CODE);
         });
 
         // 비밀번호 변경 버튼
         changePwBtn = rootView.findViewById(R.id.changePwBtn);
-        changePwBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changePassword();
-            }
-        });
+        changePwBtn.setOnClickListener(v -> changePassword());
 
         // 로그아웃 버튼
         logoutBtn = rootView.findViewById(R.id.logoutBtn);
-        logoutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logoutDialog();
-            }
-        });
+        logoutBtn.setOnClickListener(v -> logoutDialog());
 
         // 회원탈퇴 버튼
         withdrawalBtn = rootView.findViewById(R.id.withdrawalBtn);
-        withdrawalBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getContext(), WithdrawalActivity.class));
-            }
-        });
+        withdrawalBtn.setOnClickListener(v -> startActivity(new Intent(getContext(), WithdrawalActivity.class)));
 
         return rootView;
     }
@@ -166,30 +124,15 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
                 user.setAddress(address);
                 addressTxt.setText(address); // 주소 설정
 
-                db.collection("user_list")
-                        .whereEqualTo("email", firebaseUser.getEmail())
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                DocumentReference documentReference = db
+                        .collection(User.DB_NAME)
+                        .document(user.getDocumentId()); // 해당 이메일 유저 문서 열기
+                documentReference
+                        .update("address", address) // 주소 업데이트
+                        .addOnSuccessListener(new OnSuccessListener<Void>() { // 업데이트에 성공 했을때 호출
                             @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        Log.d("DB", document.getId() + " => " + document.getData());
-                                        DocumentReference documentReference = db
-                                                .collection("user_list")
-                                                .document(document.getId()); // 해당 이메일 유저 문서 열기
-                                        documentReference
-                                                .update("address", address) // 주소 업데이트
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() { // 업데이트에 성공 했을때 호출
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Log.d("update", "주소 정보 업데이트 성공");
-                                                    }
-                                                });
-                                    }
-                                } else {
-                                    Log.d("DB", "Error getting documents: ", task.getException());
-                                }
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "주소 정보 업데이트 성공");
                             }
                         });
             }
@@ -226,67 +169,30 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
                 .setTitle("전화번호 변경")
                 .setMessage("전화번호를 입력해주세요.")
                 .setView(container)
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int i) { /* empty */ }
-                })
-                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) { /* empty */ }
-                });
+                .setPositiveButton("확인", (dialog, i) -> { /* empty */ })
+                .setNegativeButton("취소", (dialog, which) -> { /* empty */ });
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                String num = PhoneNumberHyphen.phone(phone.getText().toString());
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String phoneNum = PhoneNumberHyphen.phone(phone.getText().toString());
 
-                if(num.equals("")){
-                    err.setVisibility(View.VISIBLE);
-                }else{
-                    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-                    if(firebaseUser!=null){
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        db.collection("user_list")
-                                .whereEqualTo("email", firebaseUser.getEmail())
-                                .get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                Log.d("DB", document.getId() + " => " + document.getData());
-                                                DocumentReference documentReference = db
-                                                        .collection("user_list")
-                                                        .document(document.getId()); // 해당 이메일 유저 문서 열기
-                                                documentReference
-                                                        .update("phone", num) // 전화번호 업데이트
-                                                        .addOnSuccessListener(new OnSuccessListener<Void>() { // 업데이트에 성공 했을때 호출
-                                                            @Override
-                                                            public void onSuccess(Void aVoid) {
-                                                                phoneTxt = getActivity().findViewById(R.id.phoneTxt);
-                                                                phoneTxt.setText(num);
-                                                                user.setPhone(num);
-                                                                alertDialog.dismiss();
-                                                                Log.d("update", "전화번호 정보 업데이트 성공");
-                                                            }
-                                                        });
-                                            }
-                                        } else {
-                                            Log.d("DB", "Error getting documents: ", task.getException());
-                                        }
-                                    }
-                                });
-                    }else{
-                        Toast.makeText(getContext(), "로그인 정보가 존재하지 않습니다.", Toast.LENGTH_LONG).show();
-                        FirebaseAuth.getInstance().signOut(); // 로그아웃
-                        ActivityCompat.finishAffinity(getActivity()); // 모든 액티비티 종료
-                        startActivity(new Intent(getContext(), LoginActivity.class)); // 다시 로그인 화면으로
-                    }
-                }
+            if(phoneNum.equals("")){
+                err.setVisibility(View.VISIBLE);
+            }else{
+                DocumentReference documentReference = db
+                        .collection(User.DB_NAME)
+                        .document(user.getDocumentId()); // 해당 이메일 유저 문서 열기
+                // 업데이트에 성공 했을때 호출
+                documentReference
+                        .update("phone", phoneNum) // 전화번호 업데이트
+                        .addOnSuccessListener(aVoid -> {
+                            phoneTxt = getActivity().findViewById(R.id.phoneTxt);
+                            phoneTxt.setText(phoneNum);
+                            user.setPhone(phoneNum);
+                            alertDialog.dismiss();
+                            Log.d(TAG, "전화번호 정보 업데이트 성공");
+                        });
             }
         });
     }
@@ -297,50 +203,20 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         int cMonth = Integer.parseInt(birth[1])-1;
         int cDay = Integer.parseInt(birth[2]);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                String date = year+"-"+(month+1)+"-"+dayOfMonth;
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
+            String date = year+"-"+(month+1)+"-"+dayOfMonth;
 
-                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-                if(firebaseUser!=null){
-                    db.collection("user_list")
-                            .whereEqualTo("email", firebaseUser.getEmail())
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                            Log.d("DB", document.getId() + " => " + document.getData());
-                                            DocumentReference documentReference = db.collection("user_list")
-                                                    .document(document.getId()); // 해당 이메일 유저 문서 열기
-                                            documentReference
-                                                    .update("birth", date) // 생년월일 업데이트
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() { // 업데이트에 성공 했을때 호출
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            birthTxt = getActivity().findViewById(R.id.birthTxt);
-                                                            user.setBirth(date);
-                                                            birthTxt.setText(date);
-                                                            Log.d("update", "생년월일 정보 업데이트 성공");
-                                                        }
-                                                    });
-                                        }
-                                    } else {
-                                        Log.d("DB", "Error getting documents: ", task.getException());
-                                    }
-                                }
-                            });
-
-                }else{
-                    Toast.makeText(getContext(), "로그인 정보가 존재하지 않습니다.", Toast.LENGTH_LONG).show();
-                    FirebaseAuth.getInstance().signOut(); // 로그아웃
-                    ActivityCompat.finishAffinity(getActivity()); // 모든 액티비티 종료
-                    startActivity(new Intent(getContext(), LoginActivity.class)); // 다시 로그인 화면으로
-                }
-            }
+            DocumentReference documentReference = db.collection(User.DB_NAME)
+                    .document(user.getDocumentId()); // 해당 이메일 유저 문서 열기
+            // 업데이트에 성공 했을때 호출
+            documentReference
+                    .update("birth", date) // 생년월일 업데이트
+                    .addOnSuccessListener(aVoid -> {
+                        birthTxt = getActivity().findViewById(R.id.birthTxt);
+                        user.setBirth(date);
+                        birthTxt.setText(date);
+                        Log.d(TAG, "생년월일 정보 업데이트 성공");
+                    });
         },cYear, cMonth, cDay);
 
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
@@ -351,71 +227,51 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
     private void changePassword(){
         Loading loading = new Loading(getContext(), "비밀번호 변경 메일 발송 중...");
 
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+                .setCancelable(false)
+                .setMessage("비밀번호를 변경하시겠습니까?")
+                .setPositiveButton("확인", (dialog, i) -> {
+                    loading.start();
 
-        if(firebaseUser!=null){
-            FirebaseAuth auth = FirebaseAuth.getInstance();
+                    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
-                    .setCancelable(false)
-                    .setMessage("비밀번호를 변경하시겠습니까?")
-                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                        @Override public void onClick(DialogInterface dialog, int i) {
-                            loading.start();
+                    firebaseAuth.sendPasswordResetEmail(user.getEmail())
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    loading.end();
 
-                            auth.sendPasswordResetEmail(firebaseUser.getEmail())
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                loading.end();
-
-                                                AlertDialog.Builder builder2 = new AlertDialog.Builder(getContext())
-                                                        .setCancelable(false)
-                                                        .setMessage("설정하신 이메일로 비밀번호 변경 안내 메일이 발송되었습니다.")
-                                                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                                            @Override public void onClick(DialogInterface dialog, int i) { /* empty */ }
-                                                        });
-                                                AlertDialog alertDialog2 = builder2.create();
-                                                alertDialog2.show();
-                                                Log.d("changePassword", "Email sent.");
-                                            }else{
-                                                loading.end();
-                                                Toast.makeText(getContext(), "진행 중 오류가 발생하였습니다. 잠시 후 다시 진행하여 주십시오.", Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    });
-                        }
-                    })
-                    .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) { /* empty */ }
-                    });
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        }else{
-            Toast.makeText(getContext(), "로그인 정보가 존재하지 않습니다.", Toast.LENGTH_LONG).show();
-            FirebaseAuth.getInstance().signOut(); // 로그아웃
-            ActivityCompat.finishAffinity(getActivity()); // 모든 액티비티 종료
-            startActivity(new Intent(getContext(), LoginActivity.class)); // 다시 로그인 화면으로
-        }
+                                    AlertDialog.Builder builder2 = new AlertDialog.Builder(getContext())
+                                            .setCancelable(false)
+                                            .setMessage("이메일로 비밀번호 변경 안내 메일이 발송되었습니다.\n비밀번호 변경 후 다시 로그인해주세요.")
+                                            .setPositiveButton("확인", (dialog1, i1) -> {
+                                                firebaseAuth.signOut();
+                                                ActivityCompat.finishAffinity(getActivity());
+                                                startActivity(new Intent(getContext(), LoginActivity.class));
+                                            });
+                                    AlertDialog alertDialog2 = builder2.create();
+                                    alertDialog2.show();
+                                    Log.d(TAG, "Email sent.");
+                                }else{
+                                    loading.end();
+                                    Toast.makeText(getContext(), "진행 중 오류가 발생하였습니다. 잠시 후 다시 진행하여 주십시오.", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                })
+                .setNegativeButton("취소", (dialog, which) -> { /* empty */ });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     private void logoutDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("로그아웃 하시겠습니까?")
-                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                    @Override public void onClick(DialogInterface dialog, int i) {
-                        FirebaseAuth.getInstance().signOut(); // 로그아웃
-                        ActivityCompat.finishAffinity(getActivity()); // 모든 액티비티 종료
-                        startActivity(new Intent(getContext(), LoginActivity.class)); // 다시 로그인 화면으로
-                    }
+                .setPositiveButton("확인", (dialog, i) -> {
+                    FirebaseAuth.getInstance().signOut(); // 로그아웃
+                    ActivityCompat.finishAffinity(getActivity()); // 모든 액티비티 종료
+                    startActivity(new Intent(getContext(), LoginActivity.class)); // 다시 로그인 화면으로
                 })
-                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) { /* empty */ }
-                });
+                .setNegativeButton("취소", (dialog, which) -> { /* empty */ });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }

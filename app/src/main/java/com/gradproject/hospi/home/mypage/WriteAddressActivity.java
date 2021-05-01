@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -34,12 +33,7 @@ public class WriteAddressActivity extends AppCompatActivity {
         startActivityForResult(new Intent(getApplicationContext(), AddressSearchActivity.class), REQUEST_ADDRESS_SEARCH_ACTIVITY_CODE);
 
         backBtn = findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        backBtn.setOnClickListener(v -> finish());
 
         detailAddressEdt = findViewById(R.id.detailAddressEdt);
         detailAddressEdt.addTextChangedListener(new TextWatcher() {
@@ -66,14 +60,11 @@ public class WriteAddressActivity extends AppCompatActivity {
         });
 
         okBtn = findViewById(R.id.okBtn);
-        okBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.putExtra("address", addressTxt.getText().toString() + " " + detailAddressEdt.getText().toString());
-                setResult(RESULT_OK, intent);
-                finish();
-            }
+        okBtn.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.putExtra("address", addressTxt.getText().toString() + " " + detailAddressEdt.getText().toString());
+            setResult(RESULT_OK, intent);
+            finish();
         });
     }
 

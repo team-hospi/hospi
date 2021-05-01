@@ -13,23 +13,18 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.home.mypage.SettingActivity;
 
-public class MyPageFragment extends Fragment {
+public class MyPageFragment extends Fragment{
     TextView version, nameTxt;
-    Button myInfoEditBtn, favoritesBtn, prescriptionBtn,
-            inquiryDetailsBtn, termsBtn, noticeBtn;
-
-    FirebaseAuth firebaseUser;
+    Button myInfoEditBtn, favoritesBtn, prescriptionBtn, inquiryDetailsBtn, termsBtn, noticeBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_my_page, container,false);
 
-        firebaseUser = FirebaseAuth.getInstance();
         version = rootView.findViewById(R.id.version);
         nameTxt = rootView.findViewById(R.id.nameTxt);
         myInfoEditBtn = rootView.findViewById(R.id.myInfoEditBtn);
@@ -39,50 +34,21 @@ public class MyPageFragment extends Fragment {
         termsBtn = rootView.findViewById(R.id.termsBtn);
         noticeBtn = rootView.findViewById(R.id.noticeBtn);
 
-        nameTxt.setText(firebaseUser.getCurrentUser().getDisplayName());
+        HomeActivity homeActivity = (HomeActivity) getActivity();
+        nameTxt.setText(homeActivity.firebaseUser.getDisplayName());
         version.setText(getVersionInfo(getContext()));
 
-        myInfoEditBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSelectedFragment("myInfoEditBtn");
-            }
-        });
+        myInfoEditBtn.setOnClickListener(v -> startSelectedFragment("myInfoEditBtn"));
 
-        favoritesBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSelectedFragment("favoritesBtn");
-            }
-        });
+        favoritesBtn.setOnClickListener(v -> startSelectedFragment("favoritesBtn"));
 
-        prescriptionBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSelectedFragment("prescriptionBtn");
-            }
-        });
+        prescriptionBtn.setOnClickListener(v -> startSelectedFragment("prescriptionBtn"));
 
-        inquiryDetailsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSelectedFragment("inquiryDetailsBtn");
-            }
-        });
+        inquiryDetailsBtn.setOnClickListener(v -> startSelectedFragment("inquiryDetailsBtn"));
 
-        termsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSelectedFragment("termsBtn");
-            }
-        });
+        termsBtn.setOnClickListener(v -> startSelectedFragment("termsBtn"));
 
-        noticeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSelectedFragment("noticeBtn");
-            }
-        });
+        noticeBtn.setOnClickListener(v -> startSelectedFragment("noticeBtn"));
 
         return rootView;
     }

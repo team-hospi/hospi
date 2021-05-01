@@ -13,17 +13,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.User;
+import com.gradproject.hospi.home.LocationPoint;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -31,13 +31,14 @@ import net.daum.mf.map.api.MapView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
 
 public class HospitalInfoDetailFragment extends Fragment implements OnBackPressedListener {
+    private static final String TAG ="HospitalInfoDetailFragment";
+
     HospitalActivity hospitalActivity;
     FirebaseFirestore db;
 
@@ -84,50 +85,31 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         }
 
         // 뒤로가기 버튼
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
 
         // 예약 버튼
-        reservationBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hospitalActivity.onReservationFragmentChanged(1);
-            }
-        });
+        reservationBtn.setOnClickListener(v -> hospitalActivity.onReservationFragmentChanged(1));
 
         // 문의 버튼
-        inquiryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hospitalActivity.onInquiryFragmentChanged(1);
-            }
-        });
+        inquiryBtn.setOnClickListener(v -> hospitalActivity.onInquiryFragmentChanged(1));
 
         // 전화 버튼
-        callBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + hospital.getTel())));
-            }
-        });
+        callBtn.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + hospital.getTel()))));
 
         // 찜 버튼
-        favoriteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isFavorite){
-                    isFavorite = false;
-                    favoriteImg.setImageResource(R.drawable.ic_action_favorite_border);
-                    removeFavoriteList();
-                }else{
-                    isFavorite = true;
-                    favoriteImg.setImageResource(R.drawable.ic_action_favorite);
-                    addFavoriteList();
-                }
+        favoriteBtn.setOnClickListener(v -> {
+            if(isFavorite){
+                String msg = "찜이 해제되었습니다.";
+                Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                isFavorite = false;
+                favoriteImg.setImageResource(R.drawable.ic_action_favorite_border);
+                removeFavoriteList();
+            }else{
+                String msg = "찜이 설정되었습니다.";
+                Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                isFavorite = true;
+                favoriteImg.setImageResource(R.drawable.ic_action_favorite);
+                addFavoriteList();
             }
         });
 
@@ -164,19 +146,19 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         String[] strArr = {"", "토요일 휴무", "공휴일 휴무"};
         String open, close;
 
-        open = hospital.getWeekday_open();
-        close = hospital.getWeekday_close();
+        open = hospital.getWeekdayOpen();
+        close = hospital.getWeekdayClose();
         strArr[0] = "평일 " + open + " ~ " + close;
 
-        if(hospital.isSaturday_status()){
-            open = hospital.getSaturday_open();
-            close = hospital.getSaturday_close();
+        if(hospital.isSaturdayStatus()){
+            open = hospital.getSaturdayOpen();
+            close = hospital.getSaturdayClose();
             strArr[1] = "토요일 " + open + " ~ " + close;
         }
 
-        if(hospital.isHoliday_status()){
-            open = hospital.getHoliday_open();
-            close = hospital.getHoliday_close();
+        if(hospital.isHolidayStatus()){
+            open = hospital.getHolidayOpen();
+            close = hospital.getHolidayClose();
             strArr[2] = "공휴일 " + open + " ~ " + close;
         }
 
@@ -194,21 +176,11 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
     public void addFavoriteList(){
         favorites.add(hospital.getId());
         user.setFavorites(favorites);
-        DocumentReference documentReference = db.collection("user_list").document(user.getDocumentId());
+        DocumentReference documentReference = db.collection(User.DB_NAME).document(user.getDocumentId());
         documentReference
                 .update("favorites", user.getFavorites())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("DB", "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DB", "Error updating document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
     public void removeFavoriteList(){
@@ -219,25 +191,15 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         }
         user.setFavorites(favorites);
 
-        DocumentReference documentReference = db.collection("user_list").document(user.getDocumentId());
+        DocumentReference documentReference = db.collection(User.DB_NAME).document(user.getDocumentId());
         documentReference
                 .update("favorites", user.getFavorites())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("DB", "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("DB", "Error updating document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
     private void showHospitalLocation(ViewGroup rootView){
-        Point point = getPointFromGeoCoder(hospital.getAddress());
+        LocationPoint point = getPointFromGeoCoder(hospital.getAddress());
 
         MapView mapView = new MapView(getContext());
         mapView.setZoomLevel(2, false);
@@ -257,8 +219,8 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         mapView.addPOIItem(marker);
     }
 
-    private Point getPointFromGeoCoder(String addr) {
-        Point point = new Point();
+    private LocationPoint getPointFromGeoCoder(String addr) {
+        LocationPoint point = new LocationPoint();
         point.addr = addr;
 
         Geocoder geocoder = new Geocoder(getContext());
@@ -280,28 +242,5 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         point.longitude = listAddress.get(0).getLongitude();
         point.latitude = listAddress.get(0).getLatitude();
         return point;
-    }
-
-    class Point {
-        // 위도
-        public double longitude;
-        // 경도
-        public double latitude;
-        public String addr;
-        // 포인트를 받았는지 여부
-        public boolean havePoint;
-
-        @Override
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append("x : ");
-            builder.append(longitude);
-            builder.append(" y : ");
-            builder.append(latitude);
-            builder.append(" addr : ");
-            builder.append(addr);
-
-            return builder.toString();
-        }
     }
 }

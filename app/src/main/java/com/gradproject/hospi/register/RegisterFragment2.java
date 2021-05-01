@@ -29,18 +29,17 @@ public class RegisterFragment2 extends Fragment implements OnBackPressedListener
         inputName = rootView.findViewById(R.id.inputName);
         nameErrorTxt = rootView.findViewById(R.id.nameErrorTxt);
 
-        Button nextBtn = rootView.findViewById(R.id.nextBtn); // 다음 버튼
-        nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                name = inputName.getText().toString();
+        registerActivity.user.setAdmin(false); // 일반 사용자로 설정
 
-                if(name.equals("")){
-                    nameErrorTxt.setVisibility(View.VISIBLE); // 빈칸 에러 출력
-                }else{
-                    registerActivity.user.setName(name); // user 인스턴스에 이름 저장
-                    registerActivity.onFragmentChanged(2); // 다음 화면 이동
-                }
+        Button nextBtn = rootView.findViewById(R.id.nextBtn); // 다음 버튼
+        nextBtn.setOnClickListener(v -> {
+            name = inputName.getText().toString();
+
+            if(name.equals("")){
+                nameErrorTxt.setVisibility(View.VISIBLE); // 빈칸 에러 출력
+            }else{
+                registerActivity.user.setName(name); // user 인스턴스에 이름 저장
+                registerActivity.onFragmentChanged(2); // 다음 화면 이동
             }
         });
 
