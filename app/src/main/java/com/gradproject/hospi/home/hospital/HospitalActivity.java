@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -18,6 +19,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.home.mypage.NoticeDetailFragment;
 import com.gradproject.hospi.home.search.Hospital;
 
 import java.util.ArrayList;
@@ -42,6 +44,8 @@ public class HospitalActivity extends AppCompatActivity {
         setContentView(R.layout.activity_hospital);
 
         hospital = (Hospital) getIntent().getSerializableExtra("hospital");
+
+        int code = getIntent().getIntExtra(HospitalInfoPopUp.HOSPITAL_INFO_POP_UP, -1);
 
         db = FirebaseFirestore.getInstance();
 
@@ -86,7 +90,17 @@ public class HospitalActivity extends AppCompatActivity {
         reservationFragment = new ReservationFragment();
         inquiryFragment = new InquiryFragment();
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.Container, hospitalInfoDetailFragment).commit();
+        switch(code){
+            case HospitalInfoPopUp.RESERVATION_CODE:
+                onReservationFragmentChanged();
+                break;
+            case HospitalInfoPopUp.INQUIRY_CODE:
+                onInquiryFragmentChanged();
+                break;
+            default:
+                getSupportFragmentManager().beginTransaction().replace(R.id.Container, hospitalInfoDetailFragment).commit();
+                break;
+        }
     }
 
     public void onReservationFragmentChanged(int index){
@@ -103,6 +117,15 @@ public class HospitalActivity extends AppCompatActivity {
         }
     }
 
+    public void onReservationFragmentChanged(){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("popUp", true);
+        reservationFragment.setArguments(bundle);
+        transaction.replace(R.id.Container, reservationFragment);
+        transaction.commit();
+    }
+
     public void onInquiryFragmentChanged(int index){
         switch (index) {
             case 0:
@@ -115,6 +138,15 @@ public class HospitalActivity extends AppCompatActivity {
                 Log.d(TAG, "잘못된 프래그먼트 인덱스 선택");
                 break;
         }
+    }
+
+    public void onInquiryFragmentChanged(){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("popUp", true);
+        inquiryFragment.setArguments(bundle);
+        transaction.replace(R.id.Container, inquiryFragment);
+        transaction.commit();
     }
 
     @Override

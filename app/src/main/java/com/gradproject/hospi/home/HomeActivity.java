@@ -54,7 +54,7 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
         historyFragment = new HistoryFragment();
         myPageFragment = new MyPageFragment();
 
-        new Thread(() -> onAuthStateChanged(firebaseAuth)).start();
+        onAuthStateChanged(firebaseAuth);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.container, searchFragment).commit();
 
@@ -85,7 +85,7 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
         firebaseUser = firebaseAuth.getCurrentUser();
         if (firebaseUser != null) {
-            db.collection(User.DB_NAME)
+            new Thread(() -> db.collection(User.DB_NAME)
                     .whereEqualTo("email", firebaseUser.getEmail()).get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -95,7 +95,7 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
-                    });
+                    })).start();
         }else{
             final String msg = "로그인 정보가 존재하지 않습니다.";
             Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();

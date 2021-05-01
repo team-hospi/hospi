@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
@@ -198,7 +199,15 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
     @Override
     public void onBackPressed() {
-        hospitalActivity.onReservationFragmentChanged(0);
+        if(getArguments()!=null){
+            if(getArguments().getBoolean("popUp", false)){
+                getActivity().finish();
+            }else{
+                hospitalActivity.onReservationFragmentChanged(0);
+            }
+        }else{
+            hospitalActivity.onReservationFragmentChanged(0);
+        }
     }
 
     private void notSelectedTimeAlert(){
@@ -242,10 +251,14 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
                 .setCancelable(false)
                 .setMessage("예약 신청이 완료되었습니다.\n병원에서 예약 확정이 되는대로 알려드리겠습니다.")
                 .setPositiveButton("확인", (dialogInterface, i) -> {
-                    getActivity().finish();
-                    Intent intent = new Intent(getContext(), HospitalActivity.class);
-                    intent.putExtra("hospital", hospital);
-                    startActivity(intent);
+                    if(getArguments().getBoolean("popUp", false)){
+                        getActivity().finish();
+                    }else{
+                        getActivity().finish();
+                        Intent intent = new Intent(getContext(), HospitalActivity.class);
+                        intent.putExtra("hospital", hospital);
+                        startActivity(intent);
+                    }
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -479,7 +492,10 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
             button[i].setText(timeList.get(i));
             button[i].setOnClickListener(v -> {
                 selectTime = tmp;
-                timeTxt.setText(tmp.substring(0,2) + "시 " + tmp.substring(3,5) + "분");
+                StringTokenizer st = new StringTokenizer(tmp, ":");
+                String hour = st.nextToken();
+                String min = st.nextToken();
+                timeTxt.setText(hour + "시 " + min + "분");
                 timeTable.removeAllViews();
                 isClickTimeSetBtn = false;
                 timeExpandImg.setImageResource(R.drawable.ic_action_expand_less);

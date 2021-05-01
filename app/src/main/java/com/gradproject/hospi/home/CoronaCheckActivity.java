@@ -1,4 +1,4 @@
-package com.gradproject.hospi.home.mypage;
+package com.gradproject.hospi.home;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.gradproject.hospi.R;
 
-public class AddressSearchActivity extends AppCompatActivity {
-    private static final String ADDRESS = "http://hospi.iptime.org:50000/getAddress.php";
+public class CoronaCheckActivity extends AppCompatActivity {
+    private static final String ADDRESS = "http://ncov.mohw.go.kr/bdBoardList_Real.do?brdId=1&brdGubun=13";
 
     private WebView webView;
     private Handler handler;
@@ -24,7 +24,7 @@ public class AddressSearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_address_search);
+        setContentView(R.layout.activity_corona_check);
 
         closeBtn = findViewById(R.id.closeBtn);
         closeBtn.setOnClickListener(v -> {

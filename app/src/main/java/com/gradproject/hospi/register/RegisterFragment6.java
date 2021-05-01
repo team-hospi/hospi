@@ -92,6 +92,7 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
                                 //아이디 생성이 실패했을 경우
                                 loading.end();
                                 Toast.makeText(getContext(), "알 수 없는 오류로 인해 진행 할 수 없습니다.\n 잠시 후 다시 진행하여 주십시오.", Toast.LENGTH_LONG).show();
+                                firebaseAuth.getCurrentUser().delete();
                             }
                         });
             }

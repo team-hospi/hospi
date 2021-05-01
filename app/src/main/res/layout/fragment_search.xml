@@ -10,7 +10,7 @@
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="80dp"
         android:text="Hospi"
         android:textColor="@color/main_color"
         android:textSize="50sp"
@@ -23,7 +23,7 @@
         android:id="@+id/searchBox"
         android:layout_width="320dp"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/edit_text"
         android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -63,52 +63,114 @@
         android:id="@+id/locationTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
         android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/location"
         app:layout_constraintTop_toBottomOf="@+id/searchBox" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="현위치 주변 병원 지도"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/location" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <View
+        android:id="@+id/view2"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="30dp"
+        android:layout_height="3dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/border"
+        app:layout_constraintBottom_toTopOf="@+id/hospitalMapBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/hospitalMapBtn"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/coronaCheckBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="25dp"
+            android:layout_marginBottom="3dp"
+            android:src="@drawable/hospital" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="100dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="지도에서 병원찾기"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="지도에서 근처 병원을 찾아보세요." />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="25dp"
+            android:src="@drawable/ic_action_forward"
+            app:tint="@color/black" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/coronaCheckBtn"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" >
+        app:layout_constraintStart_toStartOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/mapView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="25dp"
+            android:layout_marginBottom="3dp"
+            android:src="@drawable/ic_action_corona" />
 
-        <ImageButton
-            android:id="@+id/gpsRefreshBtn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="left|bottom"
-            android:layout_margin="15dp"
-            android:background="@drawable/button_ripple"
-            android:elevation="7dp"
-            android:src="@drawable/ic_action_gps"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:tint="@color/main_color" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="100dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="코로나19 발생동향"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="시도별 코로나19 발생동향 확인" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="25dp"
+            android:src="@drawable/ic_action_forward"
+            app:tint="@color/black" />
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

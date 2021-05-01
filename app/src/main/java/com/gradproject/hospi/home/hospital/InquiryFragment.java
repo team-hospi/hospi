@@ -102,9 +102,19 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
 
     @Override
     public void onBackPressed() {
-        hospitalActivity.onInquiryFragmentChanged(0);
-        inquiryTitleEdt.setText("");
-        inquiryContentEdt.setText("");
+        if(getArguments()!=null){
+            if(getArguments().getBoolean("popUp", false)){
+                getActivity().finish();
+            }else{
+                hospitalActivity.onInquiryFragmentChanged(0);
+                inquiryTitleEdt.setText("");
+                inquiryContentEdt.setText("");
+            }
+        }else{
+            hospitalActivity.onInquiryFragmentChanged(0);
+            inquiryTitleEdt.setText("");
+            inquiryContentEdt.setText("");
+        }
     }
 
     public void inquiryWriteProcess(String title, String content){
@@ -136,10 +146,14 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
                 .setCancelable(false)
                 .setMessage("문의가 등록되었습니다.")
                 .setPositiveButton("확인", (dialogInterface, i) -> {
-                    getActivity().finish();
-                    Intent intent = new Intent(getContext(), HospitalActivity.class);
-                    intent.putExtra("hospital", hospital);
-                    startActivity(intent);
+                    if(getArguments().getBoolean("popUp", false)){
+                        getActivity().finish();
+                    }else{
+                        getActivity().finish();
+                        Intent intent = new Intent(getContext(), HospitalActivity.class);
+                        intent.putExtra("hospital", hospital);
+                        startActivity(intent);
+                    }
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
