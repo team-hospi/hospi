@@ -42,6 +42,7 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
         loading = new ProgressDialog(getContext());
         loading.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -55,7 +56,7 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
 
         backBtn = rootView.findViewById(R.id.backBtn);
         inquiryRecyclerView = rootView.findViewById(R.id.inquiryList);
-        layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+
         inquiryRecyclerView.setLayoutManager(layoutManager);
 
         if(getArguments()!=null){

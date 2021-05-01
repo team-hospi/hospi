@@ -1,10 +1,15 @@
 package com.gradproject.hospi.home.mypage;
 
-public class Notice {
+import java.io.Serializable;
+
+public class Notice implements Serializable {
+    private static final long serialVersionUID = 1L;
+    public static final String DB_NAME = "noticeList";
+
     private String title;
     private String content;
-    private String date;
     private long timestamp;
+    private String documentId;
 
     public Notice() {
     }
@@ -25,19 +30,19 @@ public class Notice {
         this.content = content;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public long getTimestamp() {
         return timestamp;
     }
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 }
