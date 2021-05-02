@@ -152,7 +152,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                     break;
                 case Reservation.CONFIRMING_RESERVATION:
                     reservationStatusTxt.setText("예약 확인 중");
-                    reservationStatusTxt.setTextColor(Color.GREEN);
+                    reservationStatusTxt.setTextColor(Color.rgb(70, 201, 0));
                     break;
                 default:
                     reservationStatusTxt.setText("예약 취소됨");

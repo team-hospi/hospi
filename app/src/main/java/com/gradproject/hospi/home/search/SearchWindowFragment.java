@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.home.hospital.HospitalActivity;
+import com.gradproject.hospi.utils.SoundSearcher;
 
 import java.util.ArrayList;
 
@@ -161,7 +162,12 @@ public class SearchWindowFragment extends Fragment {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             Hospital hospital = document.toObject(Hospital.class);
-                            if(hospital.getName().contains(searchStr)){
+
+                            String str = stateDistribution(searchStr);
+
+                            if(hospital.getName().contains(str) || hospital.getAddress().contains(str)
+                                || SoundSearcher.matchString(hospital.getName(), str)
+                                || SoundSearcher.matchString(hospital.getAddress(), str)){
                                 tmpArrList.add(hospital);
                             }
                         }
@@ -180,5 +186,20 @@ public class SearchWindowFragment extends Fragment {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }
                 });
+    }
+
+    private String stateDistribution(String searchStr){
+        String str = searchStr;
+
+        if(searchStr.endsWith("남도")){
+            str = searchStr.substring(0, 1) + "남";
+        }else if(searchStr.endsWith("북도")){
+            str = searchStr.substring(0, 1) + "북";
+        }else if(searchStr.endsWith("도") || searchStr.endsWith("특별시")
+                || searchStr.endsWith("광역시") || searchStr.endsWith("시")){
+            str = searchStr.substring(0, 2);
+        }
+
+        return str;
     }
 }

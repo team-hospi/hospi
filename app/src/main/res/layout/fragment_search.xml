@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".home.SearchFragment">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/logo"
@@ -13,7 +11,7 @@
         android:layout_marginTop="80dp"
         android:text="Hospi"
         android:textColor="@color/main_color"
-        android:textSize="50sp"
+        android:textSize="60sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +21,7 @@
         android:id="@+id/searchBox"
         android:layout_width="320dp"
         android:layout_height="50dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="70dp"
         android:background="@drawable/edit_text"
         android:clickable="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left|center"
             android:layout_marginLeft="10dp"
-            android:hint="증상 또는 병원을 검색하세요"
+            android:hint="지역 또는 병원을 검색하세요"
             android:textSize="17sp" />
 
         <ImageView
@@ -47,27 +45,6 @@
             android:src="@drawable/ic_action_search"
             app:tint="@color/main_color" />
     </FrameLayout>
-
-    <TextView
-        android:id="@+id/location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
-        android:layout_marginTop="10dp"
-        android:text="현위치:"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchBox" />
-
-    <TextView
-        android:id="@+id/locationTxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@+id/location"
-        app:layout_constraintTop_toBottomOf="@+id/searchBox" />
 
     <View
         android:id="@+id/view2"
@@ -108,6 +85,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:text="지도에서 병원찾기"
                 android:textColor="@color/black"
                 android:textSize="20sp" />
@@ -155,6 +133,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:text="코로나19 발생동향"
                 android:textColor="@color/black"
                 android:textSize="20sp" />

@@ -217,6 +217,7 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
         marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
         mapView.addPOIItem(marker);
+        mapView.selectPOIItem(marker, true);
     }
 
     private LocationPoint getPointFromGeoCoder(String addr) {

@@ -24,6 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
+                android:layout_marginBottom="5dp"
                 android:text="병원이름"
                 android:textSize="20sp"
                 android:textColor="@color/black"/>
@@ -32,6 +33,7 @@
                 android:id="@+id/weekdayBusinessHours"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:text="평일 09:00 ~ 18:00"/>
 
@@ -39,6 +41,7 @@
                 android:id="@+id/saturdayBusinessHours"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:text="토요일 휴무"/>
 
@@ -46,6 +49,7 @@
                 android:id="@+id/holidayBusinessHours"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
                 android:text="공휴일 휴무"/>
 
