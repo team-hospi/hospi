@@ -143,15 +143,14 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectDepartment = departmentArray.get(position);
                 closeDateSelect();
-                openDateSelect();
                 closeTimeSelect();
+                openTimeSelect();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
         });
 
-        openDateSelect();
         cal = Calendar.getInstance();
         cal.setTimeInMillis(calendarView.getDate());
         selectCal.setTimeInMillis(calendarView.getDate());
@@ -490,6 +489,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
             button[i] = new Button(getContext());
             button[i].setText(timeList.get(i));
+            button[i].setBackgroundResource(R.drawable.location_btn);
             button[i].setOnClickListener(v -> {
                 selectTime = tmp;
                 StringTokenizer st = new StringTokenizer(tmp, ":");
