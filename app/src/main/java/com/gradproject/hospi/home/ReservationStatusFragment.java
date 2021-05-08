@@ -2,7 +2,6 @@ package com.gradproject.hospi.home;
 
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,18 +13,13 @@ import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.home.hospital.Reservation;
 
 import java.util.ArrayList;
-
-import static com.gradproject.hospi.home.HomeActivity.user;
+import java.util.Collections;
 
 public class ReservationStatusFragment extends Fragment {
     private static final String TAG = "ReservationStatusFragment";
@@ -64,10 +58,18 @@ public class ReservationStatusFragment extends Fragment {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        ArrayList<Reservation> tmpArrList = new ArrayList<>();
+
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             Reservation reservation = document.toObject(Reservation.class);
-                            reservationAdapter.addItem(reservation);
+                            tmpArrList.add(reservation);
+                        }
+
+                        Collections.sort(tmpArrList, new ReservationComparator());
+
+                        for(int i=0; i<tmpArrList.size(); i++){
+                            reservationAdapter.addItem(tmpArrList.get(i));
                         }
 
                         reservationRecyclerView.setAdapter(reservationAdapter);

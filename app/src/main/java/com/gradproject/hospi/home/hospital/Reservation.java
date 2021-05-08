@@ -15,6 +15,7 @@ public class Reservation {
     private String additionalContent;
     private long timestamp;
     private int reservationStatus;
+    private String cancelComment;
 
     public Reservation() {}
 
@@ -88,5 +89,13 @@ public class Reservation {
 
     public void setReservationStatus(int reservationStatus) {
         this.reservationStatus = reservationStatus;
+    }
+
+    public String getCancelComment() {
+        return cancelComment;
+    }
+
+    public void setCancelComment(String cancelComment) {
+        this.cancelComment = cancelComment;
     }
 }

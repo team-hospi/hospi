@@ -32,6 +32,9 @@ import com.gradproject.hospi.User;
 import com.gradproject.hospi.utils.Loading;
 import com.gradproject.hospi.utils.PhoneNumberHyphen;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import static android.app.Activity.RESULT_OK;
 import static com.gradproject.hospi.home.HomeActivity.user;
 
@@ -43,6 +46,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
     FrameLayout changePhNumBtn, changeBirthBtn, changeAddressBtn; // 전화번호 변경, 생년월일 변경, 주소 변경 버튼
     Button changePwBtn, logoutBtn, withdrawalBtn; // 비밀번호 변경, 로그아웃, 회원탈퇴 버튼
     TextView emailTxt, nameTxt, phoneTxt, birthTxt, addressTxt;
+    Calendar cal;
 
     FirebaseFirestore db;
 
@@ -50,6 +54,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
+        cal = Calendar.getInstance();
     }
 
     @Override
@@ -204,7 +209,9 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         int cDay = Integer.parseInt(birth[2]);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
-            String date = year+"-"+(month+1)+"-"+dayOfMonth;
+            cal.set(year, month, dayOfMonth);
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            String date = df.format(cal.getTime());
 
             DocumentReference documentReference = db.collection(User.DB_NAME)
                     .document(user.getDocumentId()); // 해당 이메일 유저 문서 열기

@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.gradproject.hospi.R;
 
 public class AddressSearchActivity extends AppCompatActivity {
-    private static final String ADDRESS = "http://hospi.iptime.org:50000/getAddress.php";
+    private static final String ADDRESS = "http://hospi.iptime.org/m/address.do";
 
     private WebView webView;
     private Handler handler;

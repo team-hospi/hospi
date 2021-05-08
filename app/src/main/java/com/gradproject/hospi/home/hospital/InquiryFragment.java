@@ -146,10 +146,15 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
                 .setCancelable(false)
                 .setMessage("문의가 등록되었습니다.")
                 .setPositiveButton("확인", (dialogInterface, i) -> {
-                    if(getArguments().getBoolean("popUp", false)){
-                        getActivity().finish();
-                    }else{
-                        getActivity().finish();
+                    boolean isPopUp = false;
+
+                    if(getArguments() != null){
+                        isPopUp = getArguments().getBoolean("popUp", false);
+                    }
+
+                    getActivity().finish();
+
+                    if (!isPopUp) {
                         Intent intent = new Intent(getContext(), HospitalActivity.class);
                         intent.putExtra("hospital", hospital);
                         startActivity(intent);

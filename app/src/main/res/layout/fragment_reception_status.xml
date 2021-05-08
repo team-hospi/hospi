@@ -10,5 +10,4 @@
         android:layout_height="match_parent"
         android:text="접수 현황"
         android:textSize="40sp"/>
-
 </LinearLayout>

@@ -132,7 +132,7 @@ public class HospitalActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.Container, hospitalInfoDetailFragment).commit();
                 break;
             case 1:
-                getSupportFragmentManager().beginTransaction().replace(R.id.Container, inquiryFragment).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.Container, new InquiryFragment()).commit();
                 break;
             default:
                 Log.d(TAG, "잘못된 프래그먼트 인덱스 선택");
