@@ -199,8 +199,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
-                android:layout_gravity="center_horizontal"
-                android:collapseColumns="4"/>
+                android:stretchColumns="4"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
