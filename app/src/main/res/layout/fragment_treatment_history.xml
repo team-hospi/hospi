@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.TreatmentHistoryFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/list_background">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/treatmentList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="진료 내역"
-        android:textSize="40sp"/>
-
-</LinearLayout>
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

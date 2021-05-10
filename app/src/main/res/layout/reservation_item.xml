@@ -154,14 +154,23 @@
                     </LinearLayout>
                 </FrameLayout>
 
-               <Button
-                   android:id="@+id/reservationCancelBtn"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:layout_marginTop="10dp"
-                   android:layout_marginBottom="5dp"
-                   android:layout_gravity="right"
-                   android:text="예약취소"/>
+                <LinearLayout
+                    android:id="@+id/reservationCancelBtn"
+                    android:clickable="true"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_gravity="right"
+                    android:gravity="center"
+                    android:background="@drawable/button_clickable_true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="예약 취소"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

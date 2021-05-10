@@ -18,7 +18,7 @@ import com.gradproject.hospi.home.mypage.SettingActivity;
 
 public class MyPageFragment extends Fragment{
     TextView version, nameTxt;
-    Button myInfoEditBtn, favoritesBtn, prescriptionBtn, inquiryDetailsBtn, termsBtn, noticeBtn;
+    Button myInfoEditBtn, favoritesBtn, inquiryDetailsBtn, termsBtn, noticeBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,7 +29,6 @@ public class MyPageFragment extends Fragment{
         nameTxt = rootView.findViewById(R.id.nameTxt);
         myInfoEditBtn = rootView.findViewById(R.id.myInfoEditBtn);
         favoritesBtn = rootView.findViewById(R.id.favoritesBtn);
-        prescriptionBtn = rootView.findViewById(R.id.prescriptionBtn);
         inquiryDetailsBtn = rootView.findViewById(R.id.inquiryDetailsBtn);
         termsBtn = rootView.findViewById(R.id.termsBtn);
         noticeBtn = rootView.findViewById(R.id.noticeBtn);
@@ -41,8 +40,6 @@ public class MyPageFragment extends Fragment{
         myInfoEditBtn.setOnClickListener(v -> startSelectedFragment("myInfoEditBtn"));
 
         favoritesBtn.setOnClickListener(v -> startSelectedFragment("favoritesBtn"));
-
-        prescriptionBtn.setOnClickListener(v -> startSelectedFragment("prescriptionBtn"));
 
         inquiryDetailsBtn.setOnClickListener(v -> startSelectedFragment("inquiryDetailsBtn"));
 

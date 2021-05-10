@@ -198,8 +198,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
 
         ImageButton hospitalInfoBtn;
         TextView hospitalNameTxt, reservationDateTxt, reservationStatusTxt, cancelCommentTxt;
-        Button reservationCancelBtn;
-        LinearLayout reserveInfo, cancelInfo;
+        LinearLayout reserveInfo, cancelInfo, reservationCancelBtn;
 
         public ViewHolder(View itemView){
             super(itemView);
