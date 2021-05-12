@@ -158,19 +158,11 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                         DocumentReference documentReference = db.collection(Reserved.DB_NAME).document(documentId);
                         documentReference
                                 .update("reservedMap", tmpMap)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                        cancelSuccess(v);
-                                    }
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                    cancelSuccess(v);
                                 })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w(TAG, "Error updating document", e);
-                                    }
-                                });
+                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
                     }
                 }
             } else {

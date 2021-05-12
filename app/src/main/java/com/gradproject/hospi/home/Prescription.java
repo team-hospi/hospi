@@ -1,9 +1,11 @@
 package com.gradproject.hospi.home;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Prescription {
+public class Prescription implements Serializable {
     public static final String DB_NAME = "prescriptionList";
+    private static final long serialVersionUID = 1L;
 
     private String department;
     private String hospitalId;

@@ -1,5 +1,6 @@
 package com.gradproject.hospi.home;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class PrescriptionAdapter extends RecyclerView.Adapter<PrescriptionAdapter.ViewHolder>{
     private static final String TAG = "PrescriptionAdapter";
@@ -52,7 +55,10 @@ public class PrescriptionAdapter extends RecyclerView.Adapter<PrescriptionAdapte
         holder.setItem(item);
         holder.prescriptionInfoBtn.setTag(holder.getAdapterPosition());
         holder.prescriptionInfoBtn.setOnClickListener(v -> {
-            // TODO: 처방 정보 팝업 intent 사용
+            Intent intent = new Intent(v.getContext(), PrescriptionInfoPopUpActivity.class);
+            intent.putExtra("prescription", item);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            v.getContext().startActivity(intent);
         });
     }
 
@@ -78,8 +84,15 @@ public class PrescriptionAdapter extends RecyclerView.Adapter<PrescriptionAdapte
 
         public void setItem(Prescription item){
             hospitalNameTxt.setText(item.getHospitalName());
-            // TODO: 타임스탬프 날짜 변환 구현
-            // treatmentDateTxt.setText();
+
+            SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
+            long timestamp = item.getTimestamp();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(timestamp);
+            String date = sdfDate.format(timestamp) + " (" + week[cal.get(Calendar.DAY_OF_WEEK)-1] + ") " + sdfTime.format(timestamp);
+
+            treatmentDateTxt.setText(date);
             departmentTxt.setText(item.getDepartment());
             opinionTxt.setText(item.getOpinion());
         }
