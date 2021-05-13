@@ -7,10 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -19,86 +15,83 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentNoticeWriteBinding;
 import com.gradproject.hospi.utils.Loading;
 
 import java.sql.Timestamp;
 
 public class NoticeWriteFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG ="NoticeWriteFragment";
+    private FragmentNoticeWriteBinding binding;
 
     SettingActivity settingActivity;
-
-    Button writeBtn;
-    ImageButton closeBtn;
-    EditText titleEdt, contentEdt;
-    TextView titleEmptyTxt, contentEmptyTxt;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_notice_write, container,false);
+        binding = FragmentNoticeWriteBinding.inflate(inflater, container, false);
 
         settingActivity = (SettingActivity) getActivity();
-        closeBtn = rootView.findViewById(R.id.closeBtn);
-        writeBtn = rootView.findViewById(R.id.writeBtn);
-        titleEdt = rootView.findViewById(R.id.titleEdt);
-        contentEdt = rootView.findViewById(R.id.contentEdt);
-        titleEmptyTxt = rootView.findViewById(R.id.titleEmptyTxt);
-        contentEmptyTxt = rootView.findViewById(R.id.contentEmptyTxt);
 
-        closeBtn.setOnClickListener(v -> onBackPressed());
+        binding.closeBtn.setOnClickListener(v -> onBackPressed());
 
-        writeBtn.setOnClickListener(v -> {
-            String title = titleEdt.getText().toString();
-            String content = contentEdt.getText().toString();
+        binding.writeBtn.setOnClickListener(v -> {
+            String title = binding.titleEdt.getText().toString();
+            String content = binding.contentEdt.getText().toString();
 
             if(title.equals("") && content.equals("")) {
-                titleEmptyTxt.setVisibility(View.VISIBLE);
-                contentEmptyTxt.setVisibility(View.VISIBLE);
+                binding.titleEmptyTxt.setVisibility(View.VISIBLE);
+                binding.contentEmptyTxt.setVisibility(View.VISIBLE);
             }else if(title.equals("")){
-                titleEmptyTxt.setVisibility(View.VISIBLE);
+                binding.titleEmptyTxt.setVisibility(View.VISIBLE);
             }else if(content.equals("")){
-                contentEmptyTxt.setVisibility(View.VISIBLE);
+                binding.contentEmptyTxt.setVisibility(View.VISIBLE);
             }else{
                 inquiryWriteProcess(title, content);
             }
         });
 
-        titleEdt.addTextChangedListener(new TextWatcher() {
+        binding.titleEdt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* Empty */ }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                titleEmptyTxt.setVisibility(View.INVISIBLE);
+                binding.titleEmptyTxt.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void afterTextChanged(Editable s) { /* Empty */ }
         });
 
-        contentEdt.addTextChangedListener(new TextWatcher() {
+        binding.contentEdt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* Empty */ }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                contentEmptyTxt.setVisibility(View.INVISIBLE);
+                binding.contentEmptyTxt.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void afterTextChanged(Editable s) { /* Empty */ }
         });
 
-        return rootView;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onBackPressed() {
         settingActivity.getSupportFragmentManager().beginTransaction()
                 .replace(R.id.settingContainer, settingActivity.noticeFragment).commit();
-        titleEdt.setText("");
-        contentEdt.setText("");
+        binding.titleEdt.setText("");
+        binding.contentEdt.setText("");
     }
 
     public void inquiryWriteProcess(String title, String content){

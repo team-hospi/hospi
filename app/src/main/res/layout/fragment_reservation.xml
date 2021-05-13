@@ -81,12 +81,18 @@
                 </LinearLayout>
             </FrameLayout>
 
-            <Spinner
-                android:id="@+id/department"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"/>
+                android:layout_marginLeft="30dp"
+                android:background="@color/white"
+                android:elevation="5dp">
+
+                <Spinner
+                    android:id="@+id/department"
+                    android:layout_width="300dp"
+                    android:layout_height="40dp" />
+            </LinearLayout>
 
             <FrameLayout
                 android:id="@+id/dateSetBtn"
@@ -195,11 +201,11 @@
 
             <TableLayout
                 android:id="@+id/timeTable"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:stretchColumns="4"/>
+                android:layout_marginRight="15dp"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

@@ -6,28 +6,27 @@ import android.os.Handler;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.ActivityCoronaCheckBinding;
 
 public class CoronaCheckActivity extends AppCompatActivity {
     private static final String ADDRESS = "http://ncov.mohw.go.kr/bdBoardList_Real.do?brdId=1&brdGubun=13";
+    private ActivityCoronaCheckBinding binding;
 
     private WebView webView;
     private Handler handler;
-
-    ImageButton closeBtn;  // 닫기 버튼
     String address = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_corona_check);
+        binding = ActivityCoronaCheckBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        closeBtn = findViewById(R.id.closeBtn);
-        closeBtn.setOnClickListener(v -> {
+        binding.closeBtn.setOnClickListener(v -> {
             setResult(RESULT_CANCELED);
             finish();
         });

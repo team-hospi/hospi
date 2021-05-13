@@ -7,10 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -22,14 +18,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentInquiryEditBinding;
 
 public class InquiryEditFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "InquiryEditFragment";
-
-    ImageButton closeBtn;
-    Button updateBtn;
-    EditText inquiryTitleEdt, inquiryContentEdt;
-    TextView hospitalNameTxt, titleEmptyTxt, contentEmptyTxt;
+    private FragmentInquiryEditBinding binding;
 
     SettingActivity settingActivity;
     Inquiry inquiry;
@@ -47,65 +40,63 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_inquiry_edit, container,false);
+        binding = FragmentInquiryEditBinding.inflate(inflater, container, false);
 
-        closeBtn = rootView.findViewById(R.id.closeBtn);
-        updateBtn = rootView.findViewById(R.id.updateBtn);
-        inquiryTitleEdt = rootView.findViewById(R.id.inquiryTitleEdt);
-        inquiryContentEdt = rootView.findViewById(R.id.inquiryContentEdt);
-        hospitalNameTxt = rootView.findViewById(R.id.hospitalNameTxt);
-        titleEmptyTxt = rootView.findViewById(R.id.titleEmptyTxt);
-        contentEmptyTxt = rootView.findViewById(R.id.contentEmptyTxt);
+        binding.hospitalNameTxt.setText(inquiry.getHospitalName());
+        binding.inquiryTitleEdt.setText(inquiry.getTitle());
+        binding.inquiryContentEdt.setText(inquiry.getContent());
 
-        hospitalNameTxt.setText(inquiry.getHospitalName());
-        inquiryTitleEdt.setText(inquiry.getTitle());
-        inquiryContentEdt.setText(inquiry.getContent());
+        binding.closeBtn.setOnClickListener(v -> onBackPressed());
 
-        closeBtn.setOnClickListener(v -> onBackPressed());
-
-        updateBtn.setOnClickListener(v -> {
-            String title = inquiryTitleEdt.getText().toString();
-            String content = inquiryContentEdt.getText().toString();
+        binding.updateBtn.setOnClickListener(v -> {
+            String title = binding.inquiryTitleEdt.getText().toString();
+            String content = binding.inquiryContentEdt.getText().toString();
 
             if(title.equals("") && content.equals("")) {
-                titleEmptyTxt.setVisibility(View.VISIBLE);
-                contentEmptyTxt.setVisibility(View.VISIBLE);
+                binding.titleEmptyTxt.setVisibility(View.VISIBLE);
+                binding.contentEmptyTxt.setVisibility(View.VISIBLE);
             }else if(title.equals("")){
-                titleEmptyTxt.setVisibility(View.VISIBLE);
+                binding.titleEmptyTxt.setVisibility(View.VISIBLE);
             }else if(content.equals("")){
-                contentEmptyTxt.setVisibility(View.VISIBLE);
+                binding.contentEmptyTxt.setVisibility(View.VISIBLE);
             }else{
                 inquiryUpdateProcess(title, content);
             }
         });
 
-        inquiryTitleEdt.addTextChangedListener(new TextWatcher() {
+        binding.inquiryTitleEdt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* Empty */ }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                titleEmptyTxt.setVisibility(View.INVISIBLE);
+                binding.titleEmptyTxt.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void afterTextChanged(Editable s) { /* Empty */ }
         });
 
-        inquiryContentEdt.addTextChangedListener(new TextWatcher() {
+        binding.inquiryContentEdt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* Empty */ }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                contentEmptyTxt.setVisibility(View.INVISIBLE);
+                binding.contentEmptyTxt.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void afterTextChanged(Editable s) { /* Empty */ }
         });
 
-        return rootView;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

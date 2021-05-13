@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.R;
 
 import java.text.SimpleDateFormat;
@@ -18,9 +17,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class PrescriptionAdapter extends RecyclerView.Adapter<PrescriptionAdapter.ViewHolder>{
-    private static final String TAG = "PrescriptionAdapter";
-
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public ArrayList<Prescription> items = new ArrayList<>();
 

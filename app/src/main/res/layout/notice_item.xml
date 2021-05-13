@@ -21,7 +21,6 @@
                 android:id="@+id/titleTxt"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:singleLine="true"
                 android:text="제목"
                 android:textSize="17sp"
@@ -31,7 +30,6 @@
                 android:id="@+id/contentTxt"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:singleLine="true"
                 android:text="내용"/>
 

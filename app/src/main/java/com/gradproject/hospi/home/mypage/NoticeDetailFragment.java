@@ -8,34 +8,27 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentNoticeDetailBinding;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 
 public class NoticeDetailFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "NoticeDetailFragment";
+    private FragmentNoticeDetailBinding binding;
 
     Notice notice;
     FirebaseFirestore db;
     SettingActivity settingActivity;
-
-    Toolbar toolbar;
-    ImageButton backBtn;
-    TextView titleTxt, contentTxt;
-
     int pos;
 
     @Override
@@ -53,23 +46,24 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_notice_detail, container,false);
-
-        toolbar = rootView.findViewById(R.id.toolbar);
-        titleTxt = rootView.findViewById(R.id.titleTxt);
-        contentTxt = rootView.findViewById(R.id.contentTxt);
-        backBtn = rootView.findViewById(R.id.backBtn);
+        binding = FragmentNoticeDetailBinding.inflate(inflater, container, false);
 
         setHasOptionsMenu(true);
-        settingActivity.setSupportActionBar(toolbar);
+        settingActivity.setSupportActionBar(binding.toolbar);
         settingActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
 
-        titleTxt.setText(notice.getTitle());
-        contentTxt.setText(notice.getContent());
+        binding.titleTxt.setText(notice.getTitle());
+        binding.contentTxt.setText(notice.getContent());
 
-        return rootView;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

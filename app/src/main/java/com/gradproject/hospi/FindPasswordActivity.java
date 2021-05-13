@@ -3,21 +3,16 @@ package com.gradproject.hospi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.gradproject.hospi.databinding.ActivityFindPasswordBinding;
 
 public class FindPasswordActivity extends AppCompatActivity {
     private final String TAG = "FindPasswordActivity";
-
-    TextView emailErrorTxt;
-    EditText inputEmail;
+    private ActivityFindPasswordBinding binding;
 
     String email;
     String emailRegex = "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+";
@@ -25,21 +20,18 @@ public class FindPasswordActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_find_password);
+        binding = ActivityFindPasswordBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        emailErrorTxt = findViewById(R.id.emailErrorTxt);
-        inputEmail = findViewById(R.id.inputEmail);
-
-        Button nextBtn = findViewById(R.id.nextBtn);
-        nextBtn.setOnClickListener(v -> {
-            email = inputEmail.getText().toString().trim();
+        binding.nextBtn.setOnClickListener(v -> {
+            email = binding.inputEmail.getText().toString().trim();
 
             if (email.equals("")) {
-                emailErrorTxt.setText("이메일을 입력해주세요.");
-                emailErrorTxt.setVisibility(View.VISIBLE);
+                binding.emailErrorTxt.setText("이메일을 입력해주세요.");
+                binding.emailErrorTxt.setVisibility(View.VISIBLE);
             } else if (!(email.matches(emailRegex))) {
-                emailErrorTxt.setText("잘못된 이메일 형식입니다.");
-                emailErrorTxt.setVisibility(View.VISIBLE);
+                binding.emailErrorTxt.setText("잘못된 이메일 형식입니다.");
+                binding.emailErrorTxt.setVisibility(View.VISIBLE);
             }else{
                 sendEmail(email);
             }

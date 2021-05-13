@@ -4,39 +4,31 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.ActivityWriteAddressBinding;
 
 public class WriteAddressActivity extends AppCompatActivity {
     private static final int REQUEST_ADDRESS_SEARCH_ACTIVITY_CODE = 101;
-
-    TextView addressTxt;
-    EditText detailAddressEdt;
-    Button okBtn;
-    ImageButton backBtn;
+    private ActivityWriteAddressBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_write_address);
+        binding = ActivityWriteAddressBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        addressTxt = findViewById(R.id.addressTxt);
+        startActivityForResult(
+                new Intent(getApplicationContext(), AddressSearchActivity.class),
+                REQUEST_ADDRESS_SEARCH_ACTIVITY_CODE);
 
-        startActivityForResult(new Intent(getApplicationContext(), AddressSearchActivity.class), REQUEST_ADDRESS_SEARCH_ACTIVITY_CODE);
+        binding.backBtn.setOnClickListener(v -> finish());
 
-        backBtn = findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(v -> finish());
-
-        detailAddressEdt = findViewById(R.id.detailAddressEdt);
-        detailAddressEdt.addTextChangedListener(new TextWatcher() {
+        binding.detailAddressEdt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -44,12 +36,12 @@ public class WriteAddressActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(detailAddressEdt.getText().toString().equals("")){
-                    okBtn.setEnabled(false);
-                    okBtn.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.black));
+                if(binding.detailAddressEdt.getText().toString().equals("")){
+                    binding.okBtn.setEnabled(false);
+                    binding.okBtn.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.black));
                 }else{
-                    okBtn.setEnabled(true);
-                    okBtn.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
+                    binding.okBtn.setEnabled(true);
+                    binding.okBtn.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.white));
                 }
             }
 
@@ -59,10 +51,12 @@ public class WriteAddressActivity extends AppCompatActivity {
             }
         });
 
-        okBtn = findViewById(R.id.okBtn);
-        okBtn.setOnClickListener(v -> {
+        binding.okBtn.setOnClickListener(v -> {
             Intent intent = new Intent();
-            intent.putExtra("address", addressTxt.getText().toString() + " " + detailAddressEdt.getText().toString());
+            intent.putExtra("address",
+                    binding.addressTxt.getText().toString()
+                    + " "
+                    + binding.detailAddressEdt.getText().toString());
             setResult(RESULT_OK, intent);
             finish();
         });
@@ -74,7 +68,7 @@ public class WriteAddressActivity extends AppCompatActivity {
 
         if(requestCode==REQUEST_ADDRESS_SEARCH_ACTIVITY_CODE) {
             if (resultCode == RESULT_OK) {
-                addressTxt.setText(data.getStringExtra("address"));
+                binding.addressTxt.setText(data.getStringExtra("address"));
             } else {
                 finish();
             }

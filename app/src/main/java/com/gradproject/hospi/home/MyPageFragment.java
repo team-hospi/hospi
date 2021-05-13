@@ -8,46 +8,38 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentMyPageBinding;
 import com.gradproject.hospi.home.mypage.SettingActivity;
 
 public class MyPageFragment extends Fragment{
-    TextView version, nameTxt;
-    Button myInfoEditBtn, favoritesBtn, inquiryDetailsBtn, termsBtn, noticeBtn;
+    private FragmentMyPageBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_my_page, container,false);
-
-        version = rootView.findViewById(R.id.version);
-        nameTxt = rootView.findViewById(R.id.nameTxt);
-        myInfoEditBtn = rootView.findViewById(R.id.myInfoEditBtn);
-        favoritesBtn = rootView.findViewById(R.id.favoritesBtn);
-        inquiryDetailsBtn = rootView.findViewById(R.id.inquiryDetailsBtn);
-        termsBtn = rootView.findViewById(R.id.termsBtn);
-        noticeBtn = rootView.findViewById(R.id.noticeBtn);
+        binding = FragmentMyPageBinding.inflate(inflater, container, false);
 
         HomeActivity homeActivity = (HomeActivity) getActivity();
-        nameTxt.setText(homeActivity.firebaseUser.getDisplayName());
-        version.setText(getVersionInfo(getContext()));
 
-        myInfoEditBtn.setOnClickListener(v -> startSelectedFragment("myInfoEditBtn"));
+        binding.nameTxt.setText(homeActivity.firebaseUser.getDisplayName());
+        binding.version.setText(getVersionInfo(getContext()));
 
-        favoritesBtn.setOnClickListener(v -> startSelectedFragment("favoritesBtn"));
+        binding.myInfoEditBtn.setOnClickListener(v -> startSelectedFragment("myInfoEditBtn"));
+        binding.favoritesBtn.setOnClickListener(v -> startSelectedFragment("favoritesBtn"));
+        binding.inquiryDetailsBtn.setOnClickListener(v -> startSelectedFragment("inquiryDetailsBtn"));
+        binding.termsBtn.setOnClickListener(v -> startSelectedFragment("termsBtn"));
+        binding.noticeBtn.setOnClickListener(v -> startSelectedFragment("noticeBtn"));
 
-        inquiryDetailsBtn.setOnClickListener(v -> startSelectedFragment("inquiryDetailsBtn"));
+        return binding.getRoot();
+    }
 
-        termsBtn.setOnClickListener(v -> startSelectedFragment("termsBtn"));
-
-        noticeBtn.setOnClickListener(v -> startSelectedFragment("noticeBtn"));
-
-        return rootView;
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     public void startSelectedFragment(String select){

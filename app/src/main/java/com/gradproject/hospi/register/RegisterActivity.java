@@ -8,10 +8,12 @@ import androidx.fragment.app.Fragment;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
+import com.gradproject.hospi.databinding.ActivityRegisterBinding;
 
 import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity {
+    private ActivityRegisterBinding binding;
 
     // 회원가입 프래그먼트
     RegisterFragment1 registerFragment1; RegisterFragment2 registerFragment2;
@@ -23,7 +25,8 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        binding = ActivityRegisterBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         user = new User();
 

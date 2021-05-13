@@ -3,39 +3,21 @@ package com.gradproject.hospi.home;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.gradproject.hospi.R;
-
-import java.util.Timer;
-import java.util.TimerTask;
-
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
+import com.gradproject.hospi.databinding.FragmentReceptionStatusBinding;
 
 public class ReceptionStatusFragment extends Fragment {
     private static final String TAG = "ReceptionStatusFragment";
-
-    LinearLayout receptionView, nothingReceptionView;
-    TextView hospitalNameTxt, departmentTxt, patientTxt, patientTxt2,
-             waitingTxt, statusTxt, receptionDateTxt, officeTxt, doctorTxt;
+    private FragmentReceptionStatusBinding binding;
 
     FirebaseFirestore db;
     Reception reception = null;
@@ -51,23 +33,11 @@ public class ReceptionStatusFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_reception_status, container, false);
-
-        receptionView = rootView.findViewById(R.id.receptionView);
-        nothingReceptionView = rootView.findViewById(R.id.nothingReceptionView);
-        departmentTxt = rootView.findViewById(R.id.departmentTxt);
-        hospitalNameTxt = rootView.findViewById(R.id.hospitalNameTxt);
-        patientTxt = rootView.findViewById(R.id.patientTxt);
-        patientTxt2 = rootView.findViewById(R.id.patientTxt2);
-        waitingTxt = rootView.findViewById(R.id.waitingTxt);
-        statusTxt = rootView.findViewById(R.id.statusTxt);
-        receptionDateTxt = rootView.findViewById(R.id.receptionDateTxt);
-        officeTxt = rootView.findViewById(R.id.officeTxt);
-        doctorTxt = rootView.findViewById(R.id.doctorTxt);
+        binding = FragmentReceptionStatusBinding.inflate(inflater, container, false);
 
         showReceptionInfo();
 
-        return rootView;
+        return binding.getRoot();
     }
 
     private void showReceptionInfo(){
@@ -83,21 +53,21 @@ public class ReceptionStatusFragment extends Fragment {
                         }
 
                         if(reception != null){
-                            nothingReceptionView.setVisibility(View.GONE);
-                            receptionView.setVisibility(View.VISIBLE);
+                            binding.nothingReceptionView.setVisibility(View.GONE);
+                            binding.receptionView.setVisibility(View.VISIBLE);
 
-                            departmentTxt.setText(reception.getDepartment());
-                            hospitalNameTxt.setText(reception.getHospitalName());
-                            patientTxt.setText(reception.getPatient());
-                            patientTxt2.setText(reception.getPatient());
-                            receptionDateTxt.setText(reception.getReceptionDate());
-                            officeTxt.setText(reception.getOffice());
-                            doctorTxt.setText(reception.getDoctor());
+                            binding.departmentTxt.setText(reception.getDepartment());
+                            binding.hospitalNameTxt.setText(reception.getHospitalName());
+                            binding.patientTxt.setText(reception.getPatient());
+                            binding.patientTxt2.setText(reception.getPatient());
+                            binding.receptionDateTxt.setText(reception.getReceptionDate());
+                            binding.officeTxt.setText(reception.getOffice());
+                            binding.doctorTxt.setText(reception.getDoctor());
 
                             updateStatus(reception);
                         }else{
-                            nothingReceptionView.setVisibility(View.VISIBLE);
-                            receptionView.setVisibility(View.GONE);
+                            binding.nothingReceptionView.setVisibility(View.VISIBLE);
+                            binding.receptionView.setVisibility(View.GONE);
                         }
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
@@ -130,25 +100,25 @@ public class ReceptionStatusFragment extends Fragment {
     private void updateStatus(Reception reception){
         switch (reception.getStatus()){
             case Reception.NOT_RECEIVED:
-                statusTxt.setText("미접수");
-                statusTxt.setTextColor(Color.RED);
-                waitingTxt.setVisibility(View.GONE);
+                binding.statusTxt.setText("미접수");
+                binding.statusTxt.setTextColor(Color.RED);
+                binding.waitingTxt.setVisibility(View.GONE);
                 break;
             case Reception.RECEIVED:
                 String str = reception.getWaitingNumber() + "명";
-                statusTxt.setText(str);
-                statusTxt.setTextColor(Color.BLACK);
-                waitingTxt.setVisibility(View.VISIBLE);
+                binding.statusTxt.setText(str);
+                binding.statusTxt.setTextColor(Color.BLACK);
+                binding.waitingTxt.setVisibility(View.VISIBLE);
                 break;
             case Reception.TREATMENT:
-                statusTxt.setText("진료중");
-                statusTxt.setTextColor(Color.GREEN);
-                waitingTxt.setVisibility(View.GONE);
+                binding.statusTxt.setText("진료중");
+                binding.statusTxt.setTextColor(Color.GREEN);
+                binding.waitingTxt.setVisibility(View.GONE);
                 break;
             case Reception.TREATMENT_COMPLETE:
-                statusTxt.setText("진료완료");
-                statusTxt.setTextColor(Color.BLACK);
-                waitingTxt.setVisibility(View.GONE);
+                binding.statusTxt.setText("진료완료");
+                binding.statusTxt.setTextColor(Color.BLACK);
+                binding.waitingTxt.setVisibility(View.GONE);
                 break;
             default:
                 break;

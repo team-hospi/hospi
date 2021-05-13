@@ -5,9 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -19,52 +16,45 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
-import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
+import com.gradproject.hospi.databinding.FragmentRegister6Binding;
 import com.gradproject.hospi.utils.Loading;
 
 public class RegisterFragment6 extends Fragment implements OnBackPressedListener {
     private static final String TAG = "RegisterFragment6";
+    private FragmentRegister6Binding binding;
 
     RegisterActivity registerActivity;
-    EditText inputPW, inputPW2; // 1: 비밀번호 2: 비밀번호 확인
-    TextView pwErrorTxt;
-
     String pw; // 비밀번호 저장
     Loading loading;
-
     FirebaseAuth firebaseAuth;
     FirebaseFirestore db;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_register6, container,false);
+        binding = FragmentRegister6Binding.inflate(inflater, container, false);
 
         registerActivity = (RegisterActivity) getActivity();
-        inputPW = rootView.findViewById(R.id.inputPW);
-        inputPW2 = rootView.findViewById(R.id.inputPW2);
-        pwErrorTxt = rootView.findViewById(R.id.pwErrorTxt);
 
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         loading = new Loading(getContext(), "회원가입 완료 중...");
 
-        Button nextBtn = rootView.findViewById(R.id.nextBtn);
-        nextBtn.setOnClickListener(v -> {
-            if(inputPW.getText().toString().equals("") || inputPW2.getText().toString().equals("")){
-                pwErrorTxt.setText("비밀번호를 입력해주세요.");
-                pwErrorTxt.setVisibility(View.VISIBLE);
-            }else if(!(inputPW.getText().toString().equals(inputPW2.getText().toString()))) {
-                pwErrorTxt.setText("비밀번호가 일치하지 않습니다.");
-                pwErrorTxt.setVisibility(View.VISIBLE);
-            }else if(inputPW.getText().toString().length()<6){
-                pwErrorTxt.setText("비밀번호는 6자리 이상이어야 합니다.");
-                pwErrorTxt.setVisibility(View.VISIBLE);
+        binding.nextBtn.setOnClickListener(v -> {
+            if(binding.inputPW.getText().toString().equals("") || binding.inputPW2.getText().toString().equals("")){
+                binding.pwErrorTxt.setText("비밀번호를 입력해주세요.");
+                binding.pwErrorTxt.setVisibility(View.VISIBLE);
+            }else if(!(binding.inputPW.getText().toString().equals(binding.inputPW2.getText().toString()))) {
+                binding.pwErrorTxt.setText("비밀번호가 일치하지 않습니다.");
+                binding.pwErrorTxt.setVisibility(View.VISIBLE);
+            }else if(binding.inputPW.getText().toString().length()<6){
+                binding.pwErrorTxt.setText("비밀번호는 6자리 이상이어야 합니다.");
+                binding.pwErrorTxt.setVisibility(View.VISIBLE);
             }else{
                 loading.start();
-                pw = inputPW2.getText().toString();
+                pw = binding.inputPW2.getText().toString();
 
                 firebaseAuth.createUserWithEmailAndPassword(registerActivity.user.getEmail(), pw)
                         .addOnCompleteListener(getActivity(), task -> {
@@ -98,7 +88,13 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
             }
         });
 
-        return rootView;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

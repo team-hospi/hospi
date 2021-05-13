@@ -9,10 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -23,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
+import com.gradproject.hospi.databinding.FragmentHospitalInfoDetailBinding;
 import com.gradproject.hospi.home.LocationPoint;
 
 import net.daum.mf.map.api.MapPOIItem;
@@ -38,23 +35,16 @@ import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
 
 public class HospitalInfoDetailFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG ="HospitalInfoDetailFragment";
+    private FragmentHospitalInfoDetailBinding binding;
 
     HospitalActivity hospitalActivity;
     FirebaseFirestore db;
-
-    TextView hospitalName, departmentTxt, weekdayBusinessHours;
-    TextView saturdayBusinessHours, holidayBusinessHours, addressTxt;
-    ImageButton backBtn;
-    LinearLayout reservationBtn, inquiryBtn, callBtn, favoriteBtn;
-    ImageView favoriteImg;
-
     ArrayList<String> favorites;
     boolean isFavorite = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         db = FirebaseFirestore.getInstance();
         favorites = (ArrayList) user.getFavorites();
     }
@@ -62,84 +52,78 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_hospital_info_detail, container,false);
+        binding = FragmentHospitalInfoDetailBinding.inflate(inflater, container, false);
 
         hospitalActivity = (HospitalActivity) getActivity();
-        hospitalName = rootView.findViewById(R.id.hospitalName);
-        departmentTxt = rootView.findViewById(R.id.departmentTxt);
-        weekdayBusinessHours = rootView.findViewById(R.id.weekdayBusinessHours);
-        saturdayBusinessHours = rootView.findViewById(R.id.saturdayBusinessHours);
-        holidayBusinessHours = rootView.findViewById(R.id.holidayBusinessHours);
-        addressTxt = rootView.findViewById(R.id.addressTxt);
-        backBtn = rootView.findViewById(R.id.backBtn);
-        reservationBtn = rootView.findViewById(R.id.reservationBtn);
-        inquiryBtn = rootView.findViewById(R.id.inquiryBtn);
-        callBtn = rootView.findViewById(R.id.callBtn);
-        favoriteBtn = rootView.findViewById(R.id.favoriteBtn);
-        favoriteImg = rootView.findViewById(R.id.favoriteImg);
 
         favoriteCheck(); // 찜한 병원인지 확인
 
         if(isFavorite){
-            favoriteImg.setImageResource(R.drawable.ic_action_favorite);
+            binding.favoriteImg.setImageResource(R.drawable.ic_action_favorite);
         }
 
         // 뒤로가기 버튼
-        backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
 
         // 예약 버튼
-        reservationBtn.setOnClickListener(v -> hospitalActivity.onReservationFragmentChanged(1));
+        binding.reservationBtn.setOnClickListener(v -> hospitalActivity.onReservationFragmentChanged(1));
 
         // 문의 버튼
-        inquiryBtn.setOnClickListener(v -> hospitalActivity.onInquiryFragmentChanged(1));
+        binding.inquiryBtn.setOnClickListener(v -> hospitalActivity.onInquiryFragmentChanged(1));
 
         // 전화 버튼
-        callBtn.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + hospital.getTel()))));
+        binding.callBtn.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + hospital.getTel()))));
 
         // 찜 버튼
-        favoriteBtn.setOnClickListener(v -> {
+        binding.favoriteBtn.setOnClickListener(v -> {
             if(isFavorite){
                 String msg = "찜이 해제되었습니다.";
                 Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                 isFavorite = false;
-                favoriteImg.setImageResource(R.drawable.ic_action_favorite_border);
+                binding.favoriteImg.setImageResource(R.drawable.ic_action_favorite_border);
                 removeFavoriteList();
             }else{
                 String msg = "찜이 설정되었습니다.";
                 Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                 isFavorite = true;
-                favoriteImg.setImageResource(R.drawable.ic_action_favorite);
+                binding.favoriteImg.setImageResource(R.drawable.ic_action_favorite);
                 addFavoriteList();
             }
         });
 
-        hospitalName.setText(hospital.getName());
+        binding.hospitalName.setText(hospital.getName());
 
         switch (hospital.getKind()){
             case "의원":
-                departmentTxt.setText(hospital.getDepartment().get(0));
+                binding.departmentTxt.setText(hospital.getDepartment().get(0));
                 break;
             case "종합":
             case "대학":
-                departmentTxt.setText(hospital.getKind() + "병원");
+                binding.departmentTxt.setText(hospital.getKind() + "병원");
                 break;
         }
 
         String[] businessHoursArr = getBusinessHours();
-        weekdayBusinessHours.setText(businessHoursArr[0]);
-        saturdayBusinessHours.setText(businessHoursArr[1]);
-        holidayBusinessHours.setText(businessHoursArr[2]);
+        binding.weekdayBusinessHours.setText(businessHoursArr[0]);
+        binding.saturdayBusinessHours.setText(businessHoursArr[1]);
+        binding.holidayBusinessHours.setText(businessHoursArr[2]);
 
-        addressTxt.setText(hospital.getAddress());
+        binding.addressTxt.setText(hospital.getAddress());
 
-        showHospitalLocation(rootView);
+        showHospitalLocation();
 
-        return rootView;
+        return binding.getRoot();
     }
 
     @Override
     public void onBackPressed() {
         getActivity().finish();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private String[] getBusinessHours(){
@@ -198,15 +182,14 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
                 .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
     }
 
-    private void showHospitalLocation(ViewGroup rootView){
+    private void showHospitalLocation(){
         LocationPoint point = getPointFromGeoCoder(hospital.getAddress());
 
         MapView mapView = new MapView(getContext());
         mapView.setZoomLevel(2, false);
-        ViewGroup mapViewContainer = (ViewGroup) rootView.findViewById(R.id.mapView);
         MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(point.latitude, point.longitude);
         mapView.setMapCenterPoint(mapPoint, false);
-        mapViewContainer.addView(mapView);
+        binding.mapView.addView(mapView);
 
         MapPOIItem marker = new MapPOIItem();
         marker.setItemName(hospital.getName());

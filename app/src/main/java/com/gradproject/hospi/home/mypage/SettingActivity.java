@@ -7,10 +7,12 @@ import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.ActivitySettingBinding;
 
 import java.util.List;
 
 public class SettingActivity extends AppCompatActivity implements OnBackPressedListener {
+    private ActivitySettingBinding binding;
 
     // 마이페이지 각 목록과 연결되는 화면
     EditMyInfoFragment editMyInfoFragment; FavoriteFragment favoriteFragment;
@@ -21,7 +23,8 @@ public class SettingActivity extends AppCompatActivity implements OnBackPressedL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
+        binding = ActivitySettingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         editMyInfoFragment = new EditMyInfoFragment(); favoriteFragment = new FavoriteFragment();
         inquiryListFragment = new InquiryListFragment(); noticeFragment = new NoticeFragment();

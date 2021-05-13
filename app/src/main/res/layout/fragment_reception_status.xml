@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/list_background"
     android:orientation="vertical">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/receptionView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,9 +15,13 @@
         android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp">
+            android:layout_margin="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -29,17 +35,17 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="병원이름"
-                    android:textSize="25sp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black"
+                    android:textSize="25sp" />
 
                 <TextView
                     android:id="@+id/departmentTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="5dp"
                     android:text="진료과"
-                    android:textSize="20sp"/>
+                    android:textSize="20sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -51,23 +57,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="OOO"
+                        android:textColor="@color/black"
                         android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="님의 접수현황"
-                        android:textSize="20sp"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="20sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="25dp"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="25dp"
                     android:orientation="vertical">
 
                     <TextView
@@ -75,10 +81,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:visibility="gone"
                         android:text="대기인수"
+                        android:textColor="@color/black"
                         android:textSize="20sp"
-                        android:textColor="@color/black"/>
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/statusTxt"
@@ -86,8 +92,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:text="미접수"
-                        android:textSize="60sp"
-                        android:textColor="@color/red"/>
+                        android:textColor="@color/red"
+                        android:textSize="60sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -99,7 +105,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="접수일"
-                        android:textSize="20sp"/>
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/receptionDateTxt"
@@ -107,8 +113,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
                         android:text="0000-00-00 (월) 00:00"
-                        android:textSize="20sp"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="20sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -120,7 +126,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="진료실"
-                        android:textSize="20sp"/>
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/officeTxt"
@@ -128,8 +134,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
                         android:text="진료실"
-                        android:textSize="20sp"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="20sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -141,7 +147,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="의사"
-                        android:textSize="20sp"/>
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/doctorTxt"
@@ -149,8 +155,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="40dp"
                         android:text="의사명"
-                        android:textSize="20sp"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="20sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -162,7 +168,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="환자"
-                        android:textSize="20sp"/>
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/patientTxt2"
@@ -170,39 +176,42 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="40dp"
                         android:text="환자명"
-                        android:textSize="20sp"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:textSize="20sp" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:layout_gravity="center"
-            android:orientation="vertical">
+            android:layout_marginBottom="5dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
             <ImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_marginTop="30dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_action_info"/>
+                android:src="@drawable/ic_action_info" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
                 android:text="접수 현황 안내"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
 
             <LinearLayout
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -213,13 +222,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="1. "/>
+                        android:text="1. " />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="대기 인원 수는 병원 상황에 따라 다를 수 있으며 실시간으로 변동됩니다."/>
+                        android:text="대기 인원 수는 병원 상황에 따라 다를 수 있으며 실시간으로 변동됩니다." />
                 </LinearLayout>
 
                 <LinearLayout
@@ -230,13 +239,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="2. "/>
+                        android:text="2. " />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="진료 받을 차례가 오면 푸시 알림으로 알려드립니다."/>
+                        android:text="진료 받을 차례가 오면 푸시 알림으로 알려드립니다." />
                 </LinearLayout>
 
                 <LinearLayout
@@ -247,17 +256,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="3. "/>
+                        android:text="3. " />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="3dp"
-                        android:text="접수와 진료에 관한 자세한 안내는 병원에서 안내받으실 수 있습니다."/>
+                        android:text="접수와 진료에 관한 자세한 안내는 병원에서 안내받으실 수 있습니다." />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/nothingReceptionView"
@@ -267,8 +276,8 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginTop="150dp"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_action_info"/>

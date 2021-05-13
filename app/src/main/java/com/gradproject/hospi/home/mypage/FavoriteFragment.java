@@ -6,18 +6,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
-import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentFavoriteBinding;
 import com.gradproject.hospi.home.hospital.HospitalActivity;
 import com.gradproject.hospi.home.search.Hospital;
 import com.gradproject.hospi.home.search.HospitalAdapter;
@@ -28,21 +25,16 @@ import static com.gradproject.hospi.home.HomeActivity.user;
 
 public class FavoriteFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "FavoriteFragment";
+    private FragmentFavoriteBinding binding;
 
-    ImageButton backBtn;
-    TextView noFavoriteTxt;
-
-    RecyclerView favoriteRecyclerView;
     LinearLayoutManager layoutManager;
     HospitalAdapter hospitalAdapter = new HospitalAdapter();
-
     FirebaseFirestore db;
     ArrayList<String> favorites;
 
     @Override
     public void onResume() {
         super.onResume();
-
         loadFavoriteHospital();
     }
 
@@ -58,15 +50,11 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_favorite, container,false);
+        binding = FragmentFavoriteBinding.inflate(inflater, container, false);
 
-        favoriteRecyclerView = rootView.findViewById(R.id.favoriteList);
-        noFavoriteTxt = rootView.findViewById(R.id.noFavoriteTxt);
+        binding.favoriteList.setLayoutManager(layoutManager);
 
-        favoriteRecyclerView.setLayoutManager(layoutManager);
-
-        backBtn = rootView.findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
 
         hospitalAdapter.setOnItemClickListener((holder, view, position) -> {
             Hospital hospital = hospitalAdapter.getItem(position);
@@ -75,12 +63,18 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
             startActivity(intent);
         });
 
-        return rootView;
+        return binding.getRoot();
     }
 
     @Override
     public void onBackPressed() {
         getActivity().finish();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     public void loadFavoriteHospital(){
@@ -99,7 +93,7 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
                                 hospitalAdapter.addItem(hospital);
                             }
 
-                            favoriteRecyclerView.setAdapter(hospitalAdapter);
+                            binding.favoriteList.setAdapter(hospitalAdapter);
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -107,7 +101,7 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
         }
 
         if(favorites.size()==0){
-            noFavoriteTxt.setVisibility(View.VISIBLE);
+            binding.noFavoriteTxt.setVisibility(View.VISIBLE);
         }
     }
 }

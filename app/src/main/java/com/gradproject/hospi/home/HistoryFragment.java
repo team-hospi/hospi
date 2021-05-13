@@ -7,16 +7,13 @@ import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
 
-import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentHistoryBinding;
 
 public class HistoryFragment extends Fragment {
-    ViewPager2 historyPager;
+    private FragmentHistoryBinding binding;
     HistoryPagerAdapter historyPagerAdapter;
-    TabLayout historyTab;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,15 +24,13 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_history, container,false);
+        binding = FragmentHistoryBinding.inflate(inflater, container, false);
 
-        historyPager = rootView.findViewById(R.id.historyPager);
-        historyTab = rootView.findViewById(R.id.historyTab);
 
-        historyPager.setSaveEnabled(false);
+        binding.historyPager.setSaveEnabled(false);
 
-        historyPager.setAdapter(historyPagerAdapter);
-        new TabLayoutMediator(historyTab, historyPager, (tab, position) -> {
+        binding.historyPager.setAdapter(historyPagerAdapter);
+        new TabLayoutMediator(binding.historyTab, binding.historyPager, (tab, position) -> {
             switch(position){
                 case 0:
                     tab.setText("예약 현황");
@@ -50,6 +45,12 @@ public class HistoryFragment extends Fragment {
 
         }).attach();
 
-        return rootView;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
