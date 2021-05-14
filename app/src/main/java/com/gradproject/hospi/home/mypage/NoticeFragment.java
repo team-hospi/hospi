@@ -17,6 +17,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentNoticeBinding;
+import com.gradproject.hospi.utils.Loading;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -24,6 +24,7 @@ import com.gradproject.hospi.home.hospital.HospitalActivity;
 import com.gradproject.hospi.home.hospital.Reservation;
 import com.gradproject.hospi.home.hospital.Reserved;
 import com.gradproject.hospi.home.search.Hospital;
+import com.gradproject.hospi.utils.Loading;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,6 +37,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     final String cancelComment = "예약자에 의한 취소";
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    Loading loading;
 
     public ArrayList<Reservation> items = new ArrayList<>();
 
@@ -60,6 +62,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     public ReservationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.reservation_item, parent, false);
+        loading = new Loading(itemView.getContext());
 
         return new ReservationAdapter.ViewHolder(itemView);
     }
@@ -87,6 +90,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     }
 
     private void reservationCancelProcess(View v, Reservation item){
+        loading.show();
         Query query = db.collection(Reservation.DB_NAME)
                 .whereEqualTo("id", item.getId())
                 .whereEqualTo("hospitalId", item.getHospitalId())
@@ -113,6 +117,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                             })
                             .addOnFailureListener(e -> {
                                 Log.w(TAG, "Error updating document", e);
+                                loading.dismiss();
                                 final String msg = "알 수 없는 오류로 인해 취소되지 않았습니다.\n잠시 후 다시 시도해주세요.";
                                 Toast.makeText(v.getContext(), msg, Toast.LENGTH_LONG).show();
                             });
@@ -157,7 +162,10 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                                     Log.d(TAG, "DocumentSnapshot successfully updated!");
                                     cancelSuccess(v);
                                 })
-                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+                                .addOnFailureListener(e -> {
+                                    Log.w(TAG, "Error updating document", e);
+                                    loading.dismiss();
+                                });
                     }
                 }
             } else {
@@ -167,6 +175,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     }
 
     private void cancelSuccess(View v){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext())
                 .setCancelable(false)
                 .setMessage("예약 취소가 정상적으로 처리되었습니다.")

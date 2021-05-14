@@ -19,6 +19,7 @@ import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentInquiryEditBinding;
+import com.gradproject.hospi.utils.Loading;
 
 public class InquiryEditFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "InquiryEditFragment";
@@ -27,11 +28,12 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
     SettingActivity settingActivity;
     Inquiry inquiry;
     FirebaseFirestore db;
+    Loading loading;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        loading = new Loading(getContext());
         settingActivity = (SettingActivity) getActivity();
         inquiry = (Inquiry) getArguments().getSerializable("inquiry");
         db = FirebaseFirestore.getInstance();
@@ -111,6 +113,7 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
     }
 
     public void inquiryUpdateProcess(String title, String content){
+        loading.show();
         inquiry.setTitle(title);
         inquiry.setContent(content);
 
@@ -123,12 +126,14 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Error updating document", e);
+                    loading.dismiss();
                     String msg = "문의 수정에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                 });
     }
 
     public void updateSuccessPopUp(){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("문의가 수정되었습니다.")

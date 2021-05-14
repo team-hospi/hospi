@@ -28,6 +28,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentReservationBinding;
+import com.gradproject.hospi.utils.Loading;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -59,6 +60,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     String selectDepartment, selectTime=null;
     boolean isClickDateSetBtn = false;
     boolean isClickTimeSetBtn = false;
+    Loading loading;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,6 +68,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         db = FirebaseFirestore.getInstance();
         cal = Calendar.getInstance();
         selectCal = Calendar.getInstance();
+        loading = new Loading(getContext());
 
         datePicker = new DatePicker(getContext());
         datePicker.setMinDate(cal.getTimeInMillis());
@@ -193,6 +196,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     }
 
     public void reservationProcess(){
+        loading.show();
         Reservation reservation = new Reservation();
         reservation.setId(user.getEmail());    // 유저 이메일 설정
         reservation.setHospitalId(hospital.getId());     // 병원 아이디 설정
@@ -221,6 +225,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     }
 
     private void reservationSuccess(){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("예약 신청이 완료되었습니다.\n병원에서 예약 확정이 되는대로 알려드리겠습니다.")
@@ -244,6 +249,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     }
 
     private void reservationFail(){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("예약에 실패하였습니다.\n잠시 후 다시 진행해주세요.")

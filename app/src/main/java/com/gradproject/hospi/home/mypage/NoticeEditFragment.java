@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentNoticeEditBinding;
+import com.gradproject.hospi.utils.Loading;
 
 public class NoticeEditFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "NoticeEditFragment";
@@ -26,6 +27,7 @@ public class NoticeEditFragment extends Fragment implements OnBackPressedListene
     SettingActivity settingActivity;
     Notice notice;
     FirebaseFirestore db;
+    Loading loading;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,7 @@ public class NoticeEditFragment extends Fragment implements OnBackPressedListene
         settingActivity = (SettingActivity) getActivity();
         notice = (Notice) getArguments().getSerializable("notice");
         db = FirebaseFirestore.getInstance();
+        loading = new Loading(getContext());
     }
 
     @Override
@@ -108,6 +111,7 @@ public class NoticeEditFragment extends Fragment implements OnBackPressedListene
     }
 
     public void inquiryUpdateProcess(String title, String content){
+        loading.show();
         notice.setTitle(title);
         notice.setContent(content);
 
@@ -120,12 +124,14 @@ public class NoticeEditFragment extends Fragment implements OnBackPressedListene
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Error updating document", e);
+                    loading.dismiss();
                     String msg = "공지사항 수정에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                 });
     }
 
     public void updateSuccessPopUp(){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("공지사항이 수정되었습니다.")

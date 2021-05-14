@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity{
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        loading = new Loading(LoginActivity.this, "로그인 중...");
+        loading = new Loading(LoginActivity.this);
 
         // 로그인 버튼
         Button loginBtn = findViewById(R.id.loginBtn);
@@ -36,22 +36,20 @@ public class LoginActivity extends AppCompatActivity{
             id = binding.inputEmail.getText().toString();
             pw = binding.inputPW.getText().toString();
 
-            loading.start();
+            loading.show();
 
             if(!(id.equals("") || pw.equals(""))){
                 firebaseAuth.signInWithEmailAndPassword(id, pw)
                         .addOnCompleteListener(LoginActivity.this, task -> {
                             if(task.isSuccessful()){
-                                loading.end();
+                                loading.dismiss();
                                 startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                                 finish();
                             } else {
-                                loading.end();
                                 loginFail();
                             }
                         });
             }else{
-                loading.end();
                 loginFail();
             }
         });
@@ -67,6 +65,7 @@ public class LoginActivity extends AppCompatActivity{
 
     // 로그인 실패 팝업 띄우기
     private void loginFail(){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this)
                 .setCancelable(false)
                 .setMessage("아이디 및 비밀번호가 일치하지 않습니다.")

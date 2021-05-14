@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentNoticeDetailBinding;
+import com.gradproject.hospi.utils.Loading;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 
@@ -26,6 +27,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     private static final String TAG = "NoticeDetailFragment";
     private FragmentNoticeDetailBinding binding;
 
+    Loading loading;
     Notice notice;
     FirebaseFirestore db;
     SettingActivity settingActivity;
@@ -34,7 +36,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        loading = new Loading(getContext());
         settingActivity = (SettingActivity) getActivity();
         db = FirebaseFirestore.getInstance();
         if(getArguments()!=null){
@@ -106,6 +108,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     }
 
     public void delBtnProcess(){
+        loading.show();
         db.collection(Notice.DB_NAME).document(notice.getDocumentId())
                 .delete()
                 .addOnSuccessListener(aVoid -> {
@@ -114,6 +117,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Error deleting document", e);
+                    loading.dismiss();
                     String msg = "삭제에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                 });
@@ -130,6 +134,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     }
 
     public void deleteSuccessPopUp(){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("삭제되었습니다.")

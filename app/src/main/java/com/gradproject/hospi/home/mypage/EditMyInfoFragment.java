@@ -217,20 +217,20 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
     }
 
     private void changePassword(){
-        Loading loading = new Loading(getContext(), "비밀번호 변경 메일 발송 중...");
+        Loading loading = new Loading(getContext());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("비밀번호를 변경하시겠습니까?")
                 .setPositiveButton("확인", (dialog, i) -> {
-                    loading.start();
+                    loading.show();
 
                     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
                     firebaseAuth.sendPasswordResetEmail(user.getEmail())
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
-                                    loading.end();
+                                    loading.dismiss();
 
                                     AlertDialog.Builder builder2 = new AlertDialog.Builder(getContext())
                                             .setCancelable(false)
@@ -244,7 +244,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
                                     alertDialog2.show();
                                     Log.d(TAG, "Email sent.");
                                 }else{
-                                    loading.end();
+                                    loading.dismiss();
                                     Toast.makeText(getContext(), "진행 중 오류가 발생하였습니다. 잠시 후 다시 진행하여 주십시오.", Toast.LENGTH_LONG).show();
                                 }
                             });

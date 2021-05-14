@@ -40,7 +40,7 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
         firebaseAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        loading = new Loading(getContext(), "회원가입 완료 중...");
+        loading = new Loading(getContext());
 
         binding.nextBtn.setOnClickListener(v -> {
             if(binding.inputPW.getText().toString().equals("") || binding.inputPW2.getText().toString().equals("")){
@@ -53,7 +53,7 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
                 binding.pwErrorTxt.setText("비밀번호는 6자리 이상이어야 합니다.");
                 binding.pwErrorTxt.setVisibility(View.VISIBLE);
             }else{
-                loading.start();
+                loading.show();
                 pw = binding.inputPW2.getText().toString();
 
                 firebaseAuth.createUserWithEmailAndPassword(registerActivity.user.getEmail(), pw)
@@ -75,12 +75,12 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
                                         .add(registerActivity.user)
                                         .addOnSuccessListener(documentReference -> {
                                             userDocumentIdUpdate();
-                                            loading.end();
+                                            loading.dismiss();
                                             registerSuccess();
                                         });
                             }else{
                                 //아이디 생성이 실패했을 경우
-                                loading.end();
+                                loading.dismiss();
                                 Toast.makeText(getContext(), "알 수 없는 오류로 인해 진행 할 수 없습니다.\n 잠시 후 다시 진행하여 주십시오.", Toast.LENGTH_LONG).show();
                                 firebaseAuth.getCurrentUser().delete();
                             }

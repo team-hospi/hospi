@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -24,7 +25,14 @@ public class NoticeWriteFragment extends Fragment implements OnBackPressedListen
     private static final String TAG ="NoticeWriteFragment";
     private FragmentNoticeWriteBinding binding;
 
+    Loading loading;
     SettingActivity settingActivity;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        loading = new Loading(getContext());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,8 +103,7 @@ public class NoticeWriteFragment extends Fragment implements OnBackPressedListen
     }
 
     public void inquiryWriteProcess(String title, String content){
-        Loading loading = new Loading(getContext(), "공지사항 등록 중...");
-        loading.start();
+        loading.show();
 
         long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
 
@@ -118,10 +125,11 @@ public class NoticeWriteFragment extends Fragment implements OnBackPressedListen
                     writeFail();
                 });
 
-        loading.end();
+        loading.dismiss();
     }
 
     private void writeSuccess(){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("공지사항이 등록되었습니다.")
@@ -139,6 +147,7 @@ public class NoticeWriteFragment extends Fragment implements OnBackPressedListen
     }
 
     private void writeFail(){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("문의 등록에 실패하였습니다.\n잠시후 다시 시도해주세요.")
