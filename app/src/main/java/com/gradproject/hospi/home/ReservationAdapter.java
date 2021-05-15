@@ -6,8 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,19 +15,29 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.home.hospital.HospitalActivity;
 import com.gradproject.hospi.home.hospital.Reservation;
+import com.gradproject.hospi.home.hospital.Reserved;
 import com.gradproject.hospi.home.search.Hospital;
+import com.gradproject.hospi.utils.Loading;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 
 public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.ViewHolder>{
     private static final String TAG = "ReservationAdapter";
+
+    final String cancelComment = "예약자에 의한 취소";
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    Loading loading;
 
     public ArrayList<Reservation> items = new ArrayList<>();
 
@@ -52,6 +62,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     public ReservationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.reservation_item, parent, false);
+        loading = new Loading(itemView.getContext());
 
         return new ReservationAdapter.ViewHolder(itemView);
     }
@@ -61,7 +72,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         Reservation item = items.get(position);
         holder.setItem(item);
         holder.reservationCancelBtn.setTag(holder.getAdapterPosition());
-        holder.reservationCancelBtn.setOnClickListener(v -> reservationCancelProcess(v, item));
+        holder.reservationCancelBtn.setOnClickListener(v -> reservationCancelDialog(v, item));
     }
 
     @Override
@@ -69,8 +80,17 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         return items.size();
     }
 
+    private void reservationCancelDialog(View v, Reservation item){
+        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext())
+                .setMessage("해당 예약을 취소하시겠습니까?")
+                .setPositiveButton("예", (dialogInterface, i) -> reservationCancelProcess(v, item))
+                .setNegativeButton("아니오", (dialog, which) -> {});
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
     private void reservationCancelProcess(View v, Reservation item){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        loading.show();
         Query query = db.collection(Reservation.DB_NAME)
                 .whereEqualTo("id", item.getId())
                 .whereEqualTo("hospitalId", item.getHospitalId())
@@ -85,14 +105,19 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                 }
 
                 if(id != null){
-                    db.collection(Reservation.DB_NAME).document(id)
-                            .delete()
+                    DocumentReference documentReference = db.collection(Reservation.DB_NAME).document(id);
+                    documentReference
+                            .update(
+                                    "cancelComment", cancelComment,
+                                    "reservationStatus", Reservation.RESERVATION_CANCELED
+                            )
                             .addOnSuccessListener(aVoid -> {
-                                Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                                cancelSuccess(v);
+                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                reservedDeleteProcess(v, item);
                             })
                             .addOnFailureListener(e -> {
-                                Log.w(TAG, "Error deleting document", e);
+                                Log.w(TAG, "Error updating document", e);
+                                loading.dismiss();
                                 final String msg = "알 수 없는 오류로 인해 취소되지 않았습니다.\n잠시 후 다시 시도해주세요.";
                                 Toast.makeText(v.getContext(), msg, Toast.LENGTH_LONG).show();
                             });
@@ -103,13 +128,61 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         });
     }
 
+    private void reservedDeleteProcess(View v, Reservation item){
+        Query query = db.collection(Reserved.DB_NAME)
+                .whereEqualTo("hospitalId", item.getHospitalId())
+                .whereEqualTo("department", item.getDepartment());
+
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Reserved reserved=null;
+                String documentId = null;
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    Log.d(TAG, document.getId() + " => " + document.getData());
+                    reserved = document.toObject(Reserved.class);
+                    documentId = document.getId();
+                }
+
+                if(reserved != null && documentId != null){
+                    HashMap<String, List<String>> tmpMap = (HashMap) reserved.getReservedMap();
+                    if(tmpMap.containsKey(item.getReservationDate())){
+                        ArrayList<String> tmpList = (ArrayList) tmpMap.get(item.getReservationDate());
+                        for(int i=0; i<tmpList.size(); i++){
+                            if(tmpList.get(i).equals(item.getReservationTime())){
+                                tmpList.remove(i);
+                            }
+                        }
+
+                        tmpMap.put(item.getReservationDate(), tmpList);
+
+                        DocumentReference documentReference = db.collection(Reserved.DB_NAME).document(documentId);
+                        documentReference
+                                .update("reservedMap", tmpMap)
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                    cancelSuccess(v);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.w(TAG, "Error updating document", e);
+                                    loading.dismiss();
+                                });
+                    }
+                }
+            } else {
+                Log.d(TAG, "Error getting documents: ", task.getException());
+            }
+        });
+    }
+
     private void cancelSuccess(View v){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext())
                 .setCancelable(false)
                 .setMessage("예약 취소가 정상적으로 처리되었습니다.")
                 .setPositiveButton("확인", (dialogInterface, i) -> {
                     int pos = (int) v.getTag();
-                    items.remove(pos);
+                    items.get(pos).setCancelComment(cancelComment);
+                    items.get(pos).setReservationStatus(Reservation.RESERVATION_CANCELED);
                     notifyDataSetChanged();
                 });
         AlertDialog alertDialog = builder.create();
@@ -120,8 +193,8 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         final String week[] = {"일", "월", "화", "수", "목", "금", "토"};
 
         ImageButton hospitalInfoBtn;
-        TextView hospitalNameTxt, reservationDateTxt, reservationStatusTxt;
-        Button reservationCancelBtn;
+        TextView hospitalNameTxt, reservationDateTxt, reservationStatusTxt, cancelCommentTxt;
+        LinearLayout reserveInfo, cancelInfo, reservationCancelBtn;
 
         public ViewHolder(View itemView){
             super(itemView);
@@ -130,10 +203,16 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
             reservationDateTxt = itemView.findViewById(R.id.reservationDateTxt);
             reservationStatusTxt = itemView.findViewById(R.id.reservationStatusTxt);
             reservationCancelBtn = itemView.findViewById(R.id.reservationCancelBtn);
+            reserveInfo = itemView.findViewById(R.id.reserveInfo);
+            cancelInfo = itemView.findViewById(R.id.cancelInfo);
+            cancelCommentTxt = itemView.findViewById(R.id.cancelCommentTxt);
         }
 
         public void setItem(Reservation item){
             hospitalNameTxt.setText(item.getHospitalName());
+            if(item.getCancelComment() != null){
+                cancelCommentTxt.setText(item.getCancelComment());
+            }
             String date = item.getReservationDate();
             String time = item.getReservationTime();
             Calendar cal = Calendar.getInstance();
@@ -152,11 +231,14 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                     break;
                 case Reservation.CONFIRMING_RESERVATION:
                     reservationStatusTxt.setText("예약 확인 중");
-                    reservationStatusTxt.setTextColor(Color.GREEN);
+                    reservationStatusTxt.setTextColor(Color.rgb(70, 201, 0));
                     break;
                 default:
                     reservationStatusTxt.setText("예약 취소됨");
                     reservationStatusTxt.setTextColor(Color.RED);
+                    reserveInfo.setVisibility(View.GONE);
+                    cancelInfo.setVisibility(View.VISIBLE);
+                    reservationCancelBtn.setVisibility(View.GONE);
                     break;
             }
 

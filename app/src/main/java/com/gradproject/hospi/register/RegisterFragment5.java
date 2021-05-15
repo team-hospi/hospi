@@ -5,9 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -16,44 +13,45 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.OnBackPressedListener;
-import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
+import com.gradproject.hospi.databinding.FragmentRegister5Binding;
 
 public class RegisterFragment5 extends Fragment implements OnBackPressedListener {
     private static final String TAG = "RegisterFragment5";
+    private FragmentRegister5Binding binding;
 
     RegisterActivity registerActivity;
-    TextView emailErrorTxt;
-    EditText inputEmail;
-
     String email;
     String emailRegex = "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_register5, container,false);
+        binding = FragmentRegister5Binding.inflate(inflater, container, false);
 
         registerActivity = (RegisterActivity) getActivity();
-        emailErrorTxt = rootView.findViewById(R.id.emailErrorTxt);
-        inputEmail = rootView.findViewById(R.id.inputEmail);
 
-        Button nextBtn = rootView.findViewById(R.id.nextBtn);
-        nextBtn.setOnClickListener(v -> {
-            email = inputEmail.getText().toString().trim();
+        binding.nextBtn.setOnClickListener(v -> {
+            email = binding.inputEmail.getText().toString().trim();
 
             if (email.equals("")) {
-                emailErrorTxt.setText("이메일을 입력해주세요.");
-                emailErrorTxt.setVisibility(View.VISIBLE);
+                binding.emailErrorTxt.setText("이메일을 입력해주세요.");
+                binding.emailErrorTxt.setVisibility(View.VISIBLE);
             } else if (!(email.matches(emailRegex))) {
-                emailErrorTxt.setText("잘못된 이메일 형식입니다.");
-                emailErrorTxt.setVisibility(View.VISIBLE);
+                binding.emailErrorTxt.setText("잘못된 이메일 형식입니다.");
+                binding.emailErrorTxt.setVisibility(View.VISIBLE);
             }else{
                 checkDuplicateEmail(email);
             }
         });
 
-        return rootView;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

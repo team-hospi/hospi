@@ -7,10 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -19,91 +15,88 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentNoticeEditBinding;
+import com.gradproject.hospi.utils.Loading;
 
 public class NoticeEditFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "NoticeEditFragment";
-
-    ImageButton closeBtn;
-    Button updateBtn;
-    EditText titleEdt, contentEdt;
-    TextView titleEmptyTxt, contentEmptyTxt;
+    private FragmentNoticeEditBinding binding;
 
     SettingActivity settingActivity;
     Notice notice;
     FirebaseFirestore db;
+    Loading loading;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         settingActivity = (SettingActivity) getActivity();
         notice = (Notice) getArguments().getSerializable("notice");
         db = FirebaseFirestore.getInstance();
+        loading = new Loading(getContext());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_notice_edit, container,false);
+        binding = FragmentNoticeEditBinding.inflate(inflater, container, false);
 
-        closeBtn = rootView.findViewById(R.id.closeBtn);
-        updateBtn = rootView.findViewById(R.id.updateBtn);
-        titleEdt = rootView.findViewById(R.id.titleEdt);
-        contentEdt = rootView.findViewById(R.id.contentEdt);
-        titleEmptyTxt = rootView.findViewById(R.id.titleEmptyTxt);
-        contentEmptyTxt = rootView.findViewById(R.id.contentEmptyTxt);
+        binding.titleEdt.setText(notice.getTitle());
+        binding.contentEdt.setText(notice.getContent());
 
-        titleEdt.setText(notice.getTitle());
-        contentEdt.setText(notice.getContent());
+        binding.closeBtn.setOnClickListener(v -> onBackPressed());
 
-        closeBtn.setOnClickListener(v -> onBackPressed());
-
-        updateBtn.setOnClickListener(v -> {
-            String title = titleEdt.getText().toString();
-            String content = contentEdt.getText().toString();
+        binding.updateBtn.setOnClickListener(v -> {
+            String title = binding.titleEdt.getText().toString();
+            String content = binding.contentEdt.getText().toString();
 
             if(title.equals("") && content.equals("")) {
-                titleEmptyTxt.setVisibility(View.VISIBLE);
-                contentEmptyTxt.setVisibility(View.VISIBLE);
+                binding.titleEmptyTxt.setVisibility(View.VISIBLE);
+                binding.contentEmptyTxt.setVisibility(View.VISIBLE);
             }else if(title.equals("")){
-                titleEmptyTxt.setVisibility(View.VISIBLE);
+                binding.titleEmptyTxt.setVisibility(View.VISIBLE);
             }else if(content.equals("")){
-                contentEmptyTxt.setVisibility(View.VISIBLE);
+                binding.contentEmptyTxt.setVisibility(View.VISIBLE);
             }else{
                 inquiryUpdateProcess(title, content);
             }
         });
 
-        titleEdt.addTextChangedListener(new TextWatcher() {
+        binding.titleEdt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* Empty */ }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                titleEmptyTxt.setVisibility(View.INVISIBLE);
+                binding.titleEmptyTxt.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void afterTextChanged(Editable s) { /* Empty */ }
         });
 
-        contentEdt.addTextChangedListener(new TextWatcher() {
+        binding.contentEdt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* Empty */ }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                contentEmptyTxt.setVisibility(View.INVISIBLE);
+                binding.contentEmptyTxt.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void afterTextChanged(Editable s) { /* Empty */ }
         });
 
-        return rootView;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -118,6 +111,7 @@ public class NoticeEditFragment extends Fragment implements OnBackPressedListene
     }
 
     public void inquiryUpdateProcess(String title, String content){
+        loading.show();
         notice.setTitle(title);
         notice.setContent(content);
 
@@ -130,12 +124,14 @@ public class NoticeEditFragment extends Fragment implements OnBackPressedListene
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Error updating document", e);
+                    loading.dismiss();
                     String msg = "공지사항 수정에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                 });
     }
 
     public void updateSuccessPopUp(){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("공지사항이 수정되었습니다.")

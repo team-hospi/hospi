@@ -21,15 +21,13 @@
             android:id="@+id/closeBtn"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="right"
-            android:layout_marginRight="15dp"
             android:src="@drawable/ic_action_close"
             android:background="?selectableItemBackgroundBorderless" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="65dp"
+            android:layout_marginLeft="35dp"
             android:text="병원 문의 수정"
             android:textColor="@color/black"
             android:textSize="17sp"/>

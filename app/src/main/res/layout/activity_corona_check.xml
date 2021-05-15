@@ -1,32 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".home.mypage.PrescriptionFragment">
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:elevation="5dp">
+        android:layout_height="50dp"
+        android:background="@color/white">
 
         <ImageButton
-            android:id="@+id/backBtn"
+            android:id="@+id/closeBtn"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/ic_action_back"
+            android:src="@drawable/ic_action_close"
             android:background="?selectableItemBackgroundBorderless"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="35dp"
-            android:text="처방전"
+            android:text="코로나19 발생동향"
             android:textColor="@color/black"
-            android:textSize="17sp"/>
+            android:textSize="17sp" />
     </androidx.appcompat.widget.Toolbar>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@drawable/border"/>
+
+    <WebView
+        android:id="@+id/webView_address"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"/>
 </LinearLayout>

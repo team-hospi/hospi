@@ -8,13 +8,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -22,24 +19,23 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentInquiryDetailBinding;
+import com.gradproject.hospi.utils.Loading;
 
 public class InquiryDetailFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "InquiryDetailFragment";
+    private FragmentInquiryDetailBinding binding;
 
+    Loading loading;
     Inquiry inquiry;
     FirebaseFirestore db;
     SettingActivity settingActivity;
-
-    Toolbar toolbar;
-    ImageButton backBtn;
-    TextView hospitalNameTxt, titleTxt, contentTxt, answerTxt;
-
     int pos;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        loading = new Loading(getContext());
         settingActivity = (SettingActivity) getActivity();
         db = FirebaseFirestore.getInstance();
         if(getArguments()!=null){
@@ -51,32 +47,31 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_inquiry_detail, container,false);
-
-        toolbar = rootView.findViewById(R.id.toolbar);
-        hospitalNameTxt = rootView.findViewById(R.id.hospitalNameTxt);
-        titleTxt = rootView.findViewById(R.id.titleTxt);
-        contentTxt = rootView.findViewById(R.id.contentTxt);
-        answerTxt = rootView.findViewById(R.id.answerTxt);
-        backBtn = rootView.findViewById(R.id.backBtn);
+        binding = FragmentInquiryDetailBinding.inflate(inflater, container, false);
 
         setHasOptionsMenu(true);
-        settingActivity.setSupportActionBar(toolbar);
+        settingActivity.setSupportActionBar(binding.toolbar);
         settingActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
 
-        hospitalNameTxt.setText(inquiry.getHospitalName());
-        titleTxt.setText(inquiry.getTitle());
-        contentTxt.setText(inquiry.getContent());
+        binding.hospitalNameTxt.setText(inquiry.getHospitalName());
+        binding.titleTxt.setText(inquiry.getTitle());
+        binding.contentTxt.setText(inquiry.getContent());
 
         if(inquiry.getAnswer().equals("")){
-            answerTxt.setText("아직 답변이 등록되지 않았습니다.");
+            binding.answerTxt.setText("아직 답변이 등록되지 않았습니다.");
         }else{
-            answerTxt.setText(inquiry.getAnswer());
+            binding.answerTxt.setText(inquiry.getAnswer());
         }
 
-        return rootView;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -122,6 +117,7 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
     }
 
     public void delBtnProcess(){
+        loading.show();
         db.collection(Inquiry.DB_NAME).document(inquiry.getDocumentId())
                 .delete()
                 .addOnSuccessListener(aVoid -> {
@@ -130,6 +126,7 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Error deleting document", e);
+                    loading.dismiss();
                     String msg = "삭제에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                 });
@@ -146,6 +143,7 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
     }
 
     public void deleteSuccessPopUp(){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("삭제되었습니다.")

@@ -1,20 +1,16 @@
 package com.gradproject.hospi.home.mypage;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,42 +18,32 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.OnBackPressedListener;
-import com.gradproject.hospi.ProgressDialog;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentInquiryListBinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class InquiryListFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "InquiryListFragment";
+    private FragmentInquiryListBinding binding;
 
-    RecyclerView inquiryRecyclerView;
     LinearLayoutManager layoutManager;
     InquiryAdapter inquiryAdapter = new InquiryAdapter();
-
-    ProgressDialog loading;
-    ImageButton backBtn;
     int pos;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-
-        loading = new ProgressDialog(getContext());
-        loading.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        loading.setCancelable(false);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_inquiry_list, container,false);
+        binding = FragmentInquiryListBinding.inflate(inflater, container, false);
 
-        backBtn = rootView.findViewById(R.id.backBtn);
-        inquiryRecyclerView = rootView.findViewById(R.id.inquiryList);
-
-        inquiryRecyclerView.setLayoutManager(layoutManager);
+        binding.inquiryList.setLayoutManager(layoutManager);
 
         if(getArguments()!=null){
             pos = getArguments().getInt("pos", -1);
@@ -70,7 +56,7 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
 
         getInquiryList();
 
-        backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
 
         inquiryAdapter.setOnItemClickListener((holder, view, position) -> {
             Inquiry inquiry = inquiryAdapter.getItem(position);
@@ -84,7 +70,13 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
             transaction.commit();
         });
 
-        return rootView;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -93,7 +85,6 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
     }
 
     private void getInquiryList(){
-        loading.show();
         inquiryAdapter.items.clear(); // 기존 항목 모두 삭제
         inquiryAdapter.notifyDataSetChanged(); // 어댑터 갱신
 
@@ -120,13 +111,20 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
                             inquiryAdapter.addItem(tmpArrList.get(i));
                         }
 
-                        inquiryRecyclerView.setAdapter(inquiryAdapter);
+                        if(!(inquiryAdapter.items.isEmpty())){
+                            binding.inquiryList.setVisibility(View.VISIBLE);
+                            binding.nothingInquiryView.setVisibility(View.GONE);
+                        }else{
+                            binding.inquiryList.setVisibility(View.GONE);
+                            binding.nothingInquiryView.setVisibility(View.VISIBLE);
+                        }
+
+                        binding.inquiryList.setAdapter(inquiryAdapter);
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                         String msg = "문의 내역을 불러올 수 없습니다.";
                         Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                     }
                 });
-        loading.dismiss();
     }
 }

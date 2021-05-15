@@ -8,40 +8,35 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentNoticeDetailBinding;
+import com.gradproject.hospi.utils.Loading;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 
 public class NoticeDetailFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "NoticeDetailFragment";
+    private FragmentNoticeDetailBinding binding;
 
+    Loading loading;
     Notice notice;
     FirebaseFirestore db;
     SettingActivity settingActivity;
-
-    Toolbar toolbar;
-    ImageButton backBtn;
-    TextView titleTxt, contentTxt;
-
     int pos;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        loading = new Loading(getContext());
         settingActivity = (SettingActivity) getActivity();
         db = FirebaseFirestore.getInstance();
         if(getArguments()!=null){
@@ -53,23 +48,24 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_notice_detail, container,false);
-
-        toolbar = rootView.findViewById(R.id.toolbar);
-        titleTxt = rootView.findViewById(R.id.titleTxt);
-        contentTxt = rootView.findViewById(R.id.contentTxt);
-        backBtn = rootView.findViewById(R.id.backBtn);
+        binding = FragmentNoticeDetailBinding.inflate(inflater, container, false);
 
         setHasOptionsMenu(true);
-        settingActivity.setSupportActionBar(toolbar);
+        settingActivity.setSupportActionBar(binding.toolbar);
         settingActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
 
-        titleTxt.setText(notice.getTitle());
-        contentTxt.setText(notice.getContent());
+        binding.titleTxt.setText(notice.getTitle());
+        binding.contentTxt.setText(notice.getContent());
 
-        return rootView;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -112,6 +108,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     }
 
     public void delBtnProcess(){
+        loading.show();
         db.collection(Notice.DB_NAME).document(notice.getDocumentId())
                 .delete()
                 .addOnSuccessListener(aVoid -> {
@@ -120,6 +117,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Error deleting document", e);
+                    loading.dismiss();
                     String msg = "삭제에 실패하였습니다.\n잠시 후 다시 진행해주세요.";
                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                 });
@@ -136,6 +134,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     }
 
     public void deleteSuccessPopUp(){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("삭제되었습니다.")

@@ -10,41 +10,30 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.google.android.material.button.MaterialButton;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.SpeechRecognitionPopUpBinding;
 
 import java.util.ArrayList;
 
 public class SpeechRecognitionPopUp extends AppCompatActivity {
+    private SpeechRecognitionPopUpBinding binding;
+
     Intent recogIntent;
     SpeechRecognizer mRecognizer;
     String result;
-    TextView recordStatusTxt, failureTxt, successTxt;
-    MaterialButton retryBtn;
-    FrameLayout voiceBkg;
-    ImageView voiceImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.speech_recognition_pop_up);
-
-        voiceBkg = findViewById(R.id.voiceBkg);
-        voiceImg = findViewById(R.id.voiceImg);
-        recordStatusTxt = findViewById(R.id.recordStatusTxt);
-        failureTxt = findViewById(R.id.failureTxt);
-        successTxt = findViewById(R.id.successTxt);
-        retryBtn = findViewById(R.id.retryBtn);
+        binding = SpeechRecognitionPopUpBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         recogIntent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         recogIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
         recogIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR");
 
-        retryBtn.setOnClickListener(v -> startRecognition());
+        binding.retryBtn.setOnClickListener(v -> startRecognition());
 
         startRecognition();
     }
@@ -56,12 +45,12 @@ public class SpeechRecognitionPopUp extends AppCompatActivity {
     }
 
     private void startRecognition(){
-        failureTxt.setVisibility(View.INVISIBLE);
-        recordStatusTxt.setVisibility(View.VISIBLE);
+        binding.failureTxt.setVisibility(View.INVISIBLE);
+        binding.recordStatusTxt.setVisibility(View.VISIBLE);
 
-        retryBtn.setVisibility(View.INVISIBLE);
-        voiceBkg.setBackground(getResources().getDrawable(R.drawable.record_on, null));
-        voiceImg.setImageTintList(ColorStateList.valueOf(Color.parseColor("#ffffff")));
+        binding.retryBtn.setVisibility(View.INVISIBLE);
+        binding.voiceBkg.setBackground(getResources().getDrawable(R.drawable.record_on, null));
+        binding.voiceImg.setImageTintList(ColorStateList.valueOf(Color.parseColor("#ffffff")));
 
         mRecognizer=SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
         mRecognizer.setRecognitionListener(listener);
@@ -86,28 +75,28 @@ public class SpeechRecognitionPopUp extends AppCompatActivity {
 
         @Override
         public void onError(int error) {
-            failureTxt.setVisibility(View.VISIBLE);
-            recordStatusTxt.setVisibility(View.INVISIBLE);
+            binding.failureTxt.setVisibility(View.VISIBLE);
+            binding.recordStatusTxt.setVisibility(View.INVISIBLE);
 
-            voiceBkg.setBackground(getResources().getDrawable(R.drawable.record_off, null));
-            voiceImg.setImageTintList(ColorStateList.valueOf(Color.parseColor("#4646FF")));
-            retryBtn.setVisibility(View.VISIBLE);
+            binding.voiceBkg.setBackground(getResources().getDrawable(R.drawable.record_off, null));
+            binding.voiceImg.setImageTintList(ColorStateList.valueOf(Color.parseColor("#4646FF")));
+            binding.retryBtn.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void onResults(Bundle results) {
-            failureTxt.setVisibility(View.INVISIBLE);
-            recordStatusTxt.setVisibility(View.INVISIBLE);
+            binding.failureTxt.setVisibility(View.INVISIBLE);
+            binding.recordStatusTxt.setVisibility(View.INVISIBLE);
 
-            voiceBkg.setBackground(getResources().getDrawable(R.drawable.record_success, null));
-            voiceImg.setImageTintList(ColorStateList.valueOf(Color.parseColor("#4646FF")));
+            binding.voiceBkg.setBackground(getResources().getDrawable(R.drawable.record_success, null));
+            binding.voiceImg.setImageTintList(ColorStateList.valueOf(Color.parseColor("#4646FF")));
 
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             for(int i=0; i<matches.size(); i++){
                 result = matches.get(i);
             }
 
-            successTxt.setText(result);
+            binding.successTxt.setText(result);
 
             Intent intent = new Intent();
             intent.putExtra("result", result);

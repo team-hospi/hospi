@@ -12,21 +12,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentSearchWindowBinding;
 import com.gradproject.hospi.home.hospital.HospitalActivity;
+import com.gradproject.hospi.utils.SoundSearcher;
 
 import java.util.ArrayList;
 
@@ -34,11 +31,8 @@ import static android.app.Activity.RESULT_OK;
 
 public class SearchWindowFragment extends Fragment {
     private static final String TAG = "SearchWindowFragment";
+    private FragmentSearchWindowBinding binding;
 
-    ImageButton backBtn, voiceInputBtn, removeBtn;
-    EditText searchEdt;
-    TextView noSearchTxt;
-    RecyclerView hospitalRecyclerView;
     LinearLayoutManager layoutManager;
     HospitalAdapter hospitalAdapter = new HospitalAdapter();
 
@@ -51,41 +45,34 @@ public class SearchWindowFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search_window, container,false);
+        binding = FragmentSearchWindowBinding.inflate(inflater, container, false);
 
-        backBtn = rootView.findViewById(R.id.backBtn);
-        voiceInputBtn = rootView.findViewById(R.id.voiceInputBtn);
-        removeBtn = rootView.findViewById(R.id.removeBtn);
-        searchEdt = rootView.findViewById(R.id.searchEdt);
-        noSearchTxt = rootView.findViewById(R.id.noSearchTxt);
-        hospitalRecyclerView = rootView.findViewById(R.id.hospitalList);
+        binding.hospitalList.setLayoutManager(layoutManager);
 
-        hospitalRecyclerView.setLayoutManager(layoutManager);
+        binding.backBtn.setOnClickListener(v -> getActivity().finish());
+        binding.removeBtn.setOnClickListener(v -> binding.searchEdt.setText(""));
 
-        backBtn.setOnClickListener(v -> getActivity().finish());
-
-        removeBtn.setOnClickListener(v -> searchEdt.setText(""));
-
-        voiceInputBtn.setOnClickListener(v -> {
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+        binding.voiceInputBtn.setOnClickListener(v -> {
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO)
+                    == PackageManager.PERMISSION_GRANTED) {
                 startActivityForResult(new Intent(getContext(), SpeechRecognitionPopUp.class), 1);
             }else{
                 micPermissionCheck();
             }
         });
 
-        searchEdt.addTextChangedListener(new TextWatcher() {
+        binding.searchEdt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { /* empty */ }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(searchEdt.getText().toString().equals("")){
-                    voiceInputBtn.setVisibility(View.VISIBLE);
-                    removeBtn.setVisibility(View.INVISIBLE);
+                if(binding.searchEdt.getText().toString().equals("")){
+                    binding.voiceInputBtn.setVisibility(View.VISIBLE);
+                    binding.removeBtn.setVisibility(View.INVISIBLE);
                 }else{
-                    voiceInputBtn.setVisibility(View.INVISIBLE);
-                    removeBtn.setVisibility(View.VISIBLE);
+                    binding.voiceInputBtn.setVisibility(View.INVISIBLE);
+                    binding.removeBtn.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -93,7 +80,7 @@ public class SearchWindowFragment extends Fragment {
             public void afterTextChanged(Editable s) { /* empty */ }
         });
 
-        searchEdt.setOnEditorActionListener((v, actionId, event) -> {
+        binding.searchEdt.setOnEditorActionListener((v, actionId, event) -> {
             searchProcess();
             return true;
         });
@@ -105,7 +92,13 @@ public class SearchWindowFragment extends Fragment {
             startActivity(intent);
         });
 
-        return rootView;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -114,7 +107,7 @@ public class SearchWindowFragment extends Fragment {
 
         if(requestCode==1) {
             if (resultCode == RESULT_OK) {
-                searchEdt.setText(data.getStringExtra("result"));
+                binding.searchEdt.setText(data.getStringExtra("result"));
                 searchProcess();
             }
         }
@@ -139,13 +132,13 @@ public class SearchWindowFragment extends Fragment {
         hospitalAdapter.items.clear(); // 기존 검색 결과 항목 모두 삭제
         hospitalAdapter.notifyDataSetChanged(); // 어댑터 갱신
 
-        String searchStr = searchEdt.getText().toString().trim();
+        String searchStr = binding.searchEdt.getText().toString().trim();
 
         if(!searchStr.equals("")){
             searchHospital(searchStr); // 검색
-            noSearchTxt.setVisibility(View.INVISIBLE);
+            binding.noSearchTxt.setVisibility(View.INVISIBLE);
         }else{
-            noSearchTxt.setVisibility(View.VISIBLE);
+            binding.noSearchTxt.setVisibility(View.VISIBLE);
         }
     }
 
@@ -161,24 +154,44 @@ public class SearchWindowFragment extends Fragment {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             Hospital hospital = document.toObject(Hospital.class);
-                            if(hospital.getName().contains(searchStr)){
+
+                            String str = stateDistribution(searchStr);
+
+                            if(hospital.getName().contains(str) || hospital.getAddress().contains(str)
+                                || SoundSearcher.matchString(hospital.getName(), str)
+                                || SoundSearcher.matchString(hospital.getAddress(), str)){
                                 tmpArrList.add(hospital);
                             }
                         }
 
                         if(tmpArrList.size()==0){
-                            noSearchTxt.setVisibility(View.VISIBLE);
+                            binding.noSearchTxt.setVisibility(View.VISIBLE);
                         }else{
-                            noSearchTxt.setVisibility(View.INVISIBLE);
+                            binding.noSearchTxt.setVisibility(View.INVISIBLE);
                             for(int i=0; i<tmpArrList.size(); i++){
                                 hospitalAdapter.addItem(tmpArrList.get(i));
                             }
                         }
 
-                        hospitalRecyclerView.setAdapter(hospitalAdapter);
+                        binding.hospitalList.setAdapter(hospitalAdapter);
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }
                 });
+    }
+
+    private String stateDistribution(String searchStr){
+        String str = searchStr;
+
+        if(searchStr.endsWith("남도")){
+            str = searchStr.substring(0, 1) + "남";
+        }else if(searchStr.endsWith("북도")){
+            str = searchStr.substring(0, 1) + "북";
+        }else if(searchStr.endsWith("도") || searchStr.endsWith("특별시")
+                || searchStr.endsWith("광역시") || searchStr.endsWith("시")){
+            str = searchStr.substring(0, 2);
+        }
+
+        return str;
     }
 }

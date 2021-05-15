@@ -12,14 +12,15 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.gradproject.hospi.databinding.ActivityMainBinding;
 import com.gradproject.hospi.home.HomeActivity;
 
 public class MainActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener{
     private static final int MULTIPLE_PERMISSION = 10235;
+    private ActivityMainBinding binding;
     private String[] PERMISSIONS = {
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -30,15 +31,14 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     FirebaseAuth firebaseAuth;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        Button setBtn = findViewById(R.id.setBtn);
-        setBtn.setOnClickListener(arg0 -> {
+        binding.setBtn.setOnClickListener(arg0 -> {
             if (!hasPermissions(this, PERMISSIONS)) {//권한이 없는 경우
                 //권한요청
                 ActivityCompat.requestPermissions(this, PERMISSIONS, MULTIPLE_PERMISSION);

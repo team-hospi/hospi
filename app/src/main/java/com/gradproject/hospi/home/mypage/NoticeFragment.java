@@ -5,20 +5,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentNoticeBinding;
+import com.gradproject.hospi.utils.Loading;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,13 +26,10 @@ import static com.gradproject.hospi.home.HomeActivity.user;
 
 public class NoticeFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "NoticeFragment";
+    private FragmentNoticeBinding binding;
 
-    RecyclerView noticeRecyclerView;
     LinearLayoutManager layoutManager;
     NoticeAdapter noticeAdapter = new NoticeAdapter();
-
-    ImageButton backBtn;
-    FloatingActionButton writeBtn;
     int pos;
 
     @Override
@@ -45,13 +41,9 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_notice, container,false);
+        binding = FragmentNoticeBinding.inflate(inflater, container, false);
 
-        backBtn = rootView.findViewById(R.id.backBtn);
-        writeBtn = rootView.findViewById(R.id.writeBtn);
-        noticeRecyclerView = rootView.findViewById(R.id.noticeList);
-
-        noticeRecyclerView.setLayoutManager(layoutManager);
+        binding.noticeList.setLayoutManager(layoutManager);
 
         if(getArguments()!=null){
             pos = getArguments().getInt("pos", -1);
@@ -69,12 +61,12 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
         getNoticeList();
 
         if(user.isAdmin()){
-            writeBtn.setVisibility(View.VISIBLE);
+            binding.writeBtn.setVisibility(View.VISIBLE);
         }
 
-        backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
 
-        writeBtn.setOnClickListener(v -> getActivity()
+        binding.writeBtn.setOnClickListener(v -> getActivity()
                 .getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.settingContainer, new NoticeWriteFragment())
@@ -92,7 +84,13 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
             transaction.commit();
         });
 
-        return rootView;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -124,7 +122,7 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
                             noticeAdapter.addItem(tmpArrList.get(i));
                         }
 
-                        noticeRecyclerView.setAdapter(noticeAdapter);
+                        binding.noticeList.setAdapter(noticeAdapter);
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                         String msg = "공지사항을 불러올 수 없습니다.";

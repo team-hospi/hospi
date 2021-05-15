@@ -7,26 +7,29 @@ import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.ActivitySettingBinding;
 
 import java.util.List;
 
 public class SettingActivity extends AppCompatActivity implements OnBackPressedListener {
+    private ActivitySettingBinding binding;
 
     // 마이페이지 각 목록과 연결되는 화면
     EditMyInfoFragment editMyInfoFragment; FavoriteFragment favoriteFragment;
     InquiryListFragment inquiryListFragment; NoticeFragment noticeFragment;
-    PrescriptionFragment prescriptionFragment; TermsFragment termsFragment;
-    InquiryDetailFragment inquiryDetailFragment; NoticeDetailFragment noticeDetailFragment;
+    TermsFragment termsFragment; InquiryDetailFragment inquiryDetailFragment;
+    NoticeDetailFragment noticeDetailFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
+        binding = ActivitySettingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         editMyInfoFragment = new EditMyInfoFragment(); favoriteFragment = new FavoriteFragment();
         inquiryListFragment = new InquiryListFragment(); noticeFragment = new NoticeFragment();
-        prescriptionFragment = new PrescriptionFragment(); termsFragment = new TermsFragment();
-        inquiryDetailFragment = new InquiryDetailFragment(); noticeDetailFragment = new NoticeDetailFragment();
+        termsFragment = new TermsFragment(); inquiryDetailFragment = new InquiryDetailFragment();
+        noticeDetailFragment = new NoticeDetailFragment();
 
         String select = getIntent().getStringExtra("selectBtn");
 
@@ -36,9 +39,6 @@ public class SettingActivity extends AppCompatActivity implements OnBackPressedL
                 break;
             case "favoritesBtn":
                 getSupportFragmentManager().beginTransaction().replace(R.id.settingContainer, favoriteFragment).commit();
-                break;
-            case "prescriptionBtn":
-                getSupportFragmentManager().beginTransaction().replace(R.id.settingContainer, prescriptionFragment).commit();
                 break;
             case "inquiryDetailsBtn":
                 getSupportFragmentManager().beginTransaction().replace(R.id.settingContainer, inquiryListFragment).commit();

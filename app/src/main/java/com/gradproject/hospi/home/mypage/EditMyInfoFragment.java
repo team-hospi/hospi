@@ -8,10 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,8 +26,12 @@ import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
+import com.gradproject.hospi.databinding.FragmentEditMyInfoBinding;
 import com.gradproject.hospi.utils.Loading;
 import com.gradproject.hospi.utils.PhoneNumberHyphen;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import static android.app.Activity.RESULT_OK;
 import static com.gradproject.hospi.home.HomeActivity.user;
@@ -38,75 +39,60 @@ import static com.gradproject.hospi.home.HomeActivity.user;
 public class EditMyInfoFragment extends Fragment implements OnBackPressedListener{
     private static final String TAG = "EditMyInfoFragment";
     private static final int REQUEST_WRITE_ADDRESS_ACTIVITY_CODE = 100; // 주소 입력 화면 식별 코드
+    private FragmentEditMyInfoBinding binding;
 
-    ImageButton backBtn; // 뒤로가기 버튼
-    FrameLayout changePhNumBtn, changeBirthBtn, changeAddressBtn; // 전화번호 변경, 생년월일 변경, 주소 변경 버튼
-    Button changePwBtn, logoutBtn, withdrawalBtn; // 비밀번호 변경, 로그아웃, 회원탈퇴 버튼
-    TextView emailTxt, nameTxt, phoneTxt, birthTxt, addressTxt;
-
+    Calendar cal;
     FirebaseFirestore db;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
+        cal = Calendar.getInstance();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_edit_my_info, container,false);
+        binding = FragmentEditMyInfoBinding.inflate(inflater, container, false);
 
-        emailTxt = rootView.findViewById(R.id.emailTxt);
-        nameTxt = rootView.findViewById(R.id.nameTxt);
-        phoneTxt = rootView.findViewById(R.id.phoneTxt);
-        birthTxt = rootView.findViewById(R.id.birthTxt);
-        addressTxt = rootView.findViewById(R.id.addressTxt);
-
-        emailTxt.setText(user.getEmail());
-        nameTxt.setText(user.getName());
-        phoneTxt.setText(user.getPhone());
-        birthTxt.setText(user.getBirth());
+        binding.emailTxt.setText(user.getEmail());
+        binding.nameTxt.setText(user.getName());
+        binding.phoneTxt.setText(user.getPhone());
+        binding.birthTxt.setText(user.getBirth());
         // 주소가 입력되었는지 검사
         if(user.getAddress().equals("")){
-            addressTxt.setText("주소를 입력해주세요");
+            binding.addressTxt.setText("주소를 입력해주세요");
         }else{
-            addressTxt.setText(user.getAddress());
+            binding.addressTxt.setText(user.getAddress());
         }
 
         // 뒤로가기 버튼
-        backBtn = rootView.findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
 
         // 전화번호 변경 버튼
-        changePhNumBtn = rootView.findViewById(R.id.changePhNumBtn);
-        changePhNumBtn.setOnClickListener(v -> changePhone());
+        binding.changePhNumBtn.setOnClickListener(v -> changePhone());
 
         // 생년월일 변경 버튼
-        changeBirthBtn = rootView.findViewById(R.id.changeBirthBtn);
-        changeBirthBtn.setOnClickListener(v -> changeBirth());
+        binding.changeBirthBtn.setOnClickListener(v -> changeBirth());
 
         // 주소 변경 버튼
-        changeAddressBtn = rootView.findViewById(R.id.changeAddressBtn);
-        changeAddressBtn.setOnClickListener(v -> {
+        binding.changeAddressBtn.setOnClickListener(v -> {
             // 주소 입력 화면으로 이동
             startActivityForResult(new Intent(getContext(), WriteAddressActivity.class),
                     REQUEST_WRITE_ADDRESS_ACTIVITY_CODE);
         });
 
         // 비밀번호 변경 버튼
-        changePwBtn = rootView.findViewById(R.id.changePwBtn);
-        changePwBtn.setOnClickListener(v -> changePassword());
+        binding.changePwBtn.setOnClickListener(v -> changePassword());
 
         // 로그아웃 버튼
-        logoutBtn = rootView.findViewById(R.id.logoutBtn);
-        logoutBtn.setOnClickListener(v -> logoutDialog());
+        binding.logoutBtn.setOnClickListener(v -> logoutDialog());
 
         // 회원탈퇴 버튼
-        withdrawalBtn = rootView.findViewById(R.id.withdrawalBtn);
-        withdrawalBtn.setOnClickListener(v -> startActivity(new Intent(getContext(), WithdrawalActivity.class)));
+        binding.withdrawalBtn.setOnClickListener(v -> startActivity(new Intent(getContext(), WithdrawalActivity.class)));
 
-        return rootView;
+        return binding.getRoot();
     }
 
     @Override
@@ -122,7 +108,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
             if (resultCode == RESULT_OK) {
                 String address = data.getStringExtra("address"); // 주소 받아와서 address에 저장
                 user.setAddress(address);
-                addressTxt.setText(address); // 주소 설정
+                binding.addressTxt.setText(address); // 주소 설정
 
                 DocumentReference documentReference = db
                         .collection(User.DB_NAME)
@@ -137,6 +123,12 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
                         });
             }
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void changePhone(){
@@ -187,8 +179,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
                 documentReference
                         .update("phone", phoneNum) // 전화번호 업데이트
                         .addOnSuccessListener(aVoid -> {
-                            phoneTxt = getActivity().findViewById(R.id.phoneTxt);
-                            phoneTxt.setText(phoneNum);
+                            binding.phoneTxt.setText(phoneNum);
                             user.setPhone(phoneNum);
                             alertDialog.dismiss();
                             Log.d(TAG, "전화번호 정보 업데이트 성공");
@@ -204,7 +195,9 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         int cDay = Integer.parseInt(birth[2]);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
-            String date = year+"-"+(month+1)+"-"+dayOfMonth;
+            cal.set(year, month, dayOfMonth);
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            String date = df.format(cal.getTime());
 
             DocumentReference documentReference = db.collection(User.DB_NAME)
                     .document(user.getDocumentId()); // 해당 이메일 유저 문서 열기
@@ -212,9 +205,8 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
             documentReference
                     .update("birth", date) // 생년월일 업데이트
                     .addOnSuccessListener(aVoid -> {
-                        birthTxt = getActivity().findViewById(R.id.birthTxt);
                         user.setBirth(date);
-                        birthTxt.setText(date);
+                        binding.birthTxt.setText(date);
                         Log.d(TAG, "생년월일 정보 업데이트 성공");
                     });
         },cYear, cMonth, cDay);
@@ -225,20 +217,20 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
     }
 
     private void changePassword(){
-        Loading loading = new Loading(getContext(), "비밀번호 변경 메일 발송 중...");
+        Loading loading = new Loading(getContext());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("비밀번호를 변경하시겠습니까?")
                 .setPositiveButton("확인", (dialog, i) -> {
-                    loading.start();
+                    loading.show();
 
                     FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
                     firebaseAuth.sendPasswordResetEmail(user.getEmail())
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
-                                    loading.end();
+                                    loading.dismiss();
 
                                     AlertDialog.Builder builder2 = new AlertDialog.Builder(getContext())
                                             .setCancelable(false)
@@ -252,7 +244,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
                                     alertDialog2.show();
                                     Log.d(TAG, "Email sent.");
                                 }else{
-                                    loading.end();
+                                    loading.dismiss();
                                     Toast.makeText(getContext(), "진행 중 오류가 발생하였습니다. 잠시 후 다시 진행하여 주십시오.", Toast.LENGTH_LONG).show();
                                 }
                             });

@@ -3,31 +3,31 @@ package com.gradproject.hospi.home.mypage;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.gradproject.hospi.IpAddress;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.ActivityAddressSearchBinding;
 
 public class AddressSearchActivity extends AppCompatActivity {
+    private static final String ADDRESS = "http://hospi.iptime.org/m/address.do";
+    private ActivityAddressSearchBinding binding;
+
     private WebView webView;
     private Handler handler;
 
-    ImageButton closeBtn;  // 닫기 버튼
     String address = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_address_search);
+        binding = ActivityAddressSearchBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        closeBtn = findViewById(R.id.closeBtn);
-        closeBtn.setOnClickListener(v -> {
+        binding.closeBtn.setOnClickListener(v -> {
             setResult(RESULT_CANCELED);
             finish();
         });
@@ -57,7 +57,7 @@ public class AddressSearchActivity extends AppCompatActivity {
         webView.setWebChromeClient(new WebChromeClient());
 
         // webview url load. php 파일 주소
-        webView.loadUrl(IpAddress.getIP()+"getAddress.php");
+        webView.loadUrl(ADDRESS);
 
     }
 

@@ -1,24 +1,20 @@
 package com.gradproject.hospi.home.hospital;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CalendarView;
-import android.widget.EditText;
+import android.widget.DatePicker;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -31,6 +27,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentReservationBinding;
+import com.gradproject.hospi.utils.Loading;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -38,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
@@ -45,6 +44,7 @@ import static com.gradproject.hospi.home.hospital.HospitalActivity.reservedList;
 
 public class ReservationFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "ReservationFragment";
+    private FragmentReservationBinding binding;
 
     private static final int WEEKDAY = 0;
     private static final int SATURDAY = 1;
@@ -54,110 +54,81 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
     HospitalActivity hospitalActivity;
     FirebaseFirestore db;
-
-    Button reservationBtn;
-    ImageButton backBtn;
-    EditText additionalContentEdt;
-    TextView dateTxt, timeTxt, departmentTxt;
-    TextView userNameTxt, userPhoneTxt, userBirthTxt;
-    TextView hospitalNameTxt, hospitalTelTxt, hospitalAddressTxt;
-    FrameLayout dateSetBtn, timeSetBtn;
-    LinearLayout calendar;
-    Spinner department;
-    TableLayout timeTable;
-    ImageView calendarExpandImg, timeExpandImg;
-
     Calendar cal, selectCal;
-    CalendarView calendarView;
-
+    DatePicker datePicker;
     String date;
     String selectDepartment, selectTime=null;
-
     boolean isClickDateSetBtn = false;
     boolean isClickTimeSetBtn = false;
+    Loading loading;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-
         cal = Calendar.getInstance();
-        calendarView = new CalendarView(getContext());
-        calendarView.setMinDate(cal.getTimeInMillis());
+        selectCal = Calendar.getInstance();
+        loading = new Loading(getContext());
+
+        datePicker = new DatePicker(getContext());
+        datePicker.setMinDate(cal.getTimeInMillis());
         Calendar tmpCal = Calendar.getInstance();
         tmpCal.add(Calendar.MONTH, 1);
-        calendarView.setMaxDate(tmpCal.getTimeInMillis());
-
-        selectCal = Calendar.getInstance();
+        datePicker.setMaxDate(tmpCal.getTimeInMillis());
+        datePicker.setBackgroundColor(Color.WHITE);
+        datePicker.setElevation(3);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_reservation, container, false);
+        binding = FragmentReservationBinding.inflate(inflater, container, false);
 
         hospitalActivity = (HospitalActivity) getActivity();
-        reservationBtn = rootView.findViewById(R.id.reservationBtn);
-        backBtn = rootView.findViewById(R.id.backBtn);
-        additionalContentEdt = rootView.findViewById(R.id.additionalContentEdt);
 
-        userNameTxt = rootView.findViewById(R.id.userNameTxt);
-        userPhoneTxt = rootView.findViewById(R.id.userPhoneTxt);
-        userBirthTxt = rootView.findViewById(R.id.userBirthTxt);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        binding.calendar.setLayoutParams(layoutParams);
 
-        hospitalNameTxt = rootView.findViewById(R.id.hospitalNameTxt);
-        hospitalTelTxt = rootView.findViewById(R.id.hospitalTelTxt);
-        hospitalAddressTxt = rootView.findViewById(R.id.hospitalAddressTxt);
-
-        departmentTxt = rootView.findViewById(R.id.departmentTxt);
-        department = rootView.findViewById(R.id.department);
-
-        dateTxt = rootView.findViewById(R.id.dateTxt);
-        dateSetBtn = rootView.findViewById(R.id.dateSetBtn);
-        calendar = rootView.findViewById(R.id.calendar);
-        calendarExpandImg = rootView.findViewById(R.id.calendarExpandImg);
-
-        timeTxt = rootView.findViewById(R.id.timeTxt);
-        timeSetBtn = rootView.findViewById(R.id.timeSetBtn);
-        timeTable = rootView.findViewById(R.id.timeTable);
-        timeExpandImg = rootView.findViewById(R.id.timeExpandImg);
+        LinearLayout.LayoutParams datePickerLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        datePickerLayoutParams.gravity = Gravity.CENTER;
+        datePickerLayoutParams.setMargins(0, 25, 0, 25);
+        datePicker.setLayoutParams(datePickerLayoutParams);
 
         // 예약자 정보
-        userNameTxt.setText(user.getName());
-        userPhoneTxt.setText(user.getPhone());
-        userBirthTxt.setText(user.getBirth());
+        binding.userNameTxt.setText(user.getName());
+        binding.userPhoneTxt.setText(user.getPhone());
+        binding.userBirthTxt.setText(user.getBirth());
 
         // 병원 정보
-        hospitalNameTxt.setText(hospital.getName());
-        hospitalTelTxt.setText(hospital.getTel());
-        hospitalAddressTxt.setText(hospital.getAddress());
+        binding.hospitalNameTxt.setText(hospital.getName());
+        binding.hospitalTelTxt.setText(hospital.getTel());
+        binding.hospitalAddressTxt.setText(hospital.getAddress());
 
-        backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
 
         ArrayList<String> departmentArray =  (ArrayList)hospital.getDepartment();
 
-        department.setAdapter(new ArrayAdapter(getContext(), android.R.layout.simple_spinner_dropdown_item, departmentArray));
-        department.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.department.setAdapter(new ArrayAdapter(getContext(), android.R.layout.simple_spinner_dropdown_item, departmentArray));
+        binding.department.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectDepartment = departmentArray.get(position);
                 closeDateSelect();
-                openDateSelect();
                 closeTimeSelect();
+                openTimeSelect();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) { }
         });
 
-        openDateSelect();
         cal = Calendar.getInstance();
-        cal.setTimeInMillis(calendarView.getDate());
-        selectCal.setTimeInMillis(calendarView.getDate());
+        cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+        selectCal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
         date = cal.get(Calendar.MONTH)+1 + "." + cal.get(Calendar.DATE) + "(" + week[cal.get(Calendar.DAY_OF_WEEK)-1] + ")";
-        dateTxt.setText(date);
+        binding.dateTxt.setText(date);
 
-        dateSetBtn.setOnClickListener(v -> {
+        binding.dateSetBtn.setOnClickListener(v -> {
             if (!(isClickDateSetBtn)) {
                 openDateSelect();
             } else {
@@ -165,11 +136,11 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
             }
         });
 
-        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
-            selectCal.set(year, month, dayOfMonth);
+        datePicker.setOnDateChangedListener((view, year, monthOfYear, dayOfMonth) -> {
+            selectCal.set(year, monthOfYear, dayOfMonth);
 
-            date = month+1 + "." + dayOfMonth + "(" + week[selectCal.get(Calendar.DAY_OF_WEEK)-1] + ")";
-            dateTxt.setText(date);
+            date = monthOfYear+1 + "." + dayOfMonth + "(" + week[selectCal.get(Calendar.DAY_OF_WEEK)-1] + ")";
+            binding.dateTxt.setText(date);
 
             closeTimeSelect();
             closeDateSelect();
@@ -177,7 +148,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
             openTimeSelect();
         });
 
-        timeSetBtn.setOnClickListener(v -> {
+        binding.timeSetBtn.setOnClickListener(v -> {
             if (!(isClickTimeSetBtn)) {
                 openTimeSelect();
             } else {
@@ -185,7 +156,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
             }
         });
 
-        reservationBtn.setOnClickListener(v -> {
+        binding.reservationBtn.setOnClickListener(v -> {
             if(selectTime != null){
                 reservationProcess();
             }else{
@@ -193,12 +164,26 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
             }
         });
 
-        return rootView;
+        return binding.getRoot();
     }
 
     @Override
     public void onBackPressed() {
-        hospitalActivity.onReservationFragmentChanged(0);
+        if(getArguments()!=null){
+            if(getArguments().getBoolean("popUp", false)){
+                getActivity().finish();
+            }else{
+                hospitalActivity.onReservationFragmentChanged(0);
+            }
+        }else{
+            hospitalActivity.onReservationFragmentChanged(0);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void notSelectedTimeAlert(){
@@ -211,6 +196,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     }
 
     public void reservationProcess(){
+        loading.show();
         Reservation reservation = new Reservation();
         reservation.setId(user.getEmail());    // 유저 이메일 설정
         reservation.setHospitalId(hospital.getId());     // 병원 아이디 설정
@@ -220,10 +206,11 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         String date = df.format(selectCal.getTime());
         reservation.setReservationDate(date);      // 예약 날짜 설정
         reservation.setReservationTime(selectTime);    // 예약 시간 설정
-        reservation.setAdditionalContent(additionalContentEdt.getText().toString());  // 추가 입력한 내용 설정
+        reservation.setAdditionalContent(binding.additionalContentEdt.getText().toString());  // 추가 입력한 내용 설정
         long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
         reservation.setTimestamp(timestamp);    // 현재 시간 타임스탬프 설정
         reservation.setReservationStatus(Reservation.CONFIRMING_RESERVATION);     // 예약 신청됨 상태로 설정
+        reservation.setCancelComment(null);
 
         db.collection(Reservation.DB_NAME)
                 .add(reservation)
@@ -238,20 +225,31 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     }
 
     private void reservationSuccess(){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("예약 신청이 완료되었습니다.\n병원에서 예약 확정이 되는대로 알려드리겠습니다.")
                 .setPositiveButton("확인", (dialogInterface, i) -> {
+                    boolean isPopUp = false;
+
+                    if(getArguments() != null){
+                        isPopUp = getArguments().getBoolean("popUp", false);
+                    }
+
                     getActivity().finish();
-                    Intent intent = new Intent(getContext(), HospitalActivity.class);
-                    intent.putExtra("hospital", hospital);
-                    startActivity(intent);
+
+                    if (!isPopUp) {
+                        Intent intent = new Intent(getContext(), HospitalActivity.class);
+                        intent.putExtra("hospital", hospital);
+                        startActivity(intent);
+                    }
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
 
     private void reservationFail(){
+        loading.dismiss();
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                 .setCancelable(false)
                 .setMessage("예약에 실패하였습니다.\n잠시 후 다시 진행해주세요.")
@@ -272,12 +270,8 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
                     Log.d(TAG, document.getId() + " => " + document.getData());
                     db.collection(Reservation.DB_NAME).document(document.getId())
                             .delete()
-                            .addOnSuccessListener(aVoid -> {
-                                Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.w(TAG, "Error deleting document", e);
-                            });
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully deleted!"))
+                            .addOnFailureListener(e -> Log.w(TAG, "Error deleting document", e));
                 }
             } else {
                 Log.d(TAG, "Error getting documents: ", task.getException());
@@ -286,31 +280,26 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     }
 
     public void reservedListUpdate(Reservation reservation){
-        Log.d(TAG, "reservedListUpdate 실행");
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String date = df.format(selectCal.getTime());
         Reserved reserved = null;
         HashMap<String, List<String>> reservedMap;
 
         for(int i=0; i<reservedList.size(); i++){
-            Log.d(TAG, "reservedList 루프 시작 i="+i);
             reserved = reservedList.get(i);
             reservedMap = (HashMap)reserved.getReservedMap();
             if(reserved.getDepartment().equals(selectDepartment)){
                 if(reservedMap.containsKey(date)){
-                    Log.d(TAG, "reservedMap 키 찾음");
                     reservedMap.get(date).add(selectTime);
                     reserved.setReservedMap(reservedMap);
                     break;
                 }else{
-                    Log.d(TAG, "reservedMap 키 못찾음");
                     ArrayList<String> tmpArr = new ArrayList<>();
                     tmpArr.add(selectTime);
                     reservedMap.put(date, tmpArr);
                     reserved.setReservedMap(reservedMap);
                 }
             }else{
-                Log.d(TAG, "일치하는 department 존재하지 않음 -> reserved 설정");
                 reserved.setHospitalId(hospital.getId());
                 reserved.setDepartment(selectDepartment);
                 ArrayList<String> tmpArr = new ArrayList<>();
@@ -322,7 +311,6 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         }
 
         if(reserved==null){
-            Log.d(TAG, "reserved가 null임 -> reserved 값을 설정해줌");
             reserved = new Reserved();
             reserved.setHospitalId(hospital.getId());
             reserved.setDepartment(selectDepartment);
@@ -334,7 +322,6 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         }
 
         if(reserved != null){
-            Log.d(TAG, "reserved가 null이 아님 :" + reserved.toString());
             Query query = db.collection(Reserved.DB_NAME)
                     .whereEqualTo("hospitalId", reserved.getHospitalId())
                     .whereEqualTo("department", reserved.getDepartment());
@@ -342,11 +329,8 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
             Reserved finalReserved = reserved;
 
             query.get().addOnCompleteListener(task -> {
-                Log.d(TAG, "query 찾음");
-
                 if (task.isSuccessful()) {
                     if(task.getResult().size()!=0){
-                        Log.d(TAG, "task 성공 -> " + task.getResult().size());
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             DocumentReference documentReference = db.collection(Reserved.DB_NAME).document(document.getId());
@@ -376,7 +360,6 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
                                     reservationFail();
                                 });
                     }
-                    Log.d(TAG, "task 종료");
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                     reservationFailProcess(reservation);
@@ -384,35 +367,34 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
                 }
             });
         }else{
-            Log.d(TAG, "reserved가 null임");
             reservationFailProcess(reservation);
             reservationFail();
         }
     }
 
     public void openDateSelect(){
-        calendar.addView(calendarView);
+        binding.calendar.addView(datePicker);
         isClickDateSetBtn = true;
-        calendarExpandImg.setImageResource(R.drawable.ic_action_expand_more);
+        binding.calendarExpandImg.setImageResource(R.drawable.ic_action_expand_more);
     }
 
     public void closeDateSelect(){
-        calendar.removeAllViews();
+        binding.calendar.removeAllViews();
         isClickDateSetBtn = false;
-        calendarExpandImg.setImageResource(R.drawable.ic_action_expand_less);
+        binding.calendarExpandImg.setImageResource(R.drawable.ic_action_expand_less);
     }
 
     public void openTimeSelect(){
         setTimeTable(selectCal.get(Calendar.DAY_OF_WEEK));
         isClickTimeSetBtn = true;
-        timeExpandImg.setImageResource(R.drawable.ic_action_expand_more);
+        binding.timeExpandImg.setImageResource(R.drawable.ic_action_expand_more);
     }
 
     public void closeTimeSelect(){
-        timeTxt.setText("시간 설정");
-        timeTable.removeAllViews();
+        binding.timeTxt.setText("시간 설정");
+        binding.timeTable.removeAllViews();
         isClickTimeSetBtn = false;
-        timeExpandImg.setImageResource(R.drawable.ic_action_expand_less);
+        binding.timeExpandImg.setImageResource(R.drawable.ic_action_expand_less);
     }
 
     public void setTimeTable(int date){
@@ -465,24 +447,29 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         }
 
         ArrayList<String> timeList = reservationTimeMaker(open, close, lunch);
+
         TableRow tableRow = new TableRow(getContext());
         Button button[] = new Button[timeList.size()];
 
         for(int i=0; i<timeList.size(); i++){
             if(i%4==0){
-                timeTable.addView(tableRow);
+                binding.timeTable.addView(tableRow);
                 tableRow = new TableRow(getContext());
             }
             String tmp = timeList.get(i);
 
             button[i] = new Button(getContext());
             button[i].setText(timeList.get(i));
+            button[i].setBackgroundResource(R.drawable.button_clickable_true);
             button[i].setOnClickListener(v -> {
                 selectTime = tmp;
-                timeTxt.setText(tmp.substring(0,2) + "시 " + tmp.substring(3,5) + "분");
-                timeTable.removeAllViews();
+                StringTokenizer st = new StringTokenizer(tmp, ":");
+                String hour = st.nextToken();
+                String min = st.nextToken();
+                binding.timeTxt.setText(hour + "시 " + min + "분");
+                binding.timeTable.removeAllViews();
                 isClickTimeSetBtn = false;
-                timeExpandImg.setImageResource(R.drawable.ic_action_expand_less);
+                binding.timeExpandImg.setImageResource(R.drawable.ic_action_expand_less);
             });
 
             for(Reserved reserved : reservedList){
@@ -496,17 +483,22 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
                     if(dateArray != null){
                         for(String time : dateArray){
                             if(timeList.get(i).equals(time)){
-                                button[i].setEnabled(false);
+                                button[i].setClickable(false);
+                                button[i].setBackgroundResource(R.drawable.button_clickable_false);
                             }
                         }
                     }
                 }
             }
 
-            tableRow.addView(button[i]);
+            TableRow.LayoutParams buttonLayoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+            buttonLayoutParams.leftMargin = 10;
+            buttonLayoutParams.rightMargin = 10;
+            buttonLayoutParams.bottomMargin = 20;
+            tableRow.addView(button[i], buttonLayoutParams);
         }
 
-        timeTable.addView(tableRow);
+        binding.timeTable.addView(tableRow);
     }
 
     // 예약 시간 30분 간격으로 점심시간 제외해서 구하는 메서드

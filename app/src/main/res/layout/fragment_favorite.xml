@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".home.mypage.FavoriteFragment">
+    tools:context=".home.mypage.FavoriteFragment"
+    android:background="@color/list_background">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -29,29 +30,37 @@
             android:textSize="17sp"/>
     </androidx.appcompat.widget.Toolbar>
 
-    <FrameLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favoriteList"
+        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="15dp"
+        android:overScrollMode="never"/>
+
+    <LinearLayout
+        android:id="@+id/nothingFavoriteView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="150dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_action_info"/>
 
         <TextView
-            android:id="@+id/noFavoriteTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:layout_gravity="center_horizontal|center_vertical"
-            android:visibility="invisible"
-            android:text="찜한 병원이 없습니다."
-            android:textSize="20sp"
-            android:textColor="@color/black"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/favoriteList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginBottom="15dp"
-            android:layout_marginRight="15dp"
-            android:overScrollMode="never"/>
-    </FrameLayout>
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:text="찜한 병원이 존재하지 않습니다."
+            android:textSize="20sp"/>
+    </LinearLayout>
 </LinearLayout>

@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,17 +14,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.FragmentReservationStatusBinding;
 import com.gradproject.hospi.home.hospital.Reservation;
 
 import java.util.ArrayList;
-
-import static com.gradproject.hospi.home.HomeActivity.user;
+import java.util.Collections;
 
 public class ReservationStatusFragment extends Fragment {
     private static final String TAG = "ReservationStatusFragment";
+    private FragmentReservationStatusBinding binding;
 
-    RecyclerView reservationRecyclerView;
     LinearLayoutManager layoutManager;
     ReservationAdapter reservationAdapter = new ReservationAdapter();
 
@@ -43,14 +41,13 @@ public class ReservationStatusFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_reservation_status, container, false);
+        binding = FragmentReservationStatusBinding.inflate(inflater, container, false);
 
-        reservationRecyclerView = rootView.findViewById(R.id.reservationList);
+        binding.reservationList.setLayoutManager(layoutManager);
 
-        reservationRecyclerView.setLayoutManager(layoutManager);
         showReservationList();
 
-        return rootView;
+        return binding.getRoot();
     }
 
     private void showReservationList(){
@@ -59,13 +56,29 @@ public class ReservationStatusFragment extends Fragment {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        ArrayList<Reservation> tmpArrList = new ArrayList<>();
+
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             Reservation reservation = document.toObject(Reservation.class);
-                            reservationAdapter.addItem(reservation);
+                            tmpArrList.add(reservation);
                         }
 
-                        reservationRecyclerView.setAdapter(reservationAdapter);
+                        if(tmpArrList.size()!=0) {
+                            binding.reservationList.setVisibility(View.VISIBLE);
+                            binding.nothingReservationView.setVisibility(View.GONE);
+                        }else{
+                            binding.reservationList.setVisibility(View.GONE);
+                            binding.nothingReservationView.setVisibility(View.VISIBLE);
+                        }
+
+                        Collections.sort(tmpArrList, new ReservationComparator());
+
+                        for(int i=0; i<tmpArrList.size(); i++){
+                            reservationAdapter.addItem(tmpArrList.get(i));
+                        }
+
+                        binding.reservationList.setAdapter(reservationAdapter);
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }

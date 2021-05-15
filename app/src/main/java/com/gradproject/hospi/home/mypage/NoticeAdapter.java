@@ -1,6 +1,5 @@
 package com.gradproject.hospi.home.mypage;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.R;
 
 import java.text.SimpleDateFormat;

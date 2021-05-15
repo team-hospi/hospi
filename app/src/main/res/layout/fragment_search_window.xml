@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".home.search.SearchWindowFragment">
+    android:background="@color/list_background">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
@@ -28,7 +27,7 @@
             android:layout_marginRight="35dp"
             android:layout_gravity="center_vertical"
             android:background="@null"
-            android:hint="증상 또는 병원을 검색하세요"
+            android:hint="지역 또는 병원을 검색하세요"
             android:singleLine="true"/>
 
         <FrameLayout
