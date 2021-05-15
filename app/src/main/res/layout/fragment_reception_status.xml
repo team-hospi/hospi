@@ -91,8 +91,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="미접수"
-                        android:textColor="@color/red"
                         android:textSize="60sp" />
                 </LinearLayout>
 
@@ -295,6 +293,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_gravity="center_horizontal"
-            android:text="접수 정보는 예약하신 날짜에 표시됩니다."/>
+            android:text="접수 정보는 예약한 시간에서 한시간 전에 제공됩니다."/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_gravity="center_horizontal"
+            android:text="시간이 됐음에도 제공되지 않을 경우 해당 병원에 문의해주세요."/>
     </LinearLayout>
 </LinearLayout>

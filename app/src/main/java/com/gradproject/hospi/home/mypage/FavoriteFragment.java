@@ -41,7 +41,6 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         db = FirebaseFirestore.getInstance();
         favorites = (ArrayList) user.getFavorites();
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -100,8 +99,12 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
                     });
         }
 
-        if(favorites.size()==0){
-            binding.noFavoriteTxt.setVisibility(View.VISIBLE);
+        if(!(favorites.isEmpty())){
+            binding.favoriteList.setVisibility(View.VISIBLE);
+            binding.nothingFavoriteView.setVisibility(View.GONE);
+        }else{
+            binding.favoriteList.setVisibility(View.GONE);
+            binding.nothingFavoriteView.setVisibility(View.VISIBLE);
         }
     }
 }

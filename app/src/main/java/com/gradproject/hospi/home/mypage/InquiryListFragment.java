@@ -111,6 +111,14 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
                             inquiryAdapter.addItem(tmpArrList.get(i));
                         }
 
+                        if(!(inquiryAdapter.items.isEmpty())){
+                            binding.inquiryList.setVisibility(View.VISIBLE);
+                            binding.nothingInquiryView.setVisibility(View.GONE);
+                        }else{
+                            binding.inquiryList.setVisibility(View.GONE);
+                            binding.nothingInquiryView.setVisibility(View.VISIBLE);
+                        }
+
                         binding.inquiryList.setAdapter(inquiryAdapter);
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());

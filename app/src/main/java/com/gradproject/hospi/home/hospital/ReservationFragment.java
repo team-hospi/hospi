@@ -270,12 +270,8 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
                     Log.d(TAG, document.getId() + " => " + document.getData());
                     db.collection(Reservation.DB_NAME).document(document.getId())
                             .delete()
-                            .addOnSuccessListener(aVoid -> {
-                                Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.w(TAG, "Error deleting document", e);
-                            });
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully deleted!"))
+                            .addOnFailureListener(e -> Log.w(TAG, "Error deleting document", e));
                 }
             } else {
                 Log.d(TAG, "Error getting documents: ", task.getException());

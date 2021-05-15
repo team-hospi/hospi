@@ -2,10 +2,9 @@ package com.gradproject.hospi.home;
 
 public class Reception {
     public static final String DB_NAME = "receptionList";
-    public static final int NOT_RECEIVED = 0;
-    public static final int RECEIVED = 1;
-    public static final int TREATMENT = 2;
-    public static final int TREATMENT_COMPLETE = 3;
+    public static final int RECEIVED = 0;
+    public static final int TREATMENT = 1;
+    public static final int TREATMENT_COMPLETE = 2;
 
     private String department;
     private String doctor;

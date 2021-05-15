@@ -15,13 +15,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.databinding.FragmentReceptionStatusBinding;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+
 public class ReceptionStatusFragment extends Fragment {
     private static final String TAG = "ReceptionStatusFragment";
     private FragmentReceptionStatusBinding binding;
 
     FirebaseFirestore db;
-    Reception reception = null;
     HomeActivity homeActivity;
+    Reception reception;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,25 +49,54 @@ public class ReceptionStatusFragment extends Fragment {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        int minNum = 1440;
+                        String docId = null;
+
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
-                            reception = document.toObject(Reception.class);
-                            realtimeCheck(document.getId());
+                            Reception tmpRec = document.toObject(Reception.class);
+                            String tmpStr = tmpRec.getReceptionDate();
+                            String[] tmpTime = tmpStr.substring(tmpStr.length()-5).split(":");
+                            int tmpNum = Integer.parseInt(tmpTime[0])*60 + Integer.parseInt(tmpTime[1]);
+                            if(tmpNum<minNum){
+                                minNum=tmpNum;
+                                reception = tmpRec;
+                                docId = document.getId();
+                            }
+                        }
+
+                        if(docId != null){
+                            realtimeCheck(docId);
                         }
 
                         if(reception != null){
-                            binding.nothingReceptionView.setVisibility(View.GONE);
-                            binding.receptionView.setVisibility(View.VISIBLE);
+                            String tmpDate = reception.getReceptionDate();
+                            String[] time = tmpDate.substring(tmpDate.length()-5).split(":");
+                            String[] date = tmpDate.substring(0, 10).split("-");
+                            Calendar curCal = Calendar.getInstance();
+                            Calendar tmpCal = Calendar.getInstance();
+                            tmpCal.set(Integer.parseInt(date[0]), Integer.parseInt(date[1])-1, Integer.parseInt(date[2]));
 
-                            binding.departmentTxt.setText(reception.getDepartment());
-                            binding.hospitalNameTxt.setText(reception.getHospitalName());
-                            binding.patientTxt.setText(reception.getPatient());
-                            binding.patientTxt2.setText(reception.getPatient());
-                            binding.receptionDateTxt.setText(reception.getReceptionDate());
-                            binding.officeTxt.setText(reception.getOffice());
-                            binding.doctorTxt.setText(reception.getDoctor());
+                            int curMin = curCal.get(Calendar.MINUTE) + curCal.get(Calendar.HOUR_OF_DAY)*60;
+                            int tmpMin = Integer.parseInt(time[0])*60 + Integer.parseInt(time[1]);
 
-                            updateStatus(reception);
+                            if((curCal.get(Calendar.YEAR) == tmpCal.get(Calendar.YEAR))
+                                    && (curCal.get(Calendar.MONTH) == tmpCal.get(Calendar.MONTH))
+                                    && (curCal.get(Calendar.DATE) == tmpCal.get(Calendar.DATE))
+                                    && (curMin>=tmpMin-60) && (curMin<=tmpMin+60)){
+                                binding.nothingReceptionView.setVisibility(View.GONE);
+                                binding.receptionView.setVisibility(View.VISIBLE);
+
+                                binding.departmentTxt.setText(reception.getDepartment());
+                                binding.hospitalNameTxt.setText(reception.getHospitalName());
+                                binding.patientTxt.setText(reception.getPatient());
+                                binding.patientTxt2.setText(reception.getPatient());
+                                binding.receptionDateTxt.setText(reception.getReceptionDate());
+                                binding.officeTxt.setText(reception.getOffice());
+                                binding.doctorTxt.setText(reception.getDoctor());
+
+                                updateStatus(reception);
+                            }
                         }else{
                             binding.nothingReceptionView.setVisibility(View.VISIBLE);
                             binding.receptionView.setVisibility(View.GONE);
@@ -99,11 +131,6 @@ public class ReceptionStatusFragment extends Fragment {
 
     private void updateStatus(Reception reception){
         switch (reception.getStatus()){
-            case Reception.NOT_RECEIVED:
-                binding.statusTxt.setText("미접수");
-                binding.statusTxt.setTextColor(Color.RED);
-                binding.waitingTxt.setVisibility(View.GONE);
-                break;
             case Reception.RECEIVED:
                 String str = reception.getWaitingNumber() + "명";
                 binding.statusTxt.setText(str);
