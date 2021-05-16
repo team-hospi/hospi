@@ -20,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.ReservationItemBinding;
 import com.gradproject.hospi.home.hospital.HospitalActivity;
 import com.gradproject.hospi.home.hospital.Reservation;
 import com.gradproject.hospi.home.hospital.Reserved;
@@ -60,19 +61,19 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     @NonNull
     @Override
     public ReservationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View itemView = inflater.inflate(R.layout.reservation_item, parent, false);
-        loading = new Loading(itemView.getContext());
+        ReservationItemBinding binding = ReservationItemBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        loading = new Loading(binding.getRoot().getContext());
 
-        return new ReservationAdapter.ViewHolder(itemView);
+        return new ReservationAdapter.ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ReservationAdapter.ViewHolder holder, int position) {
         Reservation item = items.get(position);
         holder.setItem(item);
-        holder.reservationCancelBtn.setTag(holder.getAdapterPosition());
-        holder.reservationCancelBtn.setOnClickListener(v -> reservationCancelDialog(v, item));
+        holder.binding.reservationCancelBtn.setTag(holder.getAdapterPosition());
+        holder.binding.reservationCancelBtn.setOnClickListener(v -> reservationCancelDialog(v, item));
     }
 
     @Override
@@ -192,26 +193,18 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     public static class ViewHolder extends RecyclerView.ViewHolder{
         final String week[] = {"일", "월", "화", "수", "목", "금", "토"};
 
-        ImageButton hospitalInfoBtn;
-        TextView hospitalNameTxt, reservationDateTxt, reservationStatusTxt, cancelCommentTxt;
-        LinearLayout reserveInfo, cancelInfo, reservationCancelBtn;
+        ReservationItemBinding binding;
 
-        public ViewHolder(View itemView){
-            super(itemView);
-            hospitalInfoBtn = itemView.findViewById(R.id.hospitalInfoBtn);
-            hospitalNameTxt = itemView.findViewById(R.id.hospitalNameTxt);
-            reservationDateTxt = itemView.findViewById(R.id.reservationDateTxt);
-            reservationStatusTxt = itemView.findViewById(R.id.reservationStatusTxt);
-            reservationCancelBtn = itemView.findViewById(R.id.reservationCancelBtn);
-            reserveInfo = itemView.findViewById(R.id.reserveInfo);
-            cancelInfo = itemView.findViewById(R.id.cancelInfo);
-            cancelCommentTxt = itemView.findViewById(R.id.cancelCommentTxt);
+        public ViewHolder(ReservationItemBinding binding){
+            super(binding.getRoot());
+
+            this.binding = binding;
         }
 
         public void setItem(Reservation item){
-            hospitalNameTxt.setText(item.getHospitalName());
+            binding.hospitalNameTxt.setText(item.getHospitalName());
             if(item.getCancelComment() != null){
-                cancelCommentTxt.setText(item.getCancelComment());
+                binding.cancelCommentTxt.setText(item.getCancelComment());
             }
             String date = item.getReservationDate();
             String time = item.getReservationTime();
@@ -222,27 +215,27 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
             cal.set(Calendar.YEAR, year);
             cal.set(Calendar.MONTH, month-1);
             cal.set(Calendar.DATE, day);
-            reservationDateTxt.setText(date + " (" + week[cal.get(Calendar.DAY_OF_WEEK)-1] + ") " + time);
+            binding.reservationDateTxt.setText(date + " (" + week[cal.get(Calendar.DAY_OF_WEEK)-1] + ") " + time);
 
             switch (item.getReservationStatus()){
                 case Reservation.RESERVATION_CONFIRMED:
-                    reservationStatusTxt.setText("예약 확정");
-                    reservationStatusTxt.setTextColor(Color.BLUE);
+                    binding.reservationStatusTxt.setText("예약 확정");
+                    binding.reservationStatusTxt.setTextColor(Color.BLUE);
                     break;
                 case Reservation.CONFIRMING_RESERVATION:
-                    reservationStatusTxt.setText("예약 확인 중");
-                    reservationStatusTxt.setTextColor(Color.rgb(70, 201, 0));
+                    binding.reservationStatusTxt.setText("예약 확인 중");
+                    binding.reservationStatusTxt.setTextColor(Color.rgb(70, 201, 0));
                     break;
                 default:
-                    reservationStatusTxt.setText("예약 취소됨");
-                    reservationStatusTxt.setTextColor(Color.RED);
-                    reserveInfo.setVisibility(View.GONE);
-                    cancelInfo.setVisibility(View.VISIBLE);
-                    reservationCancelBtn.setVisibility(View.GONE);
+                    binding.reservationStatusTxt.setText("예약 취소됨");
+                    binding.reservationStatusTxt.setTextColor(Color.RED);
+                    binding.reserveInfo.setVisibility(View.GONE);
+                    binding.cancelInfo.setVisibility(View.VISIBLE);
+                    binding.reservationCancelBtn.setVisibility(View.GONE);
                     break;
             }
 
-            hospitalInfoBtn.setOnClickListener(v -> showHospitalInfo(v, item.getHospitalId()));
+            binding.hospitalInfoBtn.setOnClickListener(v -> showHospitalInfo(v, item.getHospitalId()));
         }
 
         public void showHospitalInfo(View v, String id){

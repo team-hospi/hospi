@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.InquiryItemBinding;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.Date;
 
 public class InquiryAdapter extends RecyclerView.Adapter<InquiryAdapter.ViewHolder>
         implements OnInquiryItemClickListener {
-    ArrayList<Inquiry> items = new ArrayList<Inquiry>();
+    ArrayList<Inquiry> items = new ArrayList<>();
     OnInquiryItemClickListener listener;
 
     public void addItem(Inquiry item){
@@ -40,10 +41,15 @@ public class InquiryAdapter extends RecyclerView.Adapter<InquiryAdapter.ViewHold
     @NonNull
     @Override
     public InquiryAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        InquiryItemBinding binding = InquiryItemBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+
+        /*
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.inquiry_item, parent, false);
+         */
 
-        return new InquiryAdapter.ViewHolder(itemView, this);
+        return new InquiryAdapter.ViewHolder(binding, this);
     }
 
     @Override
@@ -69,16 +75,19 @@ public class InquiryAdapter extends RecyclerView.Adapter<InquiryAdapter.ViewHold
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView titleTxt, dateTxt, answerCheckTxt, hospitalNameTxt;
+        //TextView titleTxt, dateTxt, answerCheckTxt, hospitalNameTxt;
+        InquiryItemBinding binding;
 
-        public ViewHolder(View itemView, final OnInquiryItemClickListener listener){
-            super(itemView);
+        public ViewHolder(InquiryItemBinding binding, final OnInquiryItemClickListener listener){
+            super(binding.getRoot());
 
+            this.binding = binding;
+/*
             titleTxt = itemView.findViewById(R.id.titleTxt);
             dateTxt = itemView.findViewById(R.id.dateTxt);
             answerCheckTxt = itemView.findViewById(R.id.answerCheckTxt);
             hospitalNameTxt = itemView.findViewById(R.id.hospitalNameTxt);
-
+*/
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
 
@@ -92,16 +101,16 @@ public class InquiryAdapter extends RecyclerView.Adapter<InquiryAdapter.ViewHold
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             String date = sdf.format(new Date(item.getTimestamp()));
 
-            dateTxt.setText(date);
-            titleTxt.setText(item.getTitle());
-            hospitalNameTxt.setText(item.getHospitalName());
+            binding.dateTxt.setText(date);
+            binding.titleTxt.setText(item.getTitle());
+            binding.hospitalNameTxt.setText(item.getHospitalName());
 
             if(item.isCheckedAnswer()){
-                answerCheckTxt.setText("답변완료");
-                answerCheckTxt.setTextColor(Color.parseColor("#0000ff"));
+                binding.answerCheckTxt.setText("답변완료");
+                binding.answerCheckTxt.setTextColor(Color.parseColor("#0000ff"));
             }else{
-                answerCheckTxt.setText("미답변");
-                answerCheckTxt.setTextColor(Color.parseColor("#ff0000"));
+                binding.answerCheckTxt.setText("미답변");
+                binding.answerCheckTxt.setTextColor(Color.parseColor("#ff0000"));
             }
         }
     }

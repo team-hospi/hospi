@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.NoticeItemBinding;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,10 +39,10 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.ViewHolder
     @NonNull
     @Override
     public NoticeAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View itemView = inflater.inflate(R.layout.notice_item, parent, false);
+        NoticeItemBinding binding = NoticeItemBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
 
-        return new NoticeAdapter.ViewHolder(itemView, this);
+        return new NoticeAdapter.ViewHolder(binding, this);
     }
 
     @Override
@@ -67,14 +68,12 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.ViewHolder
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView titleTxt, contentTxt, dateTxt;
+        NoticeItemBinding binding;
 
-        public ViewHolder(View itemView, final OnNoticeItemClickListener listener){
-            super(itemView);
+        public ViewHolder(NoticeItemBinding binding, final OnNoticeItemClickListener listener){
+            super(binding.getRoot());
 
-            titleTxt = itemView.findViewById(R.id.titleTxt);
-            dateTxt = itemView.findViewById(R.id.dateTxt);
-            contentTxt = itemView.findViewById(R.id.contentTxt);
+            this.binding = binding;
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -89,9 +88,9 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.ViewHolder
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String date = sdf.format(new Date(item.getTimestamp()));
 
-            dateTxt.setText(date);
-            titleTxt.setText(item.getTitle());
-            contentTxt.setText(item.getContent());
+            binding.dateTxt.setText(date);
+            binding.titleTxt.setText(item.getTitle());
+            binding.contentTxt.setText(item.getContent());
         }
     }
 }
