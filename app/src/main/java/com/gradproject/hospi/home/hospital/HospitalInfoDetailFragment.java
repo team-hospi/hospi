@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -21,7 +22,9 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 import com.gradproject.hospi.databinding.FragmentHospitalInfoDetailBinding;
 import com.gradproject.hospi.home.LocationPoint;
+import com.gradproject.hospi.home.search.Hospital;
 
+import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
@@ -186,6 +189,7 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         LocationPoint point = getPointFromGeoCoder(hospital.getAddress());
 
         MapView mapView = new MapView(getContext());
+        mapView.setCalloutBalloonAdapter(new CustomBalloonAdapter(getLayoutInflater()));
         mapView.setZoomLevel(2, false);
         MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(point.latitude, point.longitude);
         mapView.setMapCenterPoint(mapPoint, false);
@@ -226,5 +230,24 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         point.longitude = listAddress.get(0).getLongitude();
         point.latitude = listAddress.get(0).getLatitude();
         return point;
+    }
+
+    class CustomBalloonAdapter implements CalloutBalloonAdapter {
+        private final View mCalloutBalloon;
+
+        public CustomBalloonAdapter(LayoutInflater inflater) {
+            mCalloutBalloon = inflater.inflate(R.layout.balloon_layout2, null);
+        }
+
+        @Override
+        public View getCalloutBalloon(MapPOIItem poiItem) {
+            ((TextView)mCalloutBalloon.findViewById(R.id.hospitalNameTxt)).setText(hospital.getName());
+            return mCalloutBalloon;
+        }
+
+        @Override
+        public View getPressedCalloutBalloon(MapPOIItem poiItem) {
+            return getCalloutBalloon(poiItem);
+        }
     }
 }

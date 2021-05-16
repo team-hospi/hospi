@@ -15,6 +15,7 @@ import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -29,6 +30,8 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentReservationBinding;
 import com.gradproject.hospi.utils.Loading;
+
+import org.w3c.dom.Text;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -406,19 +409,34 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
             case 6:
                 if(hospital.isStatus()){
                     timeTable(WEEKDAY);
+                }else{
+                    notPossibleReservation();
                 }
                 break;
             case 7:
                 if(hospital.isSaturdayStatus()){
                     timeTable(SATURDAY);
+                }else{
+                    notPossibleReservation();
                 }
                 break;
             default:
                 if(hospital.isHolidayStatus()){
                     timeTable(HOLIDAY);
+                }else{
+                    notPossibleReservation();
                 }
                 break;
         }
+    }
+
+    private void notPossibleReservation(){
+        TextView textView = new TextView(getContext());
+        TableRow tableRow = new TableRow(getContext());
+        textView.setText("예약이 불가한 날짜입니다. 다른 날짜를 선택해주세요.");
+        textView.setTextColor(Color.RED);
+        tableRow.addView(textView);
+        binding.timeTable.addView(tableRow);
     }
 
     // 평일: 0, 토요일: 1, 일요일 및 공휴일: 2
@@ -506,54 +524,41 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
         ArrayList<String> timeList = new ArrayList<>();
 
-        int openHr = Integer.parseInt(open.substring(0,2));
-        int openMin = Integer.parseInt(open.substring(3,5));
-        int closeHr = Integer.parseInt(close.substring(0,2));
-        int closeMin = Integer.parseInt(close.substring(3,5));
-        int lunchHr = Integer.parseInt(lunch.substring(0,2));
-        int lunchMin = Integer.parseInt(lunch.substring(3,5));
+        String[] openArr = open.split(":");
+        String[] closeArr = close.split(":");
+        String[] lunchArr = lunch.split(":");
 
-        while(openHr<lunchHr){
-            String time;
+        int openMin = Integer.parseInt(openArr[0]) * 60 + Integer.parseInt(openArr[1]);
+        int closeMin = Integer.parseInt(closeArr[0]) * 60 + Integer.parseInt(closeArr[1]);
+        int lunchMin = Integer.parseInt(lunchArr[0]) * 60 + Integer.parseInt(lunchArr[1]);
+        int lunchEndMin = lunchMin + 60;
 
-            if(openMin==30){
-                time = openHr + ":" + openMin;
-                timeList.add(time);
-                openMin=0;
-                openHr++;
+        while(openMin<closeMin){
+            if(openMin%60 == 0){
+                timeList.add(openMin / 60 +":"+"00");
             }else{
-                time = openHr + ":" + openMin +"0";
-                timeList.add(time);
-                openMin = 30;
+                timeList.add(openMin / 60 +":"+"30");
             }
+            openMin+=30;
         }
 
-        if(lunchMin==30){
-            openMin=0;
-            String time = openHr + ":" + openMin + "0";
-            timeList.add(time);
-        }
+        ArrayList<String> tmpList = new ArrayList<>();
 
-        int tmp = lunchHr+1;
-
-        while(tmp<closeHr){
-            String time;
-            if(lunchMin==30){
-                time = tmp + ":" + lunchMin;
-                timeList.add(time);
-                lunchMin=0;
-                tmp++;
+        while(lunchMin<lunchEndMin){
+            if(lunchMin%60 == 0){
+                tmpList.add(lunchMin / 60 +":"+"00");
             }else{
-                time = tmp + ":" + lunchMin +"0";
-                timeList.add(time);
-                lunchMin = 30;
+                tmpList.add(lunchMin / 60 +":"+"30");
             }
+            lunchMin+=30;
         }
 
-        if(closeMin==30){
-            lunchMin=0;
-            String time = tmp + ":" + lunchMin + "0";
-            timeList.add(time);
+        for(int i=0; i<timeList.size(); i++){
+            for(int j=0; j<tmpList.size(); j++){
+                if(timeList.get(i).equals(tmpList.get(j))){
+                    timeList.remove(i);
+                }
+            }
         }
 
         return timeList;
