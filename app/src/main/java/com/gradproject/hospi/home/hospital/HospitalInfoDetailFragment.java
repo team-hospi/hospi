@@ -1,5 +1,6 @@
 package com.gradproject.hospi.home.hospital;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -22,7 +24,6 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 import com.gradproject.hospi.databinding.FragmentHospitalInfoDetailBinding;
 import com.gradproject.hospi.home.LocationPoint;
-import com.gradproject.hospi.home.search.Hospital;
 
 import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.MapPOIItem;
@@ -32,6 +33,7 @@ import net.daum.mf.map.api.MapView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
@@ -49,11 +51,12 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-        favorites = (ArrayList) user.getFavorites();
+        favorites = (ArrayList<String>) user.getFavorites();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHospitalInfoDetailBinding.inflate(inflater, container, false);
 
@@ -120,7 +123,7 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
 
     @Override
     public void onBackPressed() {
-        getActivity().finish();
+        Objects.requireNonNull(getActivity()).finish();
     }
 
     @Override
@@ -154,8 +157,9 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
 
     public void favoriteCheck(){
         for(String str : favorites){
-            if(str.equals(hospital.getId())){
+            if (str.equals(hospital.getId())) {
                 isFavorite = true;
+                break;
             }
         }
     }
@@ -171,9 +175,12 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
     }
 
     public void removeFavoriteList(){
-        for(int i=0; i<favorites.size(); i++){
+        int size = favorites.size();
+        for(int i=0; i<size; i++){
             if(favorites.get(i).equals(hospital.getId())){
                 favorites.remove(i);
+                size--;
+                i--;
             }
         }
         user.setFavorites(favorites);
@@ -188,7 +195,7 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
     private void showHospitalLocation(){
         LocationPoint point = getPointFromGeoCoder(hospital.getAddress());
 
-        MapView mapView = new MapView(getContext());
+        MapView mapView = new MapView(Objects.requireNonNull(getContext()));
         mapView.setCalloutBalloonAdapter(new CustomBalloonAdapter(getLayoutInflater()));
         mapView.setZoomLevel(2, false);
         MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(point.latitude, point.longitude);
@@ -232,9 +239,10 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
         return point;
     }
 
-    class CustomBalloonAdapter implements CalloutBalloonAdapter {
+    static class CustomBalloonAdapter implements CalloutBalloonAdapter {
         private final View mCalloutBalloon;
 
+        @SuppressLint("InflateParams")
         public CustomBalloonAdapter(LayoutInflater inflater) {
             mCalloutBalloon = inflater.inflate(R.layout.balloon_layout2, null);
         }

@@ -132,7 +132,7 @@ public class ReceptionStatusFragment extends Fragment {
     private void updateStatus(Reception reception){
         switch (reception.getStatus()){
             case Reception.RECEIVED:
-                String str = reception.getWaitingNumber() + "명";
+                String str = String.valueOf(reception.getWaitingNumber());
                 binding.statusTxt.setText(str);
                 binding.statusTxt.setTextColor(Color.BLACK);
                 binding.waitingTxt.setVisibility(View.VISIBLE);
