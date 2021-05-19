@@ -32,6 +32,7 @@ public class SearchFragment extends Fragment {
 
         binding.searchBox.setOnClickListener(v -> startActivity(new Intent(getContext(), ResultActivity.class)));
         binding.hospitalMapBtn.setOnClickListener(v -> startActivity(new Intent(getContext(), HospitalMapActivity.class)));
+        binding.pharmacyMapBtn.setOnClickListener(v -> startActivity(new Intent(getContext(), PharmacyMapActivity.class)));
         binding.coronaCheckBtn.setOnClickListener(v -> startActivity(new Intent(getContext(), CoronaCheckActivity.class)));
 
         return binding.getRoot();

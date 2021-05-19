@@ -438,6 +438,8 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     // 평일: 0, 토요일: 1, 일요일 및 공휴일: 2
     @SuppressLint("SetTextI18n")
     public void timeTable(int dateNum){
+        // TODO: 당일 시간에 따라서 예약 시간 잠금 구현해야함
+
         String open, close, lunch;
 
         switch(dateNum){

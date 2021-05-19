@@ -21,6 +21,8 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentNoticeDetailBinding;
 import com.gradproject.hospi.utils.Loading;
 
+import java.text.SimpleDateFormat;
+
 import static com.gradproject.hospi.home.HomeActivity.user;
 
 public class NoticeDetailFragment extends Fragment implements OnBackPressedListener {
@@ -56,6 +58,9 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
 
         binding.backBtn.setOnClickListener(v -> onBackPressed());
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd. HH:mm");
+
+        binding.dateTxt.setText(sdf.format(notice.getTimestamp()));
         binding.titleTxt.setText(notice.getTitle());
         binding.contentTxt.setText(notice.getContent());
 

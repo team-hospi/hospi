@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -19,18 +20,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        // TODO: 채널 아이디 별로 나오는 화면 설정
-
         if (remoteMessage.getNotification() != null) {
             Log.d("FCM Log", "알림 메시지: " + remoteMessage.getNotification().getBody());
             String messageBody = remoteMessage.getNotification().getBody();
             String messageTitle = remoteMessage.getNotification().getTitle();
+            String channelId = remoteMessage.getNotification().getChannelId();
 
             Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setAction(Intent.ACTION_MAIN)
+                    .addCategory(Intent.CATEGORY_LAUNCHER)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-            String channelId = remoteMessage.getNotification().getChannelId();
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            assert channelId != null;
             NotificationCompat.Builder notificationBuilder =
                     new NotificationCompat.Builder(this, channelId)
                             .setSmallIcon(R.drawable.icon)
@@ -41,7 +43,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             .setContentIntent(pendingIntent);
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                String channelName = remoteMessage.getNotification().getChannelId();
+                String channelName = "알림";
                 NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
                 notificationManager.createNotificationChannel(channel);
             }
@@ -50,7 +52,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     @Override
-    public void onNewToken(String token) {
+    public void onNewToken(@NonNull String token) {
         Log.d("FCM Log", "Refreshed token: " + token);
         sendRegistrationToServer(token);
     }
