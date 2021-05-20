@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
@@ -20,6 +21,8 @@ import com.gradproject.hospi.User;
 import com.gradproject.hospi.databinding.FragmentRegister6Binding;
 import com.gradproject.hospi.utils.Loading;
 
+import java.util.Objects;
+
 public class RegisterFragment6 extends Fragment implements OnBackPressedListener {
     private static final String TAG = "RegisterFragment6";
     private FragmentRegister6Binding binding;
@@ -31,7 +34,7 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
     FirebaseFirestore db;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentRegister6Binding.inflate(inflater, container, false);
 
@@ -57,14 +60,14 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
                 pw = binding.inputPW2.getText().toString();
 
                 firebaseAuth.createUserWithEmailAndPassword(registerActivity.user.getEmail(), pw)
-                        .addOnCompleteListener(getActivity(), task -> {
+                        .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
                             if(task.isSuccessful()){
                                 //아이디 생성이 완료 되었을 때
                                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                         .setDisplayName(registerActivity.user.getName())
                                         .build();
 
-                                firebaseAuth.getCurrentUser().updateProfile(profileUpdates)
+                                Objects.requireNonNull(firebaseAuth.getCurrentUser()).updateProfile(profileUpdates)
                                         .addOnCompleteListener(task1 -> {
                                             if (task1.isSuccessful()) {
                                                 Log.d(TAG, "User profile updated.");
@@ -82,7 +85,7 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
                                 //아이디 생성이 실패했을 경우
                                 loading.dismiss();
                                 Toast.makeText(getContext(), "알 수 없는 오류로 인해 진행 할 수 없습니다.\n 잠시 후 다시 진행하여 주십시오.", Toast.LENGTH_LONG).show();
-                                firebaseAuth.getCurrentUser().delete();
+                                Objects.requireNonNull(firebaseAuth.getCurrentUser()).delete();
                             }
                         });
             }
@@ -104,12 +107,12 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
 
     // 회원가입 완료 팝업
     private void registerSuccess(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                 .setCancelable(false)
                 .setMessage("회원가입이 완료되었습니다.")
                 .setPositiveButton("확인", (dialogInterface, i) -> {
                     FirebaseAuth.getInstance().signOut();
-                    getActivity().finish();
+                    Objects.requireNonNull(getActivity()).finish();
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -121,7 +124,7 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             DocumentReference documentReference = db.collection(User.DB_NAME).document(document.getId());
                             documentReference

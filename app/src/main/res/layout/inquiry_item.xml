@@ -3,62 +3,62 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/white">
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/white"
-        app:cardElevation="5dp"
-        app:cardUseCompatPadding="true">
+        android:background="?attr/selectableItemBackground">
 
-        <FrameLayout
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/titleTxt"
-                    android:layout_width="250dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:singleLine="true"
-                    android:text="제목"
-                    android:textSize="17sp"
-                    android:textColor="@color/black"/>
-
-                <TextView
-                    android:id="@+id/dateTxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:text="0000-00-00"/>
-
-                <TextView
-                    android:id="@+id/hospitalNameTxt"
-                    android:layout_width="250dp"
-                    android:layout_height="wrap_content"
-                    android:text="병원이름"/>
-            </LinearLayout>
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/answerCheckTxt"
+                android:id="@+id/titleTxt"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:singleLine="true"
+                android:text="제목"
+                android:textSize="17sp"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/dateTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_gravity="right"
-                android:gravity="right"
-                android:text="미답변"
-                android:textColor="@color/red"/>
-        </FrameLayout>
-    </androidx.cardview.widget.CardView>
+                android:layout_marginBottom="2dp"
+                android:text="0000-00-00"/>
+
+            <TextView
+                android:id="@+id/hospitalNameTxt"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:text="병원이름"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/answerCheckTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="right"
+            android:gravity="right"
+            android:text="미답변"
+            android:textColor="@color/red"/>
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/border"/>
 </LinearLayout>

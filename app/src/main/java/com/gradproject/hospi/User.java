@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+@SuppressWarnings("ConstantConditions")
 public class User {
     public static final String DB_NAME = "userList";
 
@@ -202,10 +203,12 @@ public class User {
         this.address = address;
     }
 
+    @SuppressWarnings("unused")
     public String getToken() {
         return token;
     }
 
+    @SuppressWarnings("unused")
     public void setToken(String token) {
         this.token = token;
     }

@@ -22,6 +22,8 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentInquiryDetailBinding;
 import com.gradproject.hospi.utils.Loading;
 
+import java.util.Objects;
+
 public class InquiryDetailFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "InquiryDetailFragment";
     private FragmentInquiryDetailBinding binding;
@@ -45,13 +47,13 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentInquiryDetailBinding.inflate(inflater, container, false);
 
         setHasOptionsMenu(true);
         settingActivity.setSupportActionBar(binding.toolbar);
-        settingActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(settingActivity.getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         binding.backBtn.setOnClickListener(v -> onBackPressed());
 
@@ -89,21 +91,20 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case R.id.editBtn:
-                editBtnProcess();
-                return true;
-            case R.id.delBtn:
-                deletePopUp();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if(item.getItemId()==R.id.editBtn){
+            editBtnProcess();
+            return true;
+        }else if(item.getItemId()==R.id.delBtn){
+            deletePopUp();
+            return true;
+        }else{
+            return super.onOptionsItemSelected(item);
         }
     }
 
     public void editBtnProcess(){
         if(!(inquiry.isCheckedAnswer())){
-            FragmentTransaction transaction = ((SettingActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
             InquiryEditFragment inquiryEditFragment = new InquiryEditFragment();
             Bundle bundle = new Bundle();
             bundle.putSerializable("inquiry", inquiry);
@@ -133,7 +134,7 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
     }
 
     public void deletePopUp(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                 .setCancelable(false)
                 .setMessage("해당 문의를 삭제하시겠습니까?")
                 .setPositiveButton("확인", (dialog, i) -> delBtnProcess())
@@ -144,7 +145,7 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
 
     public void deleteSuccessPopUp(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                 .setCancelable(false)
                 .setMessage("삭제되었습니다.")
                 .setPositiveButton("확인", (dialog, i) -> {

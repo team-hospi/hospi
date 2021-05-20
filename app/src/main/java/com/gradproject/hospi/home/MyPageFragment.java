@@ -9,23 +9,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.databinding.FragmentMyPageBinding;
 import com.gradproject.hospi.home.mypage.SettingActivity;
 
+import java.util.Objects;
+
 public class MyPageFragment extends Fragment{
     private FragmentMyPageBinding binding;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentMyPageBinding.inflate(inflater, container, false);
 
         HomeActivity homeActivity = (HomeActivity) getActivity();
 
-        binding.nameTxt.setText(homeActivity.firebaseUser.getDisplayName());
-        binding.version.setText(getVersionInfo(getContext()));
+        if (homeActivity != null) {
+            binding.nameTxt.setText(homeActivity.firebaseUser.getDisplayName());
+        }
+        binding.version.setText(getVersionInfo(Objects.requireNonNull(getContext())));
 
         binding.myInfoEditBtn.setOnClickListener(v -> startSelectedFragment("myInfoEditBtn"));
         binding.favoritesBtn.setOnClickListener(v -> startSelectedFragment("favoritesBtn"));
@@ -53,7 +58,7 @@ public class MyPageFragment extends Fragment{
         try {
             PackageInfo i = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             version = i.versionName;
-        } catch(PackageManager.NameNotFoundException e) { }
+        } catch(PackageManager.NameNotFoundException ignored) { }
         return version;
     }
 }

@@ -20,8 +20,7 @@ import com.gradproject.hospi.home.HomeActivity;
 
 public class MainActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener{
     private static final int MULTIPLE_PERMISSION = 10235;
-    private ActivityMainBinding binding;
-    private String[] PERMISSIONS = {
+    private final String[] PERMISSIONS = {
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -33,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -82,32 +81,30 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
 
     //권한 요청에 대한 결과 처리
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MULTIPLE_PERMISSION:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == MULTIPLE_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED
                     && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-                    /*..권한이 있는경우 실행할 코드....*/
-                    onAuthStateChanged(firebaseAuth);
-                } else {
-                    // 하나라도 거부한다면.
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                    alertDialog.setTitle("앱 권한");
-                    alertDialog.setMessage("해당 앱의 원할한 기능을 이용하시려면 애플리케이션 [정보]>[권한] 에서 모든 권한을 허용해 주십시오.");
-                    // 권한설정 클릭시 이벤트 발생
-                    alertDialog.setPositiveButton("권한설정",
-                            (dialog, which) -> {
-                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + getApplicationContext().getPackageName()));
-                                startActivity(intent);
-                                dialog.cancel();
-                            });
-                    //취소
-                    alertDialog.setNegativeButton("취소",
-                            (dialog, which) -> dialog.cancel());
-                    alertDialog.show();
-                }
-                return;
+                /*..권한이 있는경우 실행할 코드....*/
+                onAuthStateChanged(firebaseAuth);
+            } else {
+                // 하나라도 거부한다면.
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                alertDialog.setTitle("앱 권한");
+                alertDialog.setMessage("해당 앱의 원할한 기능을 이용하시려면 애플리케이션 [정보]>[권한] 에서 모든 권한을 허용해 주십시오.");
+                // 권한설정 클릭시 이벤트 발생
+                alertDialog.setPositiveButton("권한설정",
+                        (dialog, which) -> {
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + getApplicationContext().getPackageName()));
+                            startActivity(intent);
+                            dialog.cancel();
+                        });
+                //취소
+                alertDialog.setNegativeButton("취소",
+                        (dialog, which) -> dialog.cancel());
+                alertDialog.show();
+            }
         }
     }
 }

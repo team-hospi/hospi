@@ -1,20 +1,20 @@
 package com.gradproject.hospi.home.search;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gradproject.hospi.R;
+import com.gradproject.hospi.databinding.HospitalItemBinding;
 
 import java.util.ArrayList;
 
 public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHolder>
                             implements OnHospitalItemClickListener {
-    public ArrayList<Hospital> items = new ArrayList<Hospital>();
+    public ArrayList<Hospital> items = new ArrayList<>();
     OnHospitalItemClickListener listener;
 
     public void addItem(Hospital item){
@@ -29,6 +29,7 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHo
         return items.get(position);
     }
 
+    @SuppressWarnings("unused")
     public void setItem(int position, Hospital item){
         items.set(position, item);
     }
@@ -36,10 +37,10 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View itemView = inflater.inflate(R.layout.hospital_item, parent, false);
+        HospitalItemBinding binding = HospitalItemBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
 
-        return new ViewHolder(itemView, this);
+        return new ViewHolder(binding, this);
     }
 
     @Override
@@ -65,17 +66,12 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHo
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView hospitalName, weekdayBusinessHours, saturdayBusinessHours;
-        TextView holidayBusinessHours, addressTxt;
+        HospitalItemBinding binding;
 
-        public ViewHolder(View itemView, final OnHospitalItemClickListener listener){
-            super(itemView);
+        public ViewHolder(HospitalItemBinding binding, final OnHospitalItemClickListener listener){
+            super(binding.getRoot());
 
-            hospitalName = itemView.findViewById(R.id.hospitalName);
-            weekdayBusinessHours = itemView.findViewById(R.id.weekdayBusinessHours);
-            saturdayBusinessHours = itemView.findViewById(R.id.saturdayBusinessHours);
-            holidayBusinessHours = itemView.findViewById(R.id.holidayBusinessHours);
-            addressTxt = itemView.findViewById(R.id.addressTxt);
+            this.binding = binding;
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -86,18 +82,19 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHo
             });
         }
 
+        @SuppressLint("SetTextI18n")
         public void setItem(Hospital item){
-            hospitalName.setText(item.getName());
+            binding.hospitalName.setText(item.getName());
             if(item.isStatus()){
-                weekdayBusinessHours.setText("평일 " + item.getWeekdayOpen() + " ~ " + item.getWeekdayClose());
+                binding.weekdayBusinessHours.setText("평일 " + item.getWeekdayOpen() + " ~ " + item.getWeekdayClose());
             }
             if(item.isSaturdayStatus()){
-                saturdayBusinessHours.setText("토요일 " + item.getSaturdayOpen() + " ~ " + item.getSaturdayClose());
+                binding.saturdayBusinessHours.setText("토요일 " + item.getSaturdayOpen() + " ~ " + item.getSaturdayClose());
             }
             if(item.isHolidayStatus()){
-                holidayBusinessHours.setText("공휴일 " + item.getHolidayOpen() + " ~ " + item.getHolidayClose());
+                binding.holidayBusinessHours.setText("공휴일 " + item.getHolidayOpen() + " ~ " + item.getHolidayClose());
             }
-            addressTxt.setText(item.getAddress());
+            binding.addressTxt.setText(item.getAddress());
         }
 
     }

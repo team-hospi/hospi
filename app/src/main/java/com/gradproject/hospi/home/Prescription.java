@@ -3,6 +3,7 @@ package com.gradproject.hospi.home;
 import java.io.Serializable;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class Prescription implements Serializable {
     public static final String DB_NAME = "prescriptionList";
     private static final long serialVersionUID = 1L;

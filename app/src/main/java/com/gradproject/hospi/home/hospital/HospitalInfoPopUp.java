@@ -1,5 +1,6 @@
 package com.gradproject.hospi.home.hospital;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ public class HospitalInfoPopUp extends AppCompatActivity {
     boolean isFavorite = false;
     Intent intent;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +44,7 @@ public class HospitalInfoPopUp extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         if(user.getFavorites() != null){
-            favorites = (ArrayList) user.getFavorites();
+            favorites = (ArrayList<String>) user.getFavorites();
         }
         hospital = (Hospital) getIntent().getSerializableExtra("hospital");
         intent.putExtra("hospital", hospital);
@@ -137,8 +139,9 @@ public class HospitalInfoPopUp extends AppCompatActivity {
 
     public void favoriteCheck(){
         for(String str : favorites){
-            if(str.equals(hospital.getId())){
+            if (str.equals(hospital.getId())) {
                 isFavorite = true;
+                break;
             }
         }
     }
@@ -154,9 +157,12 @@ public class HospitalInfoPopUp extends AppCompatActivity {
     }
 
     public void removeFavoriteList(){
-        for(int i=0; i<favorites.size(); i++){
+        int size = favorites.size();
+        for(int i=0; i<size; i++){
             if(favorites.get(i).equals(hospital.getId())){
                 favorites.remove(i);
+                size--;
+                i--;
             }
         }
         user.setFavorites(favorites);

@@ -13,7 +13,6 @@ import com.gradproject.hospi.databinding.ActivityRegisterBinding;
 import java.util.List;
 
 public class RegisterActivity extends AppCompatActivity {
-    private ActivityRegisterBinding binding;
 
     // 회원가입 프래그먼트
     RegisterFragment1 registerFragment1; RegisterFragment2 registerFragment2;
@@ -25,7 +24,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityRegisterBinding.inflate(getLayoutInflater());
+        ActivityRegisterBinding binding = ActivityRegisterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         user = new User();
@@ -40,11 +39,9 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
-        if(fragmentList!=null){
-            for(Fragment fragment : fragmentList) {
-                if (fragment instanceof OnBackPressedListener) {
-                    ((OnBackPressedListener) fragment).onBackPressed();
-                }
+        for(Fragment fragment : fragmentList) {
+            if (fragment instanceof OnBackPressedListener) {
+                ((OnBackPressedListener) fragment).onBackPressed();
             }
         }
     }

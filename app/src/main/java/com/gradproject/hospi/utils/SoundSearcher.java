@@ -1,5 +1,6 @@
 package com.gradproject.hospi.utils;
 
+@SuppressWarnings("JavaDoc")
 public class SoundSearcher
 {
     private static final char HANGUL_BEGIN_UNICODE = 44032; // 가
@@ -54,7 +55,7 @@ public class SoundSearcher
      * @param search : 검색어 ex> ㅅ검ㅅ합ㄴ
      * @return 매칭 되는거 찾으면 true 못찾으면 false. */
     public static boolean matchString(String value, String search){
-        int t = 0;
+        int t;
         int seof = value.length() - search.length();
         int slen = search.length();
         if(seof < 0)
@@ -62,7 +63,7 @@ public class SoundSearcher
         for(int i = 0;i <= seof;i++){
             t = 0;
             while(t < slen){
-                if(isInitialSound(search.charAt(t))==true && isHangul(value.charAt(i+t))){
+                if(isInitialSound(search.charAt(t)) && isHangul(value.charAt(i+t))){
                     //만약 현재 char이 초성이고 value가 한글이면
                     if(getInitialSound(value.charAt(i+t))==search.charAt(t))
                         //각각의 초성끼리 같은지 비교한다

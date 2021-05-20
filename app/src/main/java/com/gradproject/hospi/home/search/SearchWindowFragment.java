@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
@@ -26,6 +27,7 @@ import com.gradproject.hospi.home.hospital.HospitalActivity;
 import com.gradproject.hospi.utils.SoundSearcher;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -43,17 +45,17 @@ public class SearchWindowFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentSearchWindowBinding.inflate(inflater, container, false);
 
         binding.hospitalList.setLayoutManager(layoutManager);
 
-        binding.backBtn.setOnClickListener(v -> getActivity().finish());
+        binding.backBtn.setOnClickListener(v -> Objects.requireNonNull(getActivity()).finish());
         binding.removeBtn.setOnClickListener(v -> binding.searchEdt.setText(""));
 
         binding.voiceInputBtn.setOnClickListener(v -> {
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO)
+            if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()), Manifest.permission.RECORD_AUDIO)
                     == PackageManager.PERMISSION_GRANTED) {
                 startActivityForResult(new Intent(getContext(), SpeechRecognitionPopUp.class), 1);
             }else{
@@ -107,19 +109,21 @@ public class SearchWindowFragment extends Fragment {
 
         if(requestCode==1) {
             if (resultCode == RESULT_OK) {
-                binding.searchEdt.setText(data.getStringExtra("result"));
+                if (data != null) {
+                    binding.searchEdt.setText(data.getStringExtra("result"));
+                }
                 searchProcess();
             }
         }
     }
 
     private void micPermissionCheck(){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
         alertDialog.setTitle("앱 권한");
         alertDialog.setMessage("음성 인식 검색을 이용하기 위해서는 권한 허용이 필요합니다. 해당 기능을 이용하시려면 애플리케이션 [정보]>[권한] 에서 마이크 액세스 권한을 허용해 주십시오.");
         alertDialog.setPositiveButton("권한설정",
                 (dialog, which) -> {
-                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + getActivity().getPackageName()));
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + Objects.requireNonNull(getActivity()).getPackageName()));
                     startActivity(intent);
                     dialog.cancel();
                 });
@@ -151,7 +155,7 @@ public class SearchWindowFragment extends Fragment {
                     ArrayList<Hospital> tmpArrList = new ArrayList<>();
 
                     if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             Hospital hospital = document.toObject(Hospital.class);
 
@@ -184,9 +188,9 @@ public class SearchWindowFragment extends Fragment {
         String str = searchStr;
 
         if(searchStr.endsWith("남도")){
-            str = searchStr.substring(0, 1) + "남";
+            str = searchStr.charAt(0) + "남";
         }else if(searchStr.endsWith("북도")){
-            str = searchStr.substring(0, 1) + "북";
+            str = searchStr.charAt(0) + "북";
         }else if(searchStr.endsWith("도") || searchStr.endsWith("특별시")
                 || searchStr.endsWith("광역시") || searchStr.endsWith("시")){
             str = searchStr.substring(0, 2);

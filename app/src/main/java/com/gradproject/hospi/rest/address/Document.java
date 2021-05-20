@@ -1,9 +1,9 @@
-package com.gradproject.hospi;
+package com.gradproject.hospi.rest.address;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.gradproject.hospi.home.RoadAddress;
 
+@SuppressWarnings("unused")
 public class Document {
 
     @SerializedName("address")

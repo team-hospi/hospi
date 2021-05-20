@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -19,6 +20,8 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentNoticeEditBinding;
 import com.gradproject.hospi.utils.Loading;
+
+import java.util.Objects;
 
 public class NoticeEditFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "NoticeEditFragment";
@@ -33,13 +36,16 @@ public class NoticeEditFragment extends Fragment implements OnBackPressedListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         settingActivity = (SettingActivity) getActivity();
-        notice = (Notice) getArguments().getSerializable("notice");
+
+        if (getArguments() != null) {
+            notice = (Notice) getArguments().getSerializable("notice");
+        }
         db = FirebaseFirestore.getInstance();
         loading = new Loading(getContext());
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentNoticeEditBinding.inflate(inflater, container, false);
 
@@ -132,7 +138,7 @@ public class NoticeEditFragment extends Fragment implements OnBackPressedListene
 
     public void updateSuccessPopUp(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                 .setCancelable(false)
                 .setMessage("공지사항이 수정되었습니다.")
                 .setPositiveButton("확인", (dialog, i) -> {

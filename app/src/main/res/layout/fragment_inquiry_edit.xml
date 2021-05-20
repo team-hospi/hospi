@@ -17,13 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageButton
-            android:id="@+id/closeBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_action_close"
-            android:background="?selectableItemBackgroundBorderless" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -31,6 +24,15 @@
             android:text="병원 문의 수정"
             android:textColor="@color/black"
             android:textSize="17sp"/>
+
+        <ImageButton
+            android:id="@+id/closeBtn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="15dp"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_action_close"
+            android:background="?selectableItemBackgroundBorderless" />
     </androidx.appcompat.widget.Toolbar>
 
     <Button

@@ -1,8 +1,10 @@
 package com.gradproject.hospi.home;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -15,12 +17,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.databinding.FragmentReceptionStatusBinding;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Objects;
 
 public class ReceptionStatusFragment extends Fragment {
     private static final String TAG = "ReceptionStatusFragment";
     private FragmentReceptionStatusBinding binding;
+    private final String[] week = {"일", "월", "화", "수", "목", "금", "토"};
 
     FirebaseFirestore db;
     HomeActivity homeActivity;
@@ -34,7 +37,7 @@ public class ReceptionStatusFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentReceptionStatusBinding.inflate(inflater, container, false);
 
@@ -43,6 +46,7 @@ public class ReceptionStatusFragment extends Fragment {
         return binding.getRoot();
     }
 
+    @SuppressLint("SetTextI18n")
     private void showReceptionInfo(){
         db.collection(Reception.DB_NAME)
                 .whereEqualTo("id", homeActivity.firebaseUser.getEmail())
@@ -52,11 +56,11 @@ public class ReceptionStatusFragment extends Fragment {
                         int minNum = 1440;
                         String docId = null;
 
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             Reception tmpRec = document.toObject(Reception.class);
-                            String tmpStr = tmpRec.getReceptionDate();
-                            String[] tmpTime = tmpStr.substring(tmpStr.length()-5).split(":");
+                            String tmpStr = tmpRec.getReceptionTime();
+                            String[] tmpTime = tmpStr.split(":");
                             int tmpNum = Integer.parseInt(tmpTime[0])*60 + Integer.parseInt(tmpTime[1]);
                             if(tmpNum<minNum){
                                 minNum=tmpNum;
@@ -70,9 +74,8 @@ public class ReceptionStatusFragment extends Fragment {
                         }
 
                         if(reception != null){
-                            String tmpDate = reception.getReceptionDate();
-                            String[] time = tmpDate.substring(tmpDate.length()-5).split(":");
-                            String[] date = tmpDate.substring(0, 10).split("-");
+                            String[] time = reception.getReceptionTime().split(":");
+                            String[] date = reception.getReceptionDate().split("-");
                             Calendar curCal = Calendar.getInstance();
                             Calendar tmpCal = Calendar.getInstance();
                             tmpCal.set(Integer.parseInt(date[0]), Integer.parseInt(date[1])-1, Integer.parseInt(date[2]));
@@ -91,7 +94,12 @@ public class ReceptionStatusFragment extends Fragment {
                                 binding.hospitalNameTxt.setText(reception.getHospitalName());
                                 binding.patientTxt.setText(reception.getPatient());
                                 binding.patientTxt2.setText(reception.getPatient());
-                                binding.receptionDateTxt.setText(reception.getReceptionDate());
+
+                                String[] tmp = reception.getReceptionDate().split("-");
+
+                                Calendar cal = Calendar.getInstance();
+                                cal.set(Integer.parseInt(tmp[0]), Integer.parseInt(tmp[1]), Integer.parseInt(tmp[2]));
+                                binding.receptionDateTxt.setText(reception.getReceptionDate() + " (" + week[cal.get(Calendar.DAY_OF_WEEK)-1] + ") " + reception.getReceptionTime());
                                 binding.officeTxt.setText(reception.getOffice());
                                 binding.doctorTxt.setText(reception.getDoctor());
 
@@ -120,7 +128,9 @@ public class ReceptionStatusFragment extends Fragment {
                     Log.d(TAG, "Current data: " + snapshot.getData());
 
                     Reception reception = snapshot.toObject(Reception.class);
-                    updateStatus(reception);
+                    if (reception != null) {
+                        updateStatus(reception);
+                    }
 
                 } else {
                     Log.d(TAG, "Current data: null");
@@ -132,7 +142,7 @@ public class ReceptionStatusFragment extends Fragment {
     private void updateStatus(Reception reception){
         switch (reception.getStatus()){
             case Reception.RECEIVED:
-                String str = reception.getWaitingNumber() + "명";
+                String str = String.valueOf(reception.getWaitingNumber());
                 binding.statusTxt.setText(str);
                 binding.statusTxt.setTextColor(Color.BLACK);
                 binding.waitingTxt.setVisibility(View.VISIBLE);

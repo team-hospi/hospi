@@ -68,7 +68,10 @@ public class WriteAddressActivity extends AppCompatActivity {
 
         if(requestCode==REQUEST_ADDRESS_SEARCH_ACTIVITY_CODE) {
             if (resultCode == RESULT_OK) {
-                binding.addressTxt.setText(data.getStringExtra("address"));
+
+                if (data != null) {
+                    binding.addressTxt.setText(data.getStringExtra("address"));
+                }
             } else {
                 finish();
             }

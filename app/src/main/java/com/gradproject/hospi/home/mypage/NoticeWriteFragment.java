@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -20,6 +21,7 @@ import com.gradproject.hospi.databinding.FragmentNoticeWriteBinding;
 import com.gradproject.hospi.utils.Loading;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 public class NoticeWriteFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG ="NoticeWriteFragment";
@@ -35,7 +37,7 @@ public class NoticeWriteFragment extends Fragment implements OnBackPressedListen
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentNoticeWriteBinding.inflate(inflater, container, false);
 
@@ -130,7 +132,7 @@ public class NoticeWriteFragment extends Fragment implements OnBackPressedListen
 
     private void writeSuccess(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                 .setCancelable(false)
                 .setMessage("공지사항이 등록되었습니다.")
                 .setPositiveButton("확인", (dialog, i) -> {
@@ -148,7 +150,7 @@ public class NoticeWriteFragment extends Fragment implements OnBackPressedListen
 
     private void writeFail(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                 .setCancelable(false)
                 .setMessage("문의 등록에 실패하였습니다.\n잠시후 다시 시도해주세요.")
                 .setPositiveButton("확인", (dialogInterface, i) -> { /* empty */ });

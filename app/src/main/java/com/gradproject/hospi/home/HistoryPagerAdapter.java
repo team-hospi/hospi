@@ -7,7 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import java.util.ArrayList;
 
 public class HistoryPagerAdapter extends FragmentStateAdapter {
-    private ArrayList<Fragment> items;
+    private final ArrayList<Fragment> items;
 
     public HistoryPagerAdapter(@NonNull Fragment fragment) {
         super(fragment);

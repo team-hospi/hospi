@@ -17,6 +17,7 @@ import com.gradproject.hospi.home.search.Hospital;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class HospitalActivity extends AppCompatActivity {
     private static final String TAG = "HospitalActivity";
@@ -47,7 +48,7 @@ public class HospitalActivity extends AppCompatActivity {
 
             query.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                         Log.d(TAG, document.getId() + " => " + document.getData());
                         Reserved reserved = document.toObject(Reserved.class);
                         reservedList.add(reserved);
@@ -66,14 +67,16 @@ public class HospitalActivity extends AppCompatActivity {
                         return;
                     }
 
-                    for (QueryDocumentSnapshot doc : value) {
-                        Reserved reserved = doc.toObject(Reserved.class);
-                        HashMap<String, List<String>> reservedMap = (HashMap)reserved.getReservedMap();
+                    if (value != null) {
+                        for (QueryDocumentSnapshot doc : value) {
+                            Reserved reserved = doc.toObject(Reserved.class);
+                            HashMap<String, List<String>> reservedMap = (HashMap<String, List<String>>)reserved.getReservedMap();
 
-                        for(int i=0; i<reservedList.size(); i++) {
-                            if(reservedList.get(i).getHospitalId().equals(reserved.getHospitalId())
-                                && reservedList.get(i).getDepartment().equals(reserved.getDepartment()))
-                                reservedList.get(i).setReservedMap(reservedMap);
+                            for(int i=0; i<reservedList.size(); i++) {
+                                if(reservedList.get(i).getHospitalId().equals(reserved.getHospitalId())
+                                    && reservedList.get(i).getDepartment().equals(reserved.getDepartment()))
+                                    reservedList.get(i).setReservedMap(reservedMap);
+                            }
                         }
                     }
                 });
@@ -144,11 +147,9 @@ public class HospitalActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
-        if(fragmentList!=null){
-            for(Fragment fragment : fragmentList) {
-                if (fragment instanceof OnBackPressedListener) {
-                    ((OnBackPressedListener) fragment).onBackPressed();
-                }
+        for(Fragment fragment : fragmentList) {
+            if (fragment instanceof OnBackPressedListener) {
+                ((OnBackPressedListener) fragment).onBackPressed();
             }
         }
     }

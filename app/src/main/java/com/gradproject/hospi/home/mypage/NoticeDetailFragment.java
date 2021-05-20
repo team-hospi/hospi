@@ -1,5 +1,6 @@
 package com.gradproject.hospi.home.mypage;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,9 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentNoticeDetailBinding;
 import com.gradproject.hospi.utils.Loading;
+
+import java.text.SimpleDateFormat;
+import java.util.Objects;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 
@@ -46,16 +50,19 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentNoticeDetailBinding.inflate(inflater, container, false);
 
         setHasOptionsMenu(true);
         settingActivity.setSupportActionBar(binding.toolbar);
-        settingActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(settingActivity.getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         binding.backBtn.setOnClickListener(v -> onBackPressed());
 
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd. HH:mm");
+
+        binding.dateTxt.setText(sdf.format(notice.getTimestamp()));
         binding.titleTxt.setText(notice.getTitle());
         binding.contentTxt.setText(notice.getContent());
 
@@ -85,20 +92,19 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case R.id.editBtn:
-                editBtnProcess();
-                return true;
-            case R.id.delBtn:
-                deletePopUp();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if(item.getItemId()==R.id.editBtn){
+            editBtnProcess();
+            return true;
+        }else if(item.getItemId()==R.id.delBtn){
+            deletePopUp();
+            return true;
+        }else{
+            return super.onOptionsItemSelected(item);
         }
     }
 
     public void editBtnProcess(){
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
         NoticeEditFragment noticeEditFragment = new NoticeEditFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("notice", notice);
@@ -124,7 +130,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     }
 
     public void deletePopUp(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                 .setCancelable(false)
                 .setMessage("해당 공지사항을 삭제하시겠습니까?")
                 .setPositiveButton("확인", (dialog, i) -> delBtnProcess())
@@ -135,7 +141,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
 
     public void deleteSuccessPopUp(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                 .setCancelable(false)
                 .setMessage("삭제되었습니다.")
                 .setPositiveButton("확인", (dialog, i) -> {

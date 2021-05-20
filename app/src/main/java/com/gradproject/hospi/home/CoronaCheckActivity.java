@@ -1,5 +1,6 @@
 package com.gradproject.hospi.home;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,16 +15,14 @@ import com.gradproject.hospi.databinding.ActivityCoronaCheckBinding;
 
 public class CoronaCheckActivity extends AppCompatActivity {
     private static final String ADDRESS = "http://ncov.mohw.go.kr/bdBoardList_Real.do?brdId=1&brdGubun=13";
-    private ActivityCoronaCheckBinding binding;
 
-    private WebView webView;
     private Handler handler;
     String address = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityCoronaCheckBinding.inflate(getLayoutInflater());
+        ActivityCoronaCheckBinding binding = ActivityCoronaCheckBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         binding.closeBtn.setOnClickListener(v -> {
@@ -38,9 +37,10 @@ public class CoronaCheckActivity extends AppCompatActivity {
         handler = new Handler();
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     public void init_webView() {
         // WebView 설정
-        webView = (WebView) findViewById(R.id.webView_address);
+        WebView webView = findViewById(R.id.webView_address);
 
         // JavaScript 허용
         webView.getSettings().setJavaScriptEnabled(true);
@@ -60,6 +60,7 @@ public class CoronaCheckActivity extends AppCompatActivity {
 
     }
 
+    @SuppressWarnings("unused")
     private class AndroidBridge {
         @JavascriptInterface
         public void setAddress(final String arg1, final String arg2, final String arg3) {

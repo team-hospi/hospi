@@ -1,5 +1,6 @@
 package com.gradproject.hospi.home;
 
+@SuppressWarnings("unused")
 public class Reception {
     public static final String DB_NAME = "receptionList";
     public static final int RECEIVED = 0;
@@ -14,6 +15,7 @@ public class Reception {
     private String office;
     private String patient;
     private String receptionDate;
+    private String receptionTime;
     private int waitingNumber;
     private int status;
 
@@ -82,6 +84,14 @@ public class Reception {
 
     public void setReceptionDate(String receptionDate) {
         this.receptionDate = receptionDate;
+    }
+
+    public String getReceptionTime() {
+        return receptionTime;
+    }
+
+    public void setReceptionTime(String receptionTime) {
+        this.receptionTime = receptionTime;
     }
 
     public int getWaitingNumber() {

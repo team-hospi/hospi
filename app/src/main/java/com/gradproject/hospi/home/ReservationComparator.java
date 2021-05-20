@@ -7,8 +7,6 @@ import java.util.Comparator;
 public class ReservationComparator implements Comparator<Reservation> {
     @Override
     public int compare(Reservation a, Reservation b){
-        if(a.getTimestamp()>b.getTimestamp()) return -1;
-        if(a.getTimestamp()<b.getTimestamp()) return 1;
-        return 0;
+        return Long.compare(b.getTimestamp(), a.getTimestamp());
     }
 }

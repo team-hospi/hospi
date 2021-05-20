@@ -3,6 +3,7 @@ package com.gradproject.hospi.home.search;
 import java.io.Serializable;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class Hospital implements Serializable {
     private static final long serialVersionUID = 1L;
     public static final String DB_NAME = "hospitals";

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -17,10 +18,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentNoticeBinding;
-import com.gradproject.hospi.utils.Loading;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Objects;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 
@@ -39,7 +39,7 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentNoticeBinding.inflate(inflater, container, false);
 
@@ -66,7 +66,7 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
 
         binding.backBtn.setOnClickListener(v -> onBackPressed());
 
-        binding.writeBtn.setOnClickListener(v -> getActivity()
+        binding.writeBtn.setOnClickListener(v -> Objects.requireNonNull(getActivity())
                 .getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.settingContainer, new NoticeWriteFragment())
@@ -74,7 +74,7 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
 
         noticeAdapter.setOnItemClickListener((holder, view, position) -> {
             Notice notice = noticeAdapter.getItem(position);
-            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
             NoticeDetailFragment noticeDetailFragment = new NoticeDetailFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("pos", position);
@@ -95,7 +95,7 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
 
     @Override
     public void onBackPressed() {
-        getActivity().finish();
+        Objects.requireNonNull(getActivity()).finish();
     }
 
     private void getNoticeList(){
@@ -109,14 +109,14 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
                     ArrayList<Notice> tmpArrList = new ArrayList<>();
 
                     if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             Notice notice = document.toObject(Notice.class);
                             notice.setDocumentId(document.getId());
                             tmpArrList.add(notice);
                         }
 
-                        Collections.sort(tmpArrList, new NoticeComparator());
+                        tmpArrList.sort(new NoticeComparator());
 
                         for(int i=0; i<tmpArrList.size(); i++){
                             noticeAdapter.addItem(tmpArrList.get(i));

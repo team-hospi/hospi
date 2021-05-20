@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -22,7 +23,7 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentInquiryListBinding;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Objects;
 
 public class InquiryListFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "InquiryListFragment";
@@ -39,7 +40,7 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentInquiryListBinding.inflate(inflater, container, false);
 
@@ -60,7 +61,7 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
 
         inquiryAdapter.setOnItemClickListener((holder, view, position) -> {
             Inquiry inquiry = inquiryAdapter.getItem(position);
-            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
             InquiryDetailFragment inquiryDetailFragment = new InquiryDetailFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("pos", position);
@@ -81,7 +82,7 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
 
     @Override
     public void onBackPressed() {
-        getActivity().finish();
+        Objects.requireNonNull(getActivity()).finish();
     }
 
     private void getInquiryList(){
@@ -91,40 +92,43 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection(Inquiry.DB_NAME)
-                .whereEqualTo("id", firebaseUser.getEmail())
-                .get()
-                .addOnCompleteListener(task -> {
-                    ArrayList<Inquiry> tmpArrList = new ArrayList<>();
 
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Log.d(TAG, document.getId() + " => " + document.getData());
-                            Inquiry inquiry = document.toObject(Inquiry.class);
-                            inquiry.setDocumentId(document.getId());
-                            tmpArrList.add(inquiry);
+        if (firebaseUser != null) {
+            db.collection(Inquiry.DB_NAME)
+                    .whereEqualTo("id", firebaseUser.getEmail())
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        ArrayList<Inquiry> tmpArrList = new ArrayList<>();
+
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                Inquiry inquiry = document.toObject(Inquiry.class);
+                                inquiry.setDocumentId(document.getId());
+                                tmpArrList.add(inquiry);
+                            }
+
+                            tmpArrList.sort(new InquiryComparator());
+
+                            for(int i=0; i<tmpArrList.size(); i++){
+                                inquiryAdapter.addItem(tmpArrList.get(i));
+                            }
+
+                            if(!(inquiryAdapter.items.isEmpty())){
+                                binding.inquiryList.setVisibility(View.VISIBLE);
+                                binding.nothingInquiryView.setVisibility(View.GONE);
+                            }else{
+                                binding.inquiryList.setVisibility(View.GONE);
+                                binding.nothingInquiryView.setVisibility(View.VISIBLE);
+                            }
+
+                            binding.inquiryList.setAdapter(inquiryAdapter);
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            String msg = "문의 내역을 불러올 수 없습니다.";
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-
-                        Collections.sort(tmpArrList, new InquiryComparator());
-
-                        for(int i=0; i<tmpArrList.size(); i++){
-                            inquiryAdapter.addItem(tmpArrList.get(i));
-                        }
-
-                        if(!(inquiryAdapter.items.isEmpty())){
-                            binding.inquiryList.setVisibility(View.VISIBLE);
-                            binding.nothingInquiryView.setVisibility(View.GONE);
-                        }else{
-                            binding.inquiryList.setVisibility(View.GONE);
-                            binding.nothingInquiryView.setVisibility(View.VISIBLE);
-                        }
-
-                        binding.inquiryList.setAdapter(inquiryAdapter);
-                    } else {
-                        Log.d(TAG, "Error getting documents: ", task.getException());
-                        String msg = "문의 내역을 불러올 수 없습니다.";
-                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                    }
-                });
+                    });
+        }
     }
 }
