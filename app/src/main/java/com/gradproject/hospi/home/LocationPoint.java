@@ -1,5 +1,7 @@
 package com.gradproject.hospi.home;
 
+import androidx.annotation.NonNull;
+
 public class LocationPoint {
     // 위도
     public double longitude;
@@ -9,16 +11,15 @@ public class LocationPoint {
     // 포인트를 받았는지 여부
     public boolean havePoint;
 
+    @NonNull
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("x : ");
-        builder.append(longitude);
-        builder.append(" y : ");
-        builder.append(latitude);
-        builder.append(" addr : ");
-        builder.append(addr);
 
-        return builder.toString();
+        return "x : " +
+                longitude +
+                " y : " +
+                latitude +
+                " addr : " +
+                addr;
     }
 }

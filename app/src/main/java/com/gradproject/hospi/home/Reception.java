@@ -1,5 +1,6 @@
 package com.gradproject.hospi.home;
 
+@SuppressWarnings("unused")
 public class Reception {
     public static final String DB_NAME = "receptionList";
     public static final int RECEIVED = 0;

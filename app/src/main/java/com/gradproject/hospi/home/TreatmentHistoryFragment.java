@@ -2,6 +2,7 @@ package com.gradproject.hospi.home;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -18,6 +19,7 @@ import com.gradproject.hospi.databinding.FragmentTreatmentHistoryBinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 public class TreatmentHistoryFragment extends Fragment {
     private static final String TAG = "TreatmentHistoryFragment";
@@ -38,7 +40,7 @@ public class TreatmentHistoryFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentTreatmentHistoryBinding.inflate(inflater, container, false);
 
@@ -63,7 +65,7 @@ public class TreatmentHistoryFragment extends Fragment {
                     if (task.isSuccessful()) {
                         ArrayList<Prescription> tmpArrList = new ArrayList<>();
 
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             Prescription prescription = document.toObject(Prescription.class);
                             tmpArrList.add(prescription);
@@ -77,7 +79,7 @@ public class TreatmentHistoryFragment extends Fragment {
                             binding.nothingTreatmentView.setVisibility(View.VISIBLE);
                         }
 
-                        Collections.sort(tmpArrList, new PrescriptionComparator());
+                        tmpArrList.sort(new PrescriptionComparator());
 
                         for(int i=0; i<tmpArrList.size(); i++){
                             prescriptionAdapter.addItem(tmpArrList.get(i));

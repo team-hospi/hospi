@@ -5,17 +5,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.databinding.FragmentRegister1Binding;
+
+import java.util.Objects;
 
 public class RegisterFragment1 extends Fragment implements OnBackPressedListener {
     private FragmentRegister1Binding binding;
     RegisterActivity registerActivity;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentRegister1Binding.inflate(inflater, container, false);
 
@@ -41,6 +44,6 @@ public class RegisterFragment1 extends Fragment implements OnBackPressedListener
 
     @Override
     public void onBackPressed() {
-        getActivity().finish();
+        Objects.requireNonNull(getActivity()).finish();
     }
 }

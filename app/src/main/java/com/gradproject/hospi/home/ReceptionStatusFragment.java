@@ -1,8 +1,10 @@
 package com.gradproject.hospi.home;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -15,8 +17,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.databinding.FragmentReceptionStatusBinding;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Objects;
 
 public class ReceptionStatusFragment extends Fragment {
     private static final String TAG = "ReceptionStatusFragment";
@@ -35,7 +37,7 @@ public class ReceptionStatusFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentReceptionStatusBinding.inflate(inflater, container, false);
 
@@ -44,6 +46,7 @@ public class ReceptionStatusFragment extends Fragment {
         return binding.getRoot();
     }
 
+    @SuppressLint("SetTextI18n")
     private void showReceptionInfo(){
         db.collection(Reception.DB_NAME)
                 .whereEqualTo("id", homeActivity.firebaseUser.getEmail())
@@ -53,7 +56,7 @@ public class ReceptionStatusFragment extends Fragment {
                         int minNum = 1440;
                         String docId = null;
 
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             Reception tmpRec = document.toObject(Reception.class);
                             String tmpStr = tmpRec.getReceptionTime();
@@ -125,7 +128,9 @@ public class ReceptionStatusFragment extends Fragment {
                     Log.d(TAG, "Current data: " + snapshot.getData());
 
                     Reception reception = snapshot.toObject(Reception.class);
-                    updateStatus(reception);
+                    if (reception != null) {
+                        updateStatus(reception);
+                    }
 
                 } else {
                     Log.d(TAG, "Current data: null");

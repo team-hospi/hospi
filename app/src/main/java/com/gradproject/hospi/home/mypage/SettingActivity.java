@@ -12,7 +12,6 @@ import com.gradproject.hospi.databinding.ActivitySettingBinding;
 import java.util.List;
 
 public class SettingActivity extends AppCompatActivity implements OnBackPressedListener {
-    private ActivitySettingBinding binding;
 
     // 마이페이지 각 목록과 연결되는 화면
     EditMyInfoFragment editMyInfoFragment; FavoriteFragment favoriteFragment;
@@ -23,7 +22,7 @@ public class SettingActivity extends AppCompatActivity implements OnBackPressedL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivitySettingBinding.inflate(getLayoutInflater());
+        ActivitySettingBinding binding = ActivitySettingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         editMyInfoFragment = new EditMyInfoFragment(); favoriteFragment = new FavoriteFragment();
@@ -55,14 +54,10 @@ public class SettingActivity extends AppCompatActivity implements OnBackPressedL
     @Override
     public void onBackPressed() {
         List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
-        if(fragmentList!=null){
-            for(Fragment fragment : fragmentList) {
-                if (fragment instanceof OnBackPressedListener) {
-                    ((OnBackPressedListener) fragment).onBackPressed();
-                }
+        for(Fragment fragment : fragmentList) {
+            if (fragment instanceof OnBackPressedListener) {
+                ((OnBackPressedListener) fragment).onBackPressed();
             }
-        }else{
-            super.onBackPressed();
         }
     }
 }

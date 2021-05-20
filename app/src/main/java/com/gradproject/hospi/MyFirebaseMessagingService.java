@@ -13,10 +13,17 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Objects;
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+    private static final String TAG = "MyFirebaseMessagingService";
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -32,22 +39,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            assert channelId != null;
-            NotificationCompat.Builder notificationBuilder =
-                    new NotificationCompat.Builder(this, channelId)
-                            .setSmallIcon(R.drawable.icon)
-                            .setContentTitle(messageTitle)
-                            .setContentText(messageBody)
-                            .setAutoCancel(true)
-                            .setSound(defaultSoundUri)
-                            .setContentIntent(pendingIntent);
+
+            NotificationCompat.Builder notificationBuilder = null;
+            if (channelId != null) {
+                notificationBuilder = new NotificationCompat.Builder(this, channelId)
+                        .setSmallIcon(R.drawable.icon)
+                        .setContentTitle(messageTitle)
+                        .setContentText(messageBody)
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setContentIntent(pendingIntent);
+            }
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 String channelName = "알림";
                 NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
                 notificationManager.createNotificationChannel(channel);
             }
-            notificationManager.notify(0, notificationBuilder.build());
+            if (notificationBuilder != null) {
+                notificationManager.notify(0, notificationBuilder.build());
+            }
         }
     }
 
@@ -58,6 +69,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     public void sendRegistrationToServer(String token){
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        DocumentReference documentReference = null;
+        if (firebaseUser != null) {
+            documentReference = db.collection(User.DB_NAME).document(Objects.requireNonNull(firebaseUser.getEmail()));
+        }
+
+        if (documentReference != null) {
+            documentReference
+                    .update("token", token)
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+        }
     }
 }

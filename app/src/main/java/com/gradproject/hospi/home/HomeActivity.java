@@ -1,5 +1,6 @@
 package com.gradproject.hospi.home;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,11 +23,12 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 import com.gradproject.hospi.databinding.ActivityHomeBinding;
 
+import java.util.Objects;
+
 public class HomeActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener{
     private static final String TAG = "HomeActivity";
-    private ActivityHomeBinding binding;
 
-    private BackPressHandler backPressHandler = new BackPressHandler(this);
+    private final BackPressHandler backPressHandler = new BackPressHandler(this);
 
     SearchFragment searchFragment;
     HistoryFragment historyFragment;
@@ -37,10 +39,11 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
     FirebaseFirestore db;
     public static User user;
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityHomeBinding.inflate(getLayoutInflater());
+        com.gradproject.hospi.databinding.ActivityHomeBinding binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         db = FirebaseFirestore.getInstance();
@@ -84,7 +87,7 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
                     .whereEqualTo("email", firebaseUser.getEmail()).get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 setUserInfo(document.getId());
                             }
                         } else {
@@ -104,7 +107,9 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
         DocumentReference docRef = db.collection(User.DB_NAME).document(documentId);
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             user = documentSnapshot.toObject(User.class);
-            user.setDocumentId(documentId);
+            if (user != null) {
+                user.setDocumentId(documentId);
+            }
             setUserToken();
             Log.d(TAG, "유저 정보 받기 성공");
         }).addOnFailureListener(e -> {
@@ -131,8 +136,7 @@ public class HomeActivity extends AppCompatActivity implements FirebaseAuth.Auth
                             .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
 
                     // Log and toast
-                    String msg = token;
-                    Log.d(TAG, msg);
+                    Log.d(TAG, token);
                 });
     }
 }

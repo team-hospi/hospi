@@ -1,16 +1,15 @@
 package com.gradproject.hospi.home.mypage;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gradproject.hospi.Inquiry;
-import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.InquiryItemBinding;
 
 import java.text.SimpleDateFormat;
@@ -34,6 +33,7 @@ public class InquiryAdapter extends RecyclerView.Adapter<InquiryAdapter.ViewHold
         return items.get(position);
     }
 
+    @SuppressWarnings("unused")
     public void setItem(int position, Inquiry item){
         items.set(position, item);
     }
@@ -98,7 +98,7 @@ public class InquiryAdapter extends RecyclerView.Adapter<InquiryAdapter.ViewHold
         }
 
         public void setItem(Inquiry item){
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             String date = sdf.format(new Date(item.getTimestamp()));
 
             binding.dateTxt.setText(date);

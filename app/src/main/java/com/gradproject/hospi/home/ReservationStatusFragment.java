@@ -2,6 +2,7 @@ package com.gradproject.hospi.home;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -19,6 +20,7 @@ import com.gradproject.hospi.home.hospital.Reservation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 public class ReservationStatusFragment extends Fragment {
     private static final String TAG = "ReservationStatusFragment";
@@ -39,7 +41,7 @@ public class ReservationStatusFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentReservationStatusBinding.inflate(inflater, container, false);
 
@@ -58,7 +60,7 @@ public class ReservationStatusFragment extends Fragment {
                     if (task.isSuccessful()) {
                         ArrayList<Reservation> tmpArrList = new ArrayList<>();
 
-                        for (QueryDocumentSnapshot document : task.getResult()) {
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             Reservation reservation = document.toObject(Reservation.class);
                             tmpArrList.add(reservation);
@@ -72,7 +74,7 @@ public class ReservationStatusFragment extends Fragment {
                             binding.nothingReservationView.setVisibility(View.VISIBLE);
                         }
 
-                        Collections.sort(tmpArrList, new ReservationComparator());
+                        tmpArrList.sort(new ReservationComparator());
 
                         for(int i=0; i<tmpArrList.size(); i++){
                             reservationAdapter.addItem(tmpArrList.get(i));

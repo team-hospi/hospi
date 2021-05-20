@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -20,6 +21,7 @@ import com.gradproject.hospi.databinding.FragmentInquiryBinding;
 import com.gradproject.hospi.utils.Loading;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
@@ -38,7 +40,7 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentInquiryBinding.inflate(inflater, container, false);
 
@@ -97,7 +99,7 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
     public void onBackPressed() {
         if(getArguments()!=null){
             if(getArguments().getBoolean("popUp", false)){
-                getActivity().finish();
+                Objects.requireNonNull(getActivity()).finish();
             }else{
                 hospitalActivity.onInquiryFragmentChanged(0);
                 binding.inquiryTitleEdt.setText("");
@@ -139,7 +141,7 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
 
     private void writeSuccess(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                 .setCancelable(false)
                 .setMessage("문의가 등록되었습니다.")
                 .setPositiveButton("확인", (dialogInterface, i) -> {
@@ -149,7 +151,7 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
                         isPopUp = getArguments().getBoolean("popUp", false);
                     }
 
-                    getActivity().finish();
+                    Objects.requireNonNull(getActivity()).finish();
 
                     if (!isPopUp) {
                         Intent intent = new Intent(getContext(), HospitalActivity.class);
@@ -163,7 +165,7 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
 
     private void writeFail(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                 .setCancelable(false)
                 .setMessage("문의 등록에 실패하였습니다.\n잠시후 다시 시도해주세요.")
                 .setPositiveButton("확인", (dialogInterface, i) -> { /* empty */ });

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.OnBackPressedListener;
@@ -16,13 +17,15 @@ public class RegisterFragment2 extends Fragment implements OnBackPressedListener
     String name; // 이름 저장
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentRegister2Binding.inflate(inflater, container, false);
 
         registerActivity = (RegisterActivity) getActivity();
 
-        registerActivity.user.setAdmin(false); // 일반 사용자로 설정
+        if (registerActivity != null) {
+            registerActivity.user.setAdmin(false); // 일반 사용자로 설정
+        }
 
         binding.nextBtn.setOnClickListener(v -> {
             name = binding.inputName.getText().toString();

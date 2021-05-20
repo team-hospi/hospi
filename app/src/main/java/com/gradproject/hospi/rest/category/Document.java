@@ -3,6 +3,7 @@ package com.gradproject.hospi.rest.category;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings("unused")
 public class Document {
     @SerializedName("address_name")
     @Expose

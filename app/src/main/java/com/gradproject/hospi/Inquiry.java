@@ -2,6 +2,7 @@ package com.gradproject.hospi;
 
 import java.io.Serializable;
 
+@SuppressWarnings("unused")
 public class Inquiry implements Serializable {
     private static final long serialVersionUID = 1L;
     public static final String DB_NAME = "inquiryList";

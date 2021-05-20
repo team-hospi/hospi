@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -20,6 +21,8 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentInquiryEditBinding;
 import com.gradproject.hospi.utils.Loading;
+
+import java.util.Objects;
 
 public class InquiryEditFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "InquiryEditFragment";
@@ -35,12 +38,15 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
         super.onCreate(savedInstanceState);
         loading = new Loading(getContext());
         settingActivity = (SettingActivity) getActivity();
-        inquiry = (Inquiry) getArguments().getSerializable("inquiry");
+
+        if (getArguments() != null) {
+            inquiry = (Inquiry) getArguments().getSerializable("inquiry");
+        }
         db = FirebaseFirestore.getInstance();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentInquiryEditBinding.inflate(inflater, container, false);
 
@@ -134,7 +140,7 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
 
     public void updateSuccessPopUp(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
                 .setCancelable(false)
                 .setMessage("문의가 수정되었습니다.")
                 .setPositiveButton("확인", (dialog, i) -> {

@@ -42,7 +42,7 @@ public class Medicine implements @NonNull BiFunction<String, String, String> {
     }
 
     @Override
-    public String apply(String s, String s2) throws Throwable {
+    public String apply(String s, String s2) {
         return null;
     }
 }

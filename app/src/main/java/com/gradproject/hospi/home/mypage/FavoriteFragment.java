@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import com.gradproject.hospi.home.search.Hospital;
 import com.gradproject.hospi.home.search.HospitalAdapter;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 
@@ -42,12 +44,12 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-        favorites = (ArrayList) user.getFavorites();
+        favorites = (ArrayList<String>) user.getFavorites();
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentFavoriteBinding.inflate(inflater, container, false);
 
@@ -67,7 +69,7 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
 
     @Override
     public void onBackPressed() {
-        getActivity().finish();
+        Objects.requireNonNull(getActivity()).finish();
     }
 
     @Override
@@ -86,7 +88,7 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 Hospital hospital = document.toObject(Hospital.class);
                                 hospitalAdapter.addItem(hospital);

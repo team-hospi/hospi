@@ -5,8 +5,6 @@ import java.util.Comparator;
 public class PrescriptionComparator implements Comparator<Prescription> {
     @Override
     public int compare(Prescription a, Prescription b){
-        if(a.getTimestamp()>b.getTimestamp()) return -1;
-        if(a.getTimestamp()<b.getTimestamp()) return 1;
-        return 0;
+        return Long.compare(b.getTimestamp(), a.getTimestamp());
     }
 }

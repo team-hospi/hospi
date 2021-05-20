@@ -8,13 +8,12 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.ActivityResultBinding;
 
 public class ResultActivity extends AppCompatActivity {
-    private ActivityResultBinding binding;
     SearchWindowFragment searchWindowFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityResultBinding.inflate(getLayoutInflater());
+        ActivityResultBinding binding = ActivityResultBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         searchWindowFragment = new SearchWindowFragment();

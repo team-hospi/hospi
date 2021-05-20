@@ -1,14 +1,12 @@
 package com.gradproject.hospi.home;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,7 +17,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.ReservationItemBinding;
 import com.gradproject.hospi.home.hospital.HospitalActivity;
 import com.gradproject.hospi.home.hospital.Reservation;
@@ -31,7 +28,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.ViewHolder>{
     private static final String TAG = "ReservationAdapter";
 
@@ -100,7 +99,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         query.get().addOnCompleteListener(task -> {
             String id = null;
             if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
+                for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                     Log.d(TAG, document.getId() + " => " + document.getData());
                     id = document.getId();
                 }
@@ -138,19 +137,25 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
             if (task.isSuccessful()) {
                 Reserved reserved=null;
                 String documentId = null;
-                for (QueryDocumentSnapshot document : task.getResult()) {
+                for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                     Log.d(TAG, document.getId() + " => " + document.getData());
                     reserved = document.toObject(Reserved.class);
                     documentId = document.getId();
                 }
 
-                if(reserved != null && documentId != null){
-                    HashMap<String, List<String>> tmpMap = (HashMap) reserved.getReservedMap();
+                if(reserved != null){
+                    HashMap<String, List<String>> tmpMap = (HashMap<String, List<String>>) reserved.getReservedMap();
                     if(tmpMap.containsKey(item.getReservationDate())){
-                        ArrayList<String> tmpList = (ArrayList) tmpMap.get(item.getReservationDate());
-                        for(int i=0; i<tmpList.size(); i++){
+                        ArrayList<String> tmpList = (ArrayList<String>) tmpMap.get(item.getReservationDate());
+                        int size = 0;
+                        if (tmpList != null) {
+                            size = tmpList.size();
+                        }
+                        for(int i=0; i<size; i++){
                             if(tmpList.get(i).equals(item.getReservationTime())){
                                 tmpList.remove(i);
+                                i--;
+                                size--;
                             }
                         }
 
@@ -191,7 +196,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        final String week[] = {"일", "월", "화", "수", "목", "금", "토"};
+        final String[] week = {"일", "월", "화", "수", "목", "금", "토"};
 
         ReservationItemBinding binding;
 
@@ -201,6 +206,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
             this.binding = binding;
         }
 
+        @SuppressLint("SetTextI18n")
         public void setItem(Reservation item){
             binding.hospitalNameTxt.setText(item.getHospitalName());
             if(item.getCancelComment() != null){
@@ -246,7 +252,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Hospital hospital = null;
-                            for (QueryDocumentSnapshot document : task.getResult()) {
+                            for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 hospital = document.toObject(Hospital.class);
                             }

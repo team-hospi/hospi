@@ -1,10 +1,12 @@
 package com.gradproject.hospi.register;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -26,7 +28,7 @@ public class RegisterFragment3 extends Fragment implements OnBackPressedListener
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentRegister3Binding.inflate(inflater, container, false);
 
@@ -37,7 +39,7 @@ public class RegisterFragment3 extends Fragment implements OnBackPressedListener
         binding.nextBtn.setOnClickListener(v -> {
             int month = binding.birthDp.getMonth();
             cal.set(binding.birthDp.getYear(), month, binding.birthDp.getDayOfMonth());
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             String date = df.format(cal.getTime());
             registerActivity.user.setBirth(date);
             registerActivity.onFragmentChanged(3);

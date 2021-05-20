@@ -10,7 +10,7 @@ public class BackPressHandler {
     // 첫 번째 뒤로가기 버튼을 누를때 표시
     private Toast toast;
     // 종료시킬 Activity
-    private Activity activity;
+    private final Activity activity;
 
     /**
      * 생성자

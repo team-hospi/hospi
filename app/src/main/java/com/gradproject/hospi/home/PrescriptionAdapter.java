@@ -1,16 +1,13 @@
 package com.gradproject.hospi.home;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.TreatmentItemBinding;
 
 import java.text.SimpleDateFormat;
@@ -29,10 +26,12 @@ public class PrescriptionAdapter extends RecyclerView.Adapter<PrescriptionAdapte
         this.items = items;
     }
 
+    @SuppressWarnings("unused")
     public Prescription getItem(int position){
         return items.get(position);
     }
 
+    @SuppressWarnings("unused")
     public void setItem(int position, Prescription item){
         items.set(position, item);
     }
@@ -65,7 +64,7 @@ public class PrescriptionAdapter extends RecyclerView.Adapter<PrescriptionAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        final String week[] = {"일", "월", "화", "수", "목", "금", "토"};
+        final String[] week = {"일", "월", "화", "수", "목", "금", "토"};
 
         TreatmentItemBinding binding;
 
@@ -78,8 +77,8 @@ public class PrescriptionAdapter extends RecyclerView.Adapter<PrescriptionAdapte
         public void setItem(Prescription item){
             binding.hospitalNameTxt.setText(item.getHospitalName());
 
-            SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd");
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
             long timestamp = item.getTimestamp();
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(timestamp);

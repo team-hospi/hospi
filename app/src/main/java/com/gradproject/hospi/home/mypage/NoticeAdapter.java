@@ -1,14 +1,13 @@
 package com.gradproject.hospi.home.mypage;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.NoticeItemBinding;
 
 import java.text.SimpleDateFormat;
@@ -32,6 +31,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.ViewHolder
         return items.get(position);
     }
 
+    @SuppressWarnings("unused")
     public void setItem(int position, Notice item){
         items.set(position, item);
     }
@@ -85,7 +85,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.ViewHolder
         }
 
         public void setItem(Notice item){
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String date = sdf.format(new Date(item.getTimestamp()));
 
             binding.dateTxt.setText(date);

@@ -67,15 +67,16 @@ public class HospitalActivity extends AppCompatActivity {
                         return;
                     }
 
-                    assert value != null;
-                    for (QueryDocumentSnapshot doc : value) {
-                        Reserved reserved = doc.toObject(Reserved.class);
-                        HashMap<String, List<String>> reservedMap = (HashMap<String, List<String>>)reserved.getReservedMap();
+                    if (value != null) {
+                        for (QueryDocumentSnapshot doc : value) {
+                            Reserved reserved = doc.toObject(Reserved.class);
+                            HashMap<String, List<String>> reservedMap = (HashMap<String, List<String>>)reserved.getReservedMap();
 
-                        for(int i=0; i<reservedList.size(); i++) {
-                            if(reservedList.get(i).getHospitalId().equals(reserved.getHospitalId())
-                                && reservedList.get(i).getDepartment().equals(reserved.getDepartment()))
-                                reservedList.get(i).setReservedMap(reservedMap);
+                            for(int i=0; i<reservedList.size(); i++) {
+                                if(reservedList.get(i).getHospitalId().equals(reserved.getHospitalId())
+                                    && reservedList.get(i).getDepartment().equals(reserved.getDepartment()))
+                                    reservedList.get(i).setReservedMap(reservedMap);
+                            }
                         }
                     }
                 });

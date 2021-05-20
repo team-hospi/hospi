@@ -438,8 +438,6 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     // 평일: 0, 토요일: 1, 일요일 및 공휴일: 2
     @SuppressLint("SetTextI18n")
     public void timeTable(int dateNum){
-        // TODO: 당일 시간에 따라서 예약 시간 잠금 구현해야함
-
         String open, close, lunch;
 
         switch(dateNum){
@@ -505,6 +503,22 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
                             }
                         }
                     }
+                }
+            }
+
+            Calendar curCal = Calendar.getInstance();
+            if(curCal.get(Calendar.YEAR) == selectCal.get(Calendar.YEAR)
+                    && curCal.get(Calendar.MONTH) == selectCal.get(Calendar.MONTH)
+                    && curCal.get(Calendar.DAY_OF_MONTH) == selectCal.get(Calendar.DAY_OF_MONTH)){
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                String[] time = sdf.format(curCal.getTime()).split(":");
+                String[] selTime = button[i].getText().toString().split(":");
+                int curMin = Integer.parseInt(time[0]) * 60 + Integer.parseInt(time[1]);
+                int selMin = Integer.parseInt(selTime[0]) * 60 + Integer.parseInt(selTime[1]);
+
+                if(selMin-30<=curMin){
+                    button[i].setClickable(false);
+                    button[i].setBackgroundResource(R.drawable.button_clickable_false);
                 }
             }
 

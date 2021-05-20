@@ -2,6 +2,7 @@ package com.gradproject.hospi.home.search;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -44,6 +45,7 @@ public class SpeechRecognitionPopUp extends AppCompatActivity {
         mRecognizer.stopListening();
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void startRecognition(){
         binding.failureTxt.setVisibility(View.INVISIBLE);
         binding.recordStatusTxt.setVisibility(View.VISIBLE);
@@ -57,7 +59,7 @@ public class SpeechRecognitionPopUp extends AppCompatActivity {
         mRecognizer.startListening(recogIntent);
     }
 
-    private RecognitionListener listener = new RecognitionListener() {
+    private final RecognitionListener listener = new RecognitionListener() {
         @Override
         public void onReadyForSpeech(Bundle params) {}
 
@@ -73,6 +75,7 @@ public class SpeechRecognitionPopUp extends AppCompatActivity {
         @Override
         public void onEndOfSpeech() {}
 
+        @SuppressLint("UseCompatLoadingForDrawables")
         @Override
         public void onError(int error) {
             binding.failureTxt.setVisibility(View.VISIBLE);
@@ -83,6 +86,7 @@ public class SpeechRecognitionPopUp extends AppCompatActivity {
             binding.retryBtn.setVisibility(View.VISIBLE);
         }
 
+        @SuppressLint("UseCompatLoadingForDrawables")
         @Override
         public void onResults(Bundle results) {
             binding.failureTxt.setVisibility(View.INVISIBLE);

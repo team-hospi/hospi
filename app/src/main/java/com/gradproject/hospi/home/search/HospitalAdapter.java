@@ -1,21 +1,20 @@
 package com.gradproject.hospi.home.search;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.HospitalItemBinding;
 
 import java.util.ArrayList;
 
 public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHolder>
                             implements OnHospitalItemClickListener {
-    public ArrayList<Hospital> items = new ArrayList<Hospital>();
+    public ArrayList<Hospital> items = new ArrayList<>();
     OnHospitalItemClickListener listener;
 
     public void addItem(Hospital item){
@@ -30,6 +29,7 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHo
         return items.get(position);
     }
 
+    @SuppressWarnings("unused")
     public void setItem(int position, Hospital item){
         items.set(position, item);
     }
@@ -82,6 +82,7 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.ViewHo
             });
         }
 
+        @SuppressLint("SetTextI18n")
         public void setItem(Hospital item){
             binding.hospitalName.setText(item.getName());
             if(item.isStatus()){
