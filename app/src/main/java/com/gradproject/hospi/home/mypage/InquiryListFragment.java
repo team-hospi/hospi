@@ -61,7 +61,7 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
 
         inquiryAdapter.setOnItemClickListener((holder, view, position) -> {
             Inquiry inquiry = inquiryAdapter.getItem(position);
-            FragmentTransaction transaction = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
             InquiryDetailFragment inquiryDetailFragment = new InquiryDetailFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("pos", position);
@@ -82,7 +82,7 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
 
     @Override
     public void onBackPressed() {
-        Objects.requireNonNull(getActivity()).finish();
+        requireActivity().finish();
     }
 
     private void getInquiryList(){

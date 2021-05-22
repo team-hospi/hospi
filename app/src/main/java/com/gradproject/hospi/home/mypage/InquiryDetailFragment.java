@@ -104,7 +104,7 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
 
     public void editBtnProcess(){
         if(!(inquiry.isCheckedAnswer())){
-            FragmentTransaction transaction = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
             InquiryEditFragment inquiryEditFragment = new InquiryEditFragment();
             Bundle bundle = new Bundle();
             bundle.putSerializable("inquiry", inquiry);
@@ -134,7 +134,7 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
     }
 
     public void deletePopUp(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("해당 문의를 삭제하시겠습니까?")
                 .setPositiveButton("확인", (dialog, i) -> delBtnProcess())
@@ -145,7 +145,7 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
 
     public void deleteSuccessPopUp(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("삭제되었습니다.")
                 .setPositiveButton("확인", (dialog, i) -> {

@@ -26,7 +26,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="35dp"
+            android:layout_marginStart="35dp"
             android:text="병원 예약"
             android:textColor="@color/black"
             android:textSize="17sp" />
@@ -44,7 +44,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <FrameLayout
@@ -61,20 +61,22 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp">
+                    android:layout_marginRight="15dp"
+                    tools:ignore="UseCompoundDrawables,UselessParent">
 
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_gravity="left|center_vertical"
-                        android:src="@drawable/ic_action_hospital" />
+                        android:layout_gravity="start|center_vertical"
+                        android:src="@drawable/ic_action_hospital"
+                        tools:ignore="ContentDescription" />
 
                     <TextView
                         android:id="@+id/departmentTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
                         android:text="진료과 설정"
                         android:textColor="@color/black"
                         android:textSize="25sp" />
@@ -84,7 +86,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
+                android:layout_marginStart="30dp"
                 android:background="@color/white"
                 android:elevation="5dp">
 
@@ -110,20 +112,22 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp">
+                    android:layout_marginRight="15dp"
+                    tools:ignore="UselessParent">
 
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_gravity="left|center_vertical"
-                        android:src="@drawable/ic_action_calendar" />
+                        android:layout_gravity="start|center_vertical"
+                        android:src="@drawable/ic_action_calendar"
+                        tools:ignore="ContentDescription" />
 
                     <TextView
                         android:id="@+id/dateTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
                         android:text="월.일(요일)"
                         android:textColor="@color/black"
                         android:textSize="25sp" />
@@ -131,14 +135,15 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center_vertical|right"
+                        android:gravity="center_vertical|end"
                         android:orientation="vertical">
 
                         <ImageView
                             android:id="@+id/calendarExpandImg"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:src="@drawable/ic_action_expand_less" />
+                            android:src="@drawable/ic_action_expand_less"
+                            tools:ignore="ContentDescription" />
                     </LinearLayout>
                 </LinearLayout>
             </FrameLayout>
@@ -166,20 +171,22 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp">
+                    android:layout_marginRight="15dp"
+                    tools:ignore="UselessParent">
 
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_gravity="left|center_vertical"
-                        android:src="@drawable/ic_action_time" />
+                        android:layout_gravity="start|center_vertical"
+                        android:src="@drawable/ic_action_time"
+                        tools:ignore="ContentDescription" />
 
                     <TextView
                         android:id="@+id/timeTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
                         android:text="시간 설정"
                         android:textColor="@color/black"
                         android:textSize="25sp" />
@@ -187,14 +194,15 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center_vertical|right"
+                        android:gravity="center_vertical|end"
                         android:orientation="vertical">
 
                         <ImageView
                             android:id="@+id/timeExpandImg"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:src="@drawable/ic_action_expand_less" />
+                            android:src="@drawable/ic_action_expand_less"
+                            tools:ignore="ContentDescription" />
                     </LinearLayout>
                 </LinearLayout>
             </FrameLayout>
@@ -206,7 +214,8 @@
                 android:shrinkColumns="*"
                 android:layout_weight="1"
                 android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"/>
+                android:layout_marginRight="15dp"
+                tools:ignore="InefficientWeight" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -218,7 +227,7 @@
                     android:id="@+id/userInfoTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp"
                     android:layout_marginTop="15dp"
                     android:text="예약자 정보"
                     android:textColor="@color/black"
@@ -240,7 +249,7 @@
                         android:id="@+id/userName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
                         android:text="예약자"
                         android:textColor="@color/black"
                         android:textSize="17sp"/>
@@ -249,7 +258,7 @@
                         android:id="@+id/userNameTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="50dp"
+                        android:layout_marginStart="50dp"
                         android:text="이름"
                         android:textSize="17sp"/>
                 </LinearLayout>
@@ -267,7 +276,7 @@
                         android:id="@+id/userPhone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
                         android:text="연락처"
                         android:textColor="@color/black"
                         android:textSize="17sp" />
@@ -276,7 +285,7 @@
                         android:id="@+id/userPhoneTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="50dp"
+                        android:layout_marginStart="50dp"
                         android:text="010-0000-0000"
                         android:textSize="17sp"/>
                 </LinearLayout>
@@ -294,7 +303,7 @@
                         android:id="@+id/userBirth"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
                         android:text="생년월일"
                         android:textColor="@color/black"
                         android:textSize="17sp" />
@@ -303,7 +312,7 @@
                         android:id="@+id/userBirthTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="34dp"
+                        android:layout_marginStart="34dp"
                         android:text="0000-00-00"
                         android:textSize="17sp"/>
                 </LinearLayout>
@@ -321,7 +330,7 @@
                         android:id="@+id/additionalContentTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
                         android:layout_marginTop="10dp"
                         android:gravity="top"
                         android:text="추가사항"
@@ -332,11 +341,12 @@
                         android:id="@+id/additionalContentEdt"
                         android:layout_width="250dp"
                         android:layout_height="150dp"
-                        android:layout_marginLeft="35dp"
+                        android:layout_marginStart="35dp"
                         android:hint="추가사항 입력"
                         android:background="@drawable/edit_text"
-                        android:gravity="left|top"
-                        android:padding="5dp" />
+                        android:gravity="start|top"
+                        android:padding="5dp"
+                        tools:ignore="Autofill,TextFields" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -349,7 +359,7 @@
                     android:id="@+id/hospitalInfoTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp"
                     android:layout_marginTop="15dp"
                     android:text="병원 정보"
                     android:textColor="@color/black"
@@ -371,7 +381,7 @@
                         android:id="@+id/hospitalName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
                         android:text="병원명"
                         android:textColor="@color/black"
                         android:textSize="17sp" />
@@ -380,7 +390,7 @@
                         android:id="@+id/hospitalNameTxt"
                         android:layout_width="250dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="50dp"
+                        android:layout_marginStart="50dp"
                         android:text="이름"
                         android:textSize="17sp" />
                 </LinearLayout>
@@ -398,7 +408,7 @@
                         android:id="@+id/hospitalTel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
                         android:text="연락처"
                         android:textColor="@color/black"
                         android:textSize="17sp" />
@@ -407,7 +417,7 @@
                         android:id="@+id/hospitalTelTxt"
                         android:layout_width="250dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="50dp"
+                        android:layout_marginStart="50dp"
                         android:text="전화번호"
                         android:textSize="17sp" />
                 </LinearLayout>
@@ -424,7 +434,7 @@
                         android:id="@+id/hospitalAddress"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
                         android:text="주소"
                         android:textColor="@color/black"
                         android:textSize="17sp" />
@@ -433,7 +443,7 @@
                         android:id="@+id/hospitalAddressTxt"
                         android:layout_width="250dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="65dp"
+                        android:layout_marginStart="65dp"
                         android:text="OO도 OO시 OO구"
                         android:textSize="17sp" />
                 </LinearLayout>

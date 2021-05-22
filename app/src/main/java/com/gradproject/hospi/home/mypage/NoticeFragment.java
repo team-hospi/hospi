@@ -66,7 +66,7 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
 
         binding.backBtn.setOnClickListener(v -> onBackPressed());
 
-        binding.writeBtn.setOnClickListener(v -> Objects.requireNonNull(getActivity())
+        binding.writeBtn.setOnClickListener(v -> requireActivity()
                 .getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.settingContainer, new NoticeWriteFragment())
@@ -74,7 +74,7 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
 
         noticeAdapter.setOnItemClickListener((holder, view, position) -> {
             Notice notice = noticeAdapter.getItem(position);
-            FragmentTransaction transaction = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
             NoticeDetailFragment noticeDetailFragment = new NoticeDetailFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("pos", position);
@@ -95,7 +95,7 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
 
     @Override
     public void onBackPressed() {
-        Objects.requireNonNull(getActivity()).finish();
+        requireActivity().finish();
     }
 
     private void getNoticeList(){

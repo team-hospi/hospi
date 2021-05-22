@@ -49,7 +49,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_margin="15dp"
-                android:background="@drawable/ic_action_location" />
+                android:background="@drawable/ic_action_location"
+                tools:ignore="ContentDescription" />
 
             <LinearLayout
                 android:layout_width="wrap_content"

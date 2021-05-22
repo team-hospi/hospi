@@ -21,7 +21,6 @@ import com.gradproject.hospi.databinding.FragmentNoticeWriteBinding;
 import com.gradproject.hospi.utils.Loading;
 
 import java.sql.Timestamp;
-import java.util.Objects;
 
 public class NoticeWriteFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG ="NoticeWriteFragment";
@@ -132,7 +131,7 @@ public class NoticeWriteFragment extends Fragment implements OnBackPressedListen
 
     private void writeSuccess(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("공지사항이 등록되었습니다.")
                 .setPositiveButton("확인", (dialog, i) -> {
@@ -150,7 +149,7 @@ public class NoticeWriteFragment extends Fragment implements OnBackPressedListen
 
     private void writeFail(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("문의 등록에 실패하였습니다.\n잠시후 다시 시도해주세요.")
                 .setPositiveButton("확인", (dialogInterface, i) -> { /* empty */ });

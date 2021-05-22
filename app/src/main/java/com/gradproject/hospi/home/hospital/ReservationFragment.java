@@ -175,7 +175,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     public void onBackPressed() {
         if(getArguments()!=null){
             if(getArguments().getBoolean("popUp", false)){
-                Objects.requireNonNull(getActivity()).finish();
+                requireActivity().finish();
             }else{
                 hospitalActivity.onReservationFragmentChanged(0);
             }
@@ -191,7 +191,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     }
 
     private void notSelectedTimeAlert(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("시간을 설정해주세요.")
                 .setPositiveButton("확인", (dialogInterface, i) -> {});
@@ -230,7 +230,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
     private void reservationSuccess(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("예약 신청이 완료되었습니다.\n병원에서 예약 확정이 되는대로 알려드리겠습니다.")
                 .setPositiveButton("확인", (dialogInterface, i) -> {
@@ -240,7 +240,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
                         isPopUp = getArguments().getBoolean("popUp", false);
                     }
 
-                    Objects.requireNonNull(getActivity()).finish();
+                    requireActivity().finish();
 
                     if (!isPopUp) {
                         Intent intent = new Intent(getContext(), HospitalActivity.class);
@@ -254,7 +254,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
     private void reservationFail(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("예약에 실패하였습니다.\n잠시 후 다시 진행해주세요.")
                 .setPositiveButton("확인", (dialogInterface, i) -> { /* empty */ });

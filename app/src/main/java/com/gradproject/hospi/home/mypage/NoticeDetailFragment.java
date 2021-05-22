@@ -104,7 +104,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     }
 
     public void editBtnProcess(){
-        FragmentTransaction transaction = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
         NoticeEditFragment noticeEditFragment = new NoticeEditFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("notice", notice);
@@ -130,7 +130,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     }
 
     public void deletePopUp(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("해당 공지사항을 삭제하시겠습니까?")
                 .setPositiveButton("확인", (dialog, i) -> delBtnProcess())
@@ -141,7 +141,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
 
     public void deleteSuccessPopUp(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("삭제되었습니다.")
                 .setPositiveButton("확인", (dialog, i) -> {

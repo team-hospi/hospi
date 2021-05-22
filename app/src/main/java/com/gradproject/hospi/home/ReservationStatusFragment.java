@@ -19,7 +19,6 @@ import com.gradproject.hospi.databinding.FragmentReservationStatusBinding;
 import com.gradproject.hospi.home.hospital.Reservation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
 
 public class ReservationStatusFragment extends Fragment {

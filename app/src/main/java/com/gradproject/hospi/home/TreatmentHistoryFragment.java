@@ -18,7 +18,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.databinding.FragmentTreatmentHistoryBinding;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
 
 public class TreatmentHistoryFragment extends Fragment {

@@ -23,7 +23,8 @@
             android:layout_height="50dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="150dp"
-            android:src="@drawable/ic_action_info" />
+            android:src="@drawable/ic_action_info"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:layout_width="wrap_content"

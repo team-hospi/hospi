@@ -21,12 +21,13 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="?selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_action_back" />
+            android:src="@drawable/ic_action_back"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="35dp"
+            android:layout_marginStart="35dp"
             android:text="공지사항"
             android:textColor="@color/black"
             android:textSize="17sp" />
@@ -61,5 +62,6 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/white" />
+        app:tint="@color/white"
+        tools:ignore="ContentDescription" />
 </androidx.constraintlayout.widget.ConstraintLayout>

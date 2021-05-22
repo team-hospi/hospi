@@ -21,8 +21,6 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentNoticeEditBinding;
 import com.gradproject.hospi.utils.Loading;
 
-import java.util.Objects;
-
 public class NoticeEditFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "NoticeEditFragment";
     private FragmentNoticeEditBinding binding;
@@ -138,7 +136,7 @@ public class NoticeEditFragment extends Fragment implements OnBackPressedListene
 
     public void updateSuccessPopUp(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("공지사항이 수정되었습니다.")
                 .setPositiveButton("확인", (dialog, i) -> {

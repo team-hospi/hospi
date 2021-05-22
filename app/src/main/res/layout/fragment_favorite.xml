@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".home.mypage.FavoriteFragment"
     android:background="@color/list_background">
 
     <androidx.appcompat.widget.Toolbar
@@ -19,12 +18,13 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_action_back"
-            android:background="?selectableItemBackgroundBorderless"/>
+            android:background="?selectableItemBackgroundBorderless"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="35dp"
+            android:layout_marginStart="35dp"
             android:text="찜한 병원"
             android:textColor="@color/black"
             android:textSize="17sp"/>
@@ -42,14 +42,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="5dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="UseCompoundDrawables">
 
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginTop="150dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_action_info"/>
+            android:src="@drawable/ic_action_info"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:layout_width="wrap_content"

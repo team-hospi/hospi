@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/list_background"
@@ -58,7 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
                     android:text="0000-00-00 (월) 00:00"
                     android:textColor="@color/black"
                     android:textSize="20sp"
@@ -132,7 +133,7 @@
                     android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="3dp"
+                    android:layout_marginStart="3dp"
                     android:layout_marginTop="20dp"
                     android:text="님의 접수현황"
                     android:textColor="@color/black"
@@ -144,7 +145,7 @@
                     android:id="@+id/patientTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
                     android:layout_marginTop="20dp"
                     android:text="OOO"
                     android:textColor="@color/black"
@@ -294,7 +295,8 @@
             android:layout_height="50dp"
             android:layout_marginTop="150dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_action_info"/>
+            android:src="@drawable/ic_action_info"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:layout_width="wrap_content"

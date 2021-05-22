@@ -15,8 +15,6 @@ import androidx.fragment.app.Fragment;
 import com.gradproject.hospi.databinding.FragmentMyPageBinding;
 import com.gradproject.hospi.home.mypage.SettingActivity;
 
-import java.util.Objects;
-
 public class MyPageFragment extends Fragment{
     private FragmentMyPageBinding binding;
 
@@ -30,7 +28,7 @@ public class MyPageFragment extends Fragment{
         if (homeActivity != null) {
             binding.nameTxt.setText(homeActivity.firebaseUser.getDisplayName());
         }
-        binding.version.setText(getVersionInfo(Objects.requireNonNull(getContext())));
+        binding.version.setText(getVersionInfo(requireContext()));
 
         binding.myInfoEditBtn.setOnClickListener(v -> startSelectedFragment("myInfoEditBtn"));
         binding.favoritesBtn.setOnClickListener(v -> startSelectedFragment("favoritesBtn"));

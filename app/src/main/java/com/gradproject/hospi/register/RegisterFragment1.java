@@ -11,8 +11,6 @@ import androidx.fragment.app.Fragment;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.databinding.FragmentRegister1Binding;
 
-import java.util.Objects;
-
 public class RegisterFragment1 extends Fragment implements OnBackPressedListener {
     private FragmentRegister1Binding binding;
     RegisterActivity registerActivity;
@@ -44,6 +42,6 @@ public class RegisterFragment1 extends Fragment implements OnBackPressedListener
 
     @Override
     public void onBackPressed() {
-        Objects.requireNonNull(getActivity()).finish();
+        requireActivity().finish();
     }
 }

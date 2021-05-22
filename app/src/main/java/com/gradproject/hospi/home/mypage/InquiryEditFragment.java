@@ -22,8 +22,6 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentInquiryEditBinding;
 import com.gradproject.hospi.utils.Loading;
 
-import java.util.Objects;
-
 public class InquiryEditFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "InquiryEditFragment";
     private FragmentInquiryEditBinding binding;
@@ -140,7 +138,7 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
 
     public void updateSuccessPopUp(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("문의가 수정되었습니다.")
                 .setPositiveButton("확인", (dialog, i) -> {
