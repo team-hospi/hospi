@@ -14,7 +14,7 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.ActivityAddressSearchBinding;
 
 public class AddressSearchActivity extends AppCompatActivity {
-    private static final String ADDRESS = "http://hospi.iptime.org/m/address.do";
+    private static final String ADDRESS = "https://hospipi.kro.kr/m/address.do";
 
     private Handler handler;
 
