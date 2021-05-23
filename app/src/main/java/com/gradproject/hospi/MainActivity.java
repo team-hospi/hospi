@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     FirebaseUser firebaseUser;
     FirebaseAuth firebaseAuth;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     protected void onStart() {
         super.onStart();
 
-        if (hasPermissions(this, PERMISSIONS)) {
+        if (hasPermissions(MainActivity.this, PERMISSIONS)) {
             onAuthStateChanged(firebaseAuth);
         }
     }

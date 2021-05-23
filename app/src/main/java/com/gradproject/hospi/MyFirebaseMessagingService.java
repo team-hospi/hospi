@@ -31,7 +31,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.d("FCM Log", "알림 메시지: " + remoteMessage.getNotification().getBody());
             String messageBody = remoteMessage.getNotification().getBody();
             String messageTitle = remoteMessage.getNotification().getTitle();
-            String channelId = remoteMessage.getNotification().getChannelId();
+            String channelId = "channel";
 
             Intent intent = new Intent(this, MainActivity.class);
             intent.setAction(Intent.ACTION_MAIN)
@@ -40,25 +40,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-            NotificationCompat.Builder notificationBuilder = null;
-            if (channelId != null) {
-                notificationBuilder = new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.drawable.icon)
-                        .setContentTitle(messageTitle)
-                        .setContentText(messageBody)
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
-            }
+            NotificationCompat.Builder notificationBuilder;
+            notificationBuilder = new NotificationCompat.Builder(this, channelId)
+                    .setSmallIcon(R.drawable.icon)
+                    .setContentTitle(messageTitle)
+                    .setContentText(messageBody)
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri)
+                    .setContentIntent(pendingIntent);
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 String channelName = "알림";
                 NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
                 notificationManager.createNotificationChannel(channel);
             }
-            if (notificationBuilder != null) {
-                notificationManager.notify(0, notificationBuilder.build());
-            }
+            notificationManager.notify(0, notificationBuilder.build());
         }
     }
 
