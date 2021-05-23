@@ -22,12 +22,15 @@ import com.gradproject.hospi.home.hospital.HospitalActivity;
 import com.gradproject.hospi.home.hospital.Reservation;
 import com.gradproject.hospi.home.hospital.Reserved;
 import com.gradproject.hospi.home.search.Hospital;
+import com.gradproject.hospi.utils.DateTimeFormat;
 import com.gradproject.hospi.utils.Loading;
 
+import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -196,8 +199,6 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        final String[] week = {"일", "월", "화", "수", "목", "금", "토"};
-
         ReservationItemBinding binding;
 
         public ViewHolder(ReservationItemBinding binding){
@@ -209,19 +210,20 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         @SuppressLint("SetTextI18n")
         public void setItem(Reservation item){
             binding.hospitalNameTxt.setText(item.getHospitalName());
+
             if(item.getCancelComment() != null){
                 binding.cancelCommentTxt.setText(item.getCancelComment());
             }
-            String date = item.getReservationDate();
+
+            String[] date = item.getReservationDate().split("-");
             String time = item.getReservationTime();
-            Calendar cal = Calendar.getInstance();
-            int year = Integer.parseInt(date.substring(0, 4));
-            int month = Integer.parseInt(date.substring(5, 7));
-            int day = Integer.parseInt(date.substring(8, 10));
-            cal.set(Calendar.YEAR, year);
-            cal.set(Calendar.MONTH, month-1);
-            cal.set(Calendar.DATE, day);
-            binding.reservationDateTxt.setText(date + " (" + week[cal.get(Calendar.DAY_OF_WEEK)-1] + ") " + time);
+
+            LocalDate lDate = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
+            binding.reservationDateTxt.setText(lDate.format(DateTimeFormat.date())
+                    + " ("
+                    + lDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA)
+                    + ") "
+                    + time);
 
             switch (item.getReservationStatus()){
                 case Reservation.RESERVATION_CONFIRMED:

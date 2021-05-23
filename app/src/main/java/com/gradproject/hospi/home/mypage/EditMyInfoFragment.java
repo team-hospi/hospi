@@ -1,6 +1,5 @@
 package com.gradproject.hospi.home.mypage;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -31,11 +30,11 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 import com.gradproject.hospi.databinding.FragmentEditMyInfoBinding;
+import com.gradproject.hospi.utils.DateTimeFormat;
 import com.gradproject.hospi.utils.Loading;
 import com.gradproject.hospi.utils.PhoneNumberHyphen;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.LocalDate;
 
 import static android.app.Activity.RESULT_OK;
 import static com.gradproject.hospi.home.HomeActivity.user;
@@ -45,7 +44,6 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
     private FragmentEditMyInfoBinding binding;
     private Context mContext;
 
-    Calendar cal;
     FirebaseFirestore db;
     ActivityResultLauncher<Intent> mGetContent;
 
@@ -53,7 +51,6 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-        cal = Calendar.getInstance();
 
         mGetContent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
@@ -199,9 +196,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         int cDay = Integer.parseInt(birth[2]);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
-            cal.set(year, month, dayOfMonth);
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            String date = df.format(cal.getTime());
+            String date = LocalDate.of(year, month+1, dayOfMonth).format(DateTimeFormat.date());
 
             DocumentReference documentReference = db.collection(User.DB_NAME)
                     .document(user.getDocumentId()); // 해당 이메일 유저 문서 열기

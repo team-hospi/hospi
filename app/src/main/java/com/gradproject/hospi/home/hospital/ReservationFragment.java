@@ -31,14 +31,20 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentReservationBinding;
+import com.gradproject.hospi.utils.DateTimeFormat;
 import com.gradproject.hospi.utils.Loading;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZonedDateTime;
+import java.time.chrono.ChronoLocalDate;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
@@ -54,11 +60,9 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     private static final int SATURDAY = 1;
     private static final int HOLIDAY = 2;
 
-    final String[] week = {"일", "월", "화", "수", "목", "금", "토"};
-
     HospitalActivity hospitalActivity;
     FirebaseFirestore db;
-    Calendar cal, selectCal;
+    LocalDateTime lDate, lSelDate;
     DatePicker datePicker;
     String date;
     String selectDepartment, selectTime=null;
@@ -70,15 +74,14 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-        cal = Calendar.getInstance();
-        selectCal = Calendar.getInstance();
+        lDate = LocalDateTime.now();
+        lSelDate = LocalDateTime.now();
         loading = new Loading(getContext());
 
         datePicker = new DatePicker(getContext());
-        datePicker.setMinDate(cal.getTimeInMillis());
-        Calendar tmpCal = Calendar.getInstance();
-        tmpCal.add(Calendar.MONTH, 1);
-        datePicker.setMaxDate(tmpCal.getTimeInMillis());
+        datePicker.setMinDate(lDate.toInstant(ZonedDateTime.now().getOffset()).toEpochMilli());
+        LocalDateTime tmpDate = lDate.plusMonths(1);
+        datePicker.setMaxDate(tmpDate.toInstant(ZonedDateTime.now().getOffset()).toEpochMilli());
         datePicker.setBackgroundColor(Color.WHITE);
         datePicker.setElevation(3);
     }
@@ -90,10 +93,12 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
         hospitalActivity = (HospitalActivity) getActivity();
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         binding.calendar.setLayoutParams(layoutParams);
 
-        LinearLayout.LayoutParams datePickerLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams datePickerLayoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         datePickerLayoutParams.gravity = Gravity.CENTER;
         datePickerLayoutParams.setMargins(0, 25, 0, 25);
         datePicker.setLayoutParams(datePickerLayoutParams);
@@ -112,7 +117,8 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
         ArrayList<String> departmentArray = (ArrayList<String>)hospital.getDepartment();
 
-        binding.department.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, departmentArray));
+        binding.department.setAdapter(new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_dropdown_item, departmentArray));
         binding.department.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -126,10 +132,13 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
             public void onNothingSelected(AdapterView<?> parent) { }
         });
 
-        cal = Calendar.getInstance();
-        cal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
-        selectCal.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
-        date = cal.get(Calendar.MONTH)+1 + "." + cal.get(Calendar.DATE) + "(" + week[cal.get(Calendar.DAY_OF_WEEK)-1] + ")";
+        date = lDate.getMonthValue()
+                + "."
+                + lDate.getDayOfMonth()
+                + "("
+                + lDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA)
+                + ")";
+
         binding.dateTxt.setText(date);
 
         binding.dateSetBtn.setOnClickListener(v -> {
@@ -141,9 +150,14 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         });
 
         datePicker.setOnDateChangedListener((view, year, monthOfYear, dayOfMonth) -> {
-            selectCal.set(year, monthOfYear, dayOfMonth);
+            lSelDate = LocalDateTime.of(year, monthOfYear+1, dayOfMonth, 0, 0);
+            date = lSelDate.getMonthValue()
+                    + "."
+                    + lSelDate.getDayOfMonth()
+                    + "("
+                    + lSelDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA)
+                    + ")";
 
-            date = monthOfYear+1 + "." + dayOfMonth + "(" + week[selectCal.get(Calendar.DAY_OF_WEEK)-1] + ")";
             binding.dateTxt.setText(date);
 
             closeTimeSelect();
@@ -206,8 +220,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         reservation.setHospitalId(hospital.getId());     // 병원 아이디 설정
         reservation.setHospitalName(hospital.getName()); // 병원 이름 설정
         reservation.setDepartment(selectDepartment);     // 진료과 설정
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        String date = df.format(selectCal.getTime());
+        String date = lSelDate.format(DateTimeFormat.date());
         reservation.setReservationDate(date);      // 예약 날짜 설정
         reservation.setReservationTime(selectTime);    // 예약 시간 설정
         reservation.setAdditionalContent(binding.additionalContentEdt.getText().toString());  // 추가 입력한 내용 설정
@@ -284,8 +297,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     }
 
     public void reservedListUpdate(Reservation reservation){
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        String date = df.format(selectCal.getTime());
+        String date = lSelDate.format(DateTimeFormat.date());
         Reserved reserved = null;
         HashMap<String, List<String>> reservedMap;
 
@@ -384,7 +396,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     }
 
     public void openTimeSelect(){
-        setTimeTable(selectCal.get(Calendar.DAY_OF_WEEK));
+        setTimeTable(lSelDate.getDayOfWeek().getValue());
         isClickTimeSetBtn = true;
         binding.timeExpandImg.setImageResource(R.drawable.ic_action_expand_more);
     }
@@ -396,20 +408,20 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         binding.timeExpandImg.setImageResource(R.drawable.ic_action_expand_less);
     }
 
-    public void setTimeTable(int date){
-        switch(date){
+    public void setTimeTable(int num){
+        switch(num){
+            case 1:
             case 2:
             case 3:
             case 4:
             case 5:
-            case 6:
                 if(hospital.isStatus()){
                     timeTable(WEEKDAY);
                 }else{
                     notPossibleReservation();
                 }
                 break;
-            case 7:
+            case 6:
                 if(hospital.isSaturdayStatus()){
                     timeTable(SATURDAY);
                 }else{
@@ -489,8 +501,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
             for(Reserved reserved : reservedList){
                 if(selectDepartment.equals(reserved.getDepartment())){
-                    @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                    String date = df.format(selectCal.getTime());
+                    String date = lSelDate.format(DateTimeFormat.date());
 
                     HashMap<String, List<String>> reservedMap = (HashMap<String, List<String>>)reserved.getReservedMap();
                     ArrayList<String> dateArray = (ArrayList<String>)reservedMap.get(date);
@@ -506,23 +517,21 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
                 }
             }
 
-            Calendar curCal = Calendar.getInstance();
-            if(curCal.get(Calendar.YEAR) == selectCal.get(Calendar.YEAR)
-                    && curCal.get(Calendar.MONTH) == selectCal.get(Calendar.MONTH)
-                    && curCal.get(Calendar.DAY_OF_MONTH) == selectCal.get(Calendar.DAY_OF_MONTH)){
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                String[] time = sdf.format(curCal.getTime()).split(":");
-                String[] selTime = button[i].getText().toString().split(":");
-                int curMin = Integer.parseInt(time[0]) * 60 + Integer.parseInt(time[1]);
-                int selMin = Integer.parseInt(selTime[0]) * 60 + Integer.parseInt(selTime[1]);
+            LocalDate curDate = LocalDate.now();
+            if(curDate.isEqual(ChronoLocalDate.from(lSelDate))){
+                String[] tmpArr = button[i].getText().toString().split(":");
 
-                if(selMin-30<=curMin){
+                LocalTime curTime = LocalTime.now();
+                LocalTime btnTime = LocalTime.of(Integer.parseInt(tmpArr[0]), Integer.parseInt(tmpArr[1])).minusMinutes(30);
+
+                if(btnTime.isBefore(curTime)){
                     button[i].setClickable(false);
                     button[i].setBackgroundResource(R.drawable.button_clickable_false);
                 }
             }
 
-            TableRow.LayoutParams buttonLayoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+            TableRow.LayoutParams buttonLayoutParams = new TableRow.LayoutParams(
+                    TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
             buttonLayoutParams.leftMargin = 10;
             buttonLayoutParams.rightMargin = 10;
             buttonLayoutParams.bottomMargin = 20;
@@ -534,36 +543,27 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
     // 예약 시간 30분 간격으로 점심시간 제외해서 구하는 메서드
     public ArrayList<String> reservationTimeMaker(String open, String close, String lunch){
-
         ArrayList<String> timeList = new ArrayList<>();
 
         String[] openArr = open.split(":");
         String[] closeArr = close.split(":");
         String[] lunchArr = lunch.split(":");
 
-        int openMin = Integer.parseInt(openArr[0]) * 60 + Integer.parseInt(openArr[1]);
-        int closeMin = Integer.parseInt(closeArr[0]) * 60 + Integer.parseInt(closeArr[1]);
-        int lunchMin = Integer.parseInt(lunchArr[0]) * 60 + Integer.parseInt(lunchArr[1]);
-        int lunchEndMin = lunchMin + 60;
+        LocalTime openTime = LocalTime.of(Integer.parseInt(openArr[0]), Integer.parseInt(openArr[1]));
+        LocalTime closeTime = LocalTime.of(Integer.parseInt(closeArr[0]), Integer.parseInt(closeArr[1]));
+        LocalTime lunchTime = LocalTime.of(Integer.parseInt(lunchArr[0]), Integer.parseInt(lunchArr[1]));
+        LocalTime lunchEndTime = lunchTime.plusHours(1);
 
-        while(openMin<closeMin){
-            if(openMin%60 == 0){
-                timeList.add(openMin / 60 +":"+"00");
-            }else{
-                timeList.add(openMin / 60 +":"+"30");
-            }
-            openMin+=30;
+        while(openTime.isBefore(closeTime)){
+            timeList.add(openTime.format(DateTimeFormat.time()));
+            openTime = openTime.plusMinutes(30);
         }
 
         ArrayList<String> tmpList = new ArrayList<>();
 
-        while(lunchMin<lunchEndMin){
-            if(lunchMin%60 == 0){
-                tmpList.add(lunchMin / 60 +":"+"00");
-            }else{
-                tmpList.add(lunchMin / 60 +":"+"30");
-            }
-            lunchMin+=30;
+        while(lunchTime.isBefore(lunchEndTime)){
+            tmpList.add(lunchTime.format(DateTimeFormat.time()));
+            lunchTime = lunchTime.plusMinutes(30);
         }
 
         for(int i=0; i<timeList.size(); i++){
