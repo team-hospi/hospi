@@ -40,7 +40,7 @@ public class SplashActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(intent);
                 finish();
-            },1300);
+            },1500);
         }else{
             notConnectedAlert();
         }
