@@ -32,6 +32,12 @@ public class HospitalActivity extends AppCompatActivity {
     static ArrayList<Reserved> reservedList = new ArrayList<>();
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        reservedUpdate();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hospital);
@@ -42,44 +48,7 @@ public class HospitalActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        new Thread(() -> {
-            Query query = db.collection(Reserved.DB_NAME)
-                    .whereEqualTo("hospitalId", hospital.getId());
-
-            query.get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        Log.d(TAG, document.getId() + " => " + document.getData());
-                        Reserved reserved = document.toObject(Reserved.class);
-                        reservedList.add(reserved);
-                    }
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            });
-        }).start();
-
-        db.collection(Reserved.DB_NAME)
-                .whereEqualTo("hospitalId", hospital.getId())
-                .addSnapshotListener((value, e) -> {
-                    if (e != null) {
-                        Log.w(TAG, "Listen failed.", e);
-                        return;
-                    }
-
-                    if (value != null) {
-                        for (QueryDocumentSnapshot doc : value) {
-                            Reserved reserved = doc.toObject(Reserved.class);
-                            HashMap<String, List<String>> reservedMap = (HashMap<String, List<String>>)reserved.getReservedMap();
-
-                            for(int i=0; i<reservedList.size(); i++) {
-                                if(reservedList.get(i).getHospitalId().equals(reserved.getHospitalId())
-                                    && reservedList.get(i).getDepartment().equals(reserved.getDepartment()))
-                                    reservedList.get(i).setReservedMap(reservedMap);
-                            }
-                        }
-                    }
-                });
+        reservedUpdate();
 
         hospitalInfoDetailFragment = new HospitalInfoDetailFragment();
         reservationFragment = new ReservationFragment();
@@ -96,6 +65,58 @@ public class HospitalActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().replace(R.id.Container, hospitalInfoDetailFragment).commit();
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+        for(Fragment fragment : fragmentList) {
+            if (fragment instanceof OnBackPressedListener) {
+                ((OnBackPressedListener) fragment).onBackPressed();
+            }
+        }
+    }
+
+    public void reservedUpdate(){
+        reservedList.clear();
+        Query query = db.collection(Reserved.DB_NAME)
+                .whereEqualTo("hospitalId", hospital.getId());
+
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    Log.d(TAG, document.getId() + " => " + document.getData());
+                    Reserved reserved = document.toObject(Reserved.class);
+                    reservedList.add(reserved);
+                }
+            } else {
+                Log.d(TAG, "Error getting documents: ", task.getException());
+            }
+        });
+    }
+
+    public void realTimeReservedUpdate(){
+        db.collection(Reserved.DB_NAME)
+                .whereEqualTo("hospitalId", hospital.getId())
+                .addSnapshotListener((value, e) -> {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
+                    }
+
+                    if (value != null) {
+                        for (QueryDocumentSnapshot doc : value) {
+                            Reserved reserved = doc.toObject(Reserved.class);
+                            HashMap<String, List<String>> reservedMap = (HashMap<String, List<String>>)reserved.getReservedMap();
+
+                            for(int i=0; i<reservedList.size(); i++) {
+                                if(reservedList.get(i).getHospitalId().equals(reserved.getHospitalId())
+                                        && reservedList.get(i).getDepartment().equals(reserved.getDepartment()))
+                                    reservedList.get(i).setReservedMap(reservedMap);
+                            }
+                        }
+                    }
+                });
     }
 
     public void onReservationFragmentChanged(int index){
@@ -142,15 +163,5 @@ public class HospitalActivity extends AppCompatActivity {
         inquiryFragment.setArguments(bundle);
         transaction.replace(R.id.Container, inquiryFragment);
         transaction.commit();
-    }
-
-    @Override
-    public void onBackPressed() {
-        List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
-        for(Fragment fragment : fragmentList) {
-            if (fragment instanceof OnBackPressedListener) {
-                ((OnBackPressedListener) fragment).onBackPressed();
-            }
-        }
     }
 }

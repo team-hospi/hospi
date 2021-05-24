@@ -5,6 +5,7 @@ public class Reservation {
     public static final int RESERVATION_CANCELED = -1;
     public static final int CONFIRMING_RESERVATION = 0;
     public static final int RESERVATION_CONFIRMED = 1;
+    public static final int TREATMENT_COMPLETE = 2;
 
     private String id;
     private String hospitalId;

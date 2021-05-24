@@ -1,10 +1,12 @@
 package com.gradproject.hospi.home.hospital;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +34,7 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentReservationBinding;
 import com.gradproject.hospi.utils.DateTimeFormat;
+import com.gradproject.hospi.utils.LengthConversion;
 import com.gradproject.hospi.utils.Loading;
 
 import java.sql.Timestamp;
@@ -116,6 +119,10 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         binding.backBtn.setOnClickListener(v -> onBackPressed());
 
         ArrayList<String> departmentArray = (ArrayList<String>)hospital.getDepartment();
+
+        if(getContext()!=null){
+            binding.department.setDropDownVerticalOffset(LengthConversion.dpToPx(getContext(), 45f));
+        }
 
         binding.department.setAdapter(new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_spinner_dropdown_item, departmentArray));

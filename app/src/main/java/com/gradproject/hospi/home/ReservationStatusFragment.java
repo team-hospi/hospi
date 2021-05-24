@@ -3,6 +3,7 @@ package com.gradproject.hospi.home;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -11,12 +12,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentReservationStatusBinding;
 import com.gradproject.hospi.home.hospital.Reservation;
+import com.gradproject.hospi.utils.Loading;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -46,12 +50,26 @@ public class ReservationStatusFragment extends Fragment {
 
         binding.reservationList.setLayoutManager(layoutManager);
 
-        showReservationList();
-
         return binding.getRoot();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        showReservationList();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        binding.loadingLayout.setVisibility(View.VISIBLE);
+        binding.reservationList.setVisibility(View.GONE);
+        binding.nothingReservationView.setVisibility(View.GONE);
+    }
+
     private void showReservationList(){
+        reservationAdapter.items.clear(); // 기존 항목 모두 삭제
+        reservationAdapter.notifyDataSetChanged(); // 어댑터 갱신
         db.collection(Reservation.DB_NAME)
                 .whereEqualTo("id", firebaseUser.getEmail())
                 .get()
@@ -83,6 +101,7 @@ public class ReservationStatusFragment extends Fragment {
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }
+                    binding.loadingLayout.setVisibility(View.GONE);
                 });
     }
 }

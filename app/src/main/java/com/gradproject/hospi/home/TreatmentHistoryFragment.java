@@ -45,9 +45,21 @@ public class TreatmentHistoryFragment extends Fragment {
 
         binding.treatmentList.setLayoutManager(layoutManager);
 
-        showPrescriptionList();
-
         return binding.getRoot();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        binding.loadingLayout.setVisibility(View.VISIBLE);
+        binding.treatmentList.setVisibility(View.GONE);
+        binding.nothingTreatmentView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showPrescriptionList();
     }
 
     @Override
@@ -57,6 +69,8 @@ public class TreatmentHistoryFragment extends Fragment {
     }
 
     private void showPrescriptionList(){
+        prescriptionAdapter.items.clear(); // 기존 항목 모두 삭제
+        prescriptionAdapter.notifyDataSetChanged(); // 어댑터 갱신
         db.collection(Prescription.DB_NAME)
                 .whereEqualTo("id", firebaseUser.getEmail())
                 .get()
@@ -88,6 +102,7 @@ public class TreatmentHistoryFragment extends Fragment {
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }
+                    binding.loadingLayout.setVisibility(View.GONE);
                 });
     }
 }

@@ -1,6 +1,7 @@
 package com.gradproject.hospi.home;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -15,10 +16,10 @@ import android.view.ViewGroup;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentReceptionStatusBinding;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.TextStyle;
 import java.util.Locale;
@@ -44,9 +45,21 @@ public class ReceptionStatusFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentReceptionStatusBinding.inflate(inflater, container, false);
 
-        showReceptionInfo();
-
         return binding.getRoot();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        binding.loadingLayout.setVisibility(View.VISIBLE);
+        binding.nothingReceptionView.setVisibility(View.GONE);
+        binding.receptionView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showReceptionInfo();
     }
 
     @SuppressLint("SetTextI18n")
@@ -90,7 +103,6 @@ public class ReceptionStatusFragment extends Fragment {
                                     && (curTime.isBefore(tmpTime.plusHours(1)))){
                                 binding.nothingReceptionView.setVisibility(View.GONE);
                                 binding.receptionView.setVisibility(View.VISIBLE);
-
                                 binding.departmentTxt.setText(reception.getDepartment());
                                 binding.hospitalNameTxt.setText(reception.getHospitalName());
                                 binding.patientTxt.setText(reception.getPatient());
@@ -116,6 +128,7 @@ public class ReceptionStatusFragment extends Fragment {
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }
+                    binding.loadingLayout.setVisibility(View.GONE);
                 });
     }
 
@@ -152,12 +165,12 @@ public class ReceptionStatusFragment extends Fragment {
                 binding.waitingTxt.setVisibility(View.VISIBLE);
                 break;
             case Reception.TREATMENT:
-                binding.statusTxt.setText("진료중");
-                binding.statusTxt.setTextColor(Color.GREEN);
+                binding.statusTxt.setText("진료 중");
+                binding.statusTxt.setTextColor(Color.rgb(70, 201, 0));
                 binding.waitingTxt.setVisibility(View.GONE);
                 break;
             case Reception.TREATMENT_COMPLETE:
-                binding.statusTxt.setText("진료완료");
+                binding.statusTxt.setText("진료 완료");
                 binding.statusTxt.setTextColor(Color.BLACK);
                 binding.waitingTxt.setVisibility(View.GONE);
                 break;
