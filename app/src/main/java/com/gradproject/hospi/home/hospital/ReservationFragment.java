@@ -1,12 +1,10 @@
 package com.gradproject.hospi.home.hospital;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +24,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -236,16 +233,40 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         reservation.setReservationStatus(Reservation.CONFIRMING_RESERVATION);     // 예약 신청됨 상태로 설정
         reservation.setCancelComment(null);
 
-        db.collection(Reservation.DB_NAME)
-                .add(reservation)
-                .addOnSuccessListener(documentReference -> {
-                    Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
-                    reservedListUpdate(reservation);
-                })
-                .addOnFailureListener(e -> {
-                    Log.w(TAG, "Error adding document", e);
+        Query query = db.collection(Reservation.DB_NAME)
+                .whereEqualTo("department", reservation.getDepartment())
+                .whereEqualTo("hospitalId", reservation.getHospitalId())
+                .whereEqualTo("reservationDate", reservation.getReservationDate())
+                .whereEqualTo("reservationTime", reservation.getReservationTime());
+
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                int count = 0;
+                for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    Log.d(TAG, document.getId() + " => " + document.getData());
+                    count++;
+                    Log.d(TAG, "count= " + count);
+                }
+
+                if(count!=0){
                     reservationFail();
-                });
+                }else{
+                    db.collection(Reservation.DB_NAME)
+                            .add(reservation)
+                            .addOnSuccessListener(documentReference -> {
+                                Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                                reservedListUpdate(reservation);
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.w(TAG, "Error adding document", e);
+                                reservationFail();
+                            });
+                }
+            } else {
+                Log.d(TAG, "Error getting documents: ", task.getException());
+                reservationFail();
+            }
+        });
     }
 
     private void reservationSuccess(){
@@ -304,74 +325,76 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     }
 
     public void reservedListUpdate(Reservation reservation){
-        String date = lSelDate.format(DateTimeFormat.date());
-        Reserved reserved = null;
-        HashMap<String, List<String>> reservedMap;
-
-        for(int i=0; i<reservedList.size(); i++){
-            reserved = reservedList.get(i);
-            reservedMap = (HashMap<String, List<String>>)reserved.getReservedMap();
-            if(reserved.getDepartment().equals(selectDepartment)){
-                if(reservedMap.containsKey(date)){
-                    Objects.requireNonNull(reservedMap.get(date)).add(selectTime);
-                    reserved.setReservedMap(reservedMap);
-                    break;
-                }else{
-                    ArrayList<String> tmpArr = new ArrayList<>();
-                    tmpArr.add(selectTime);
-                    reservedMap.put(date, tmpArr);
-                    reserved.setReservedMap(reservedMap);
-                }
-            }else{
-                reserved.setHospitalId(hospital.getId());
-                reserved.setDepartment(selectDepartment);
-                ArrayList<String> tmpArr = new ArrayList<>();
-                tmpArr.add(selectTime);
-                HashMap<String, List<String>> tmpMap = new HashMap<>();
-                tmpMap.put(date, tmpArr);
-                reserved.setReservedMap(tmpMap);
-            }
-        }
-
-        if(reserved==null){
-            reserved = new Reserved();
-            reserved.setHospitalId(hospital.getId());
-            reserved.setDepartment(selectDepartment);
-            ArrayList<String> tmpArr = new ArrayList<>();
-            tmpArr.add(selectTime);
-            HashMap<String, List<String>> tmpMap = new HashMap<>();
-            tmpMap.put(date, tmpArr);
-            reserved.setReservedMap(tmpMap);
-        }
-
         Query query = db.collection(Reserved.DB_NAME)
-                .whereEqualTo("hospitalId", reserved.getHospitalId())
-                .whereEqualTo("department", reserved.getDepartment());
-
-        Reserved finalReserved = reserved;
+                .whereEqualTo("hospitalId", reservation.getHospitalId())
+                .whereEqualTo("department", reservation.getDepartment());
 
         query.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                if(Objects.requireNonNull(task.getResult()).size()!=0){
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.d(TAG, document.getId() + " => " + document.getData());
-                        DocumentReference documentReference = db.collection(Reserved.DB_NAME).document(document.getId());
+                int count = 0;
+                String docId = null;
+                Reserved reserved = null;
+                for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    Log.d(TAG, document.getId() + " => " + document.getData());
+                    count++;
+                    docId = document.getId();
+                    reserved = document.toObject(Reserved.class);
+                }
 
-                        documentReference
-                                .update("reservedMap", finalReserved.getReservedMap())
-                                .addOnSuccessListener(aVoid -> {
-                                    Log.d(TAG, "DocumentSnapshot successfully updated!");
-                                    reservationSuccess();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.w(TAG, "Error updating document", e);
-                                    reservationFailProcess(reservation);
-                                    reservationFail();
-                                });
+                if(count!=0){
+                    HashMap<String, List<String>> reservedMap = (HashMap<String, List<String>>)reserved.getReservedMap();
+                    ArrayList<String> timeArr;
+
+                    if(reservedMap.containsKey(reservation.getReservationDate())){
+                        timeArr = (ArrayList<String>)reservedMap.get(reservation.getReservationDate());
+                    }else{
+                        timeArr = new ArrayList<>();
+                    }
+
+                    if (timeArr != null) {
+                        boolean isChecked = false;
+                        for(String str : timeArr){
+                            if (reservation.getReservationTime().equals(str)) {
+                                isChecked = true;
+                                break;
+                            }
+                        }
+
+                        if(isChecked){
+                            reservationFailProcess(reservation);
+                            reservationFail();
+                        }else{
+                            timeArr.add(reservation.getReservationTime());
+                            reservedMap.put(reservation.getReservationDate(), timeArr);
+
+                            db.collection(Reserved.DB_NAME).document(docId)
+                                    .update("reservedMap", reservedMap)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                                        reservationSuccess();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.w(TAG, "Error updating document", e);
+                                        reservationFailProcess(reservation);
+                                        reservationFail();
+                                    });
+                        }
+                    }else{
+                        reservationFailProcess(reservation);
+                        reservationFail();
                     }
                 }else{
+                    Reserved tmpReserved = new Reserved();
+                    tmpReserved.setDepartment(reservation.getDepartment());
+                    tmpReserved.setHospitalId(reservation.getHospitalId());
+                    ArrayList<String> tmpArr = new ArrayList<>();
+                    tmpArr.add(reservation.getReservationTime());
+                    HashMap<String, List<String>> tmpMap = new HashMap<>();
+                    tmpMap.put(reservation.getReservationDate(), tmpArr);
+                    tmpReserved.setReservedMap(tmpMap);
+
                     db.collection(Reserved.DB_NAME)
-                            .add(finalReserved)
+                            .add(tmpReserved)
                             .addOnSuccessListener(documentReference -> {
                                 Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
                                 reservationSuccess();

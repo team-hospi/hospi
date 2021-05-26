@@ -17,7 +17,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
 
             <ProgressBar
                 android:layout_width="72dp"
@@ -251,7 +252,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_action_info" />
+                android:src="@drawable/ic_action_info"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -359,5 +361,23 @@
             android:layout_marginTop="3dp"
             android:layout_gravity="center_horizontal"
             android:text="시간이 됐음에도 제공되지 않을 경우 해당 병원에 문의해주세요."/>
+
+        <LinearLayout
+            android:id="@+id/refreshBtn"
+            android:clickable="true"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:background="@drawable/button_clickable_true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="새로고침"
+                android:textColor="@color/black"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

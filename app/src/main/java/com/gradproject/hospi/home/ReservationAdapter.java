@@ -200,11 +200,12 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         ReservationItemBinding binding;
+        Loading loading;
 
         public ViewHolder(ReservationItemBinding binding){
             super(binding.getRoot());
-
             this.binding = binding;
+            loading = new Loading(binding.getRoot().getContext());
         }
 
         @SuppressLint("SetTextI18n")
@@ -253,6 +254,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         }
 
         public void showHospitalInfo(View v, String id){
+            loading.show();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection(Hospital.DB_NAME)
                     .whereEqualTo("id", id)
@@ -271,6 +273,8 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 v.getContext().startActivity(intent);
                             }
+
+                            loading.dismiss();
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }

@@ -45,21 +45,16 @@ public class ReceptionStatusFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentReceptionStatusBinding.inflate(inflater, container, false);
 
-        return binding.getRoot();
-    }
+        binding.refreshBtn.setOnClickListener(v -> {
+            binding.loadingLayout.setVisibility(View.VISIBLE);
+            binding.nothingReceptionView.setVisibility(View.GONE);
+            binding.receptionView.setVisibility(View.GONE);
+            showReceptionInfo();
+        });
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        binding.loadingLayout.setVisibility(View.VISIBLE);
-        binding.nothingReceptionView.setVisibility(View.GONE);
-        binding.receptionView.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         showReceptionInfo();
+
+        return binding.getRoot();
     }
 
     @SuppressLint("SetTextI18n")

@@ -123,6 +123,8 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
                         }
 
                         binding.noticeList.setAdapter(noticeAdapter);
+                        binding.noticeList.setVisibility(View.VISIBLE);
+                        binding.loadingLayout.setVisibility(View.GONE);
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                         String msg = "공지사항을 불러올 수 없습니다.";

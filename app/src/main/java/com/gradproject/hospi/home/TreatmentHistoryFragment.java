@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,12 +16,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentTreatmentHistoryBinding;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class TreatmentHistoryFragment extends Fragment {
+public class TreatmentHistoryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = "TreatmentHistoryFragment";
     private FragmentTreatmentHistoryBinding binding;
 
@@ -44,28 +46,30 @@ public class TreatmentHistoryFragment extends Fragment {
         binding = FragmentTreatmentHistoryBinding.inflate(inflater, container, false);
 
         binding.treatmentList.setLayoutManager(layoutManager);
+        binding.swipeRefresh.setOnRefreshListener(this);
+        binding.swipeRefresh.setColorSchemeResources(R.color.main_color_dark);
+        binding.refreshBtn.setOnClickListener(v -> {
+            binding.loadingLayout.setVisibility(View.VISIBLE);
+            binding.swipeRefresh.setVisibility(View.GONE);
+            binding.nothingTreatmentView.setVisibility(View.GONE);
+            showPrescriptionList();
+        });
+
+        showPrescriptionList();
 
         return binding.getRoot();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        binding.loadingLayout.setVisibility(View.VISIBLE);
-        binding.treatmentList.setVisibility(View.GONE);
-        binding.nothingTreatmentView.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        showPrescriptionList();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onRefresh() {
+        showPrescriptionList();
+        binding.swipeRefresh.setRefreshing(false);
     }
 
     private void showPrescriptionList(){
@@ -85,10 +89,10 @@ public class TreatmentHistoryFragment extends Fragment {
                         }
 
                         if(tmpArrList.size()!=0) {
-                            binding.treatmentList.setVisibility(View.VISIBLE);
+                            binding.swipeRefresh.setVisibility(View.VISIBLE);
                             binding.nothingTreatmentView.setVisibility(View.GONE);
                         }else{
-                            binding.treatmentList.setVisibility(View.GONE);
+                            binding.swipeRefresh.setVisibility(View.GONE);
                             binding.nothingTreatmentView.setVisibility(View.VISIBLE);
                         }
 

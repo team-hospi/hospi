@@ -123,10 +123,14 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
                             }
 
                             binding.inquiryList.setAdapter(inquiryAdapter);
+
+                            binding.loadingLayout.setVisibility(View.GONE);
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                             String msg = "문의 내역을 불러올 수 없습니다.";
                             Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                            binding.loadingLayout.setVisibility(View.GONE);
+                            binding.nothingInquiryView.setVisibility(View.VISIBLE);
                         }
                     });
         }
