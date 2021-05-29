@@ -18,6 +18,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentNoticeBinding;
+import com.gradproject.hospi.utils.StatusBar;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -42,6 +43,8 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentNoticeBinding.inflate(inflater, container, false);
+
+        StatusBar.updateStatusBarColor(requireActivity(), R.color.white);
 
         binding.noticeList.setLayoutManager(layoutManager);
 

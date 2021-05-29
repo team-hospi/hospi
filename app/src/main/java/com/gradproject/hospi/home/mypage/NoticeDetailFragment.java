@@ -21,6 +21,7 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentNoticeDetailBinding;
 import com.gradproject.hospi.utils.Loading;
+import com.gradproject.hospi.utils.StatusBar;
 
 import java.text.SimpleDateFormat;
 import java.util.Objects;
@@ -53,6 +54,8 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentNoticeDetailBinding.inflate(inflater, container, false);
+
+        StatusBar.updateStatusBarColor(requireActivity(), R.color.list_background);
 
         setHasOptionsMenu(true);
         settingActivity.setSupportActionBar(binding.toolbar);

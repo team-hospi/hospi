@@ -24,6 +24,7 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 import com.gradproject.hospi.databinding.FragmentHospitalInfoDetailBinding;
 import com.gradproject.hospi.home.LocationPoint;
+import com.gradproject.hospi.utils.StatusBar;
 
 import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.MapPOIItem;
@@ -58,6 +59,8 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHospitalInfoDetailBinding.inflate(inflater, container, false);
+
+        StatusBar.updateStatusBarColor(requireActivity(), R.color.white);
 
         hospitalActivity = (HospitalActivity) getActivity();
 

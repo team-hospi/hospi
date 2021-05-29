@@ -17,8 +17,10 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gradproject.hospi.Inquiry;
 import com.gradproject.hospi.OnBackPressedListener;
+import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentInquiryBinding;
 import com.gradproject.hospi.utils.Loading;
+import com.gradproject.hospi.utils.StatusBar;
 
 import java.sql.Timestamp;
 
@@ -42,6 +44,8 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentInquiryBinding.inflate(inflater, container, false);
+
+        StatusBar.updateStatusBarColor(requireActivity(), R.color.white);
 
         hospitalActivity = (HospitalActivity) getActivity();
 

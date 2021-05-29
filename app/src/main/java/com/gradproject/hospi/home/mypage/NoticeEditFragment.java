@@ -20,6 +20,7 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentNoticeEditBinding;
 import com.gradproject.hospi.utils.Loading;
+import com.gradproject.hospi.utils.StatusBar;
 
 public class NoticeEditFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "NoticeEditFragment";
@@ -46,6 +47,8 @@ public class NoticeEditFragment extends Fragment implements OnBackPressedListene
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentNoticeEditBinding.inflate(inflater, container, false);
+
+        StatusBar.updateStatusBarColor(requireActivity(), R.color.white);
 
         binding.titleEdt.setText(notice.getTitle());
         binding.contentEdt.setText(notice.getContent());

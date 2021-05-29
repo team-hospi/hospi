@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -33,6 +35,8 @@ import com.gradproject.hospi.databinding.FragmentReservationBinding;
 import com.gradproject.hospi.utils.DateTimeFormat;
 import com.gradproject.hospi.utils.LengthConversion;
 import com.gradproject.hospi.utils.Loading;
+import com.gradproject.hospi.utils.LunarCalendar;
+import com.gradproject.hospi.utils.StatusBar;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -40,12 +44,14 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoLocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
@@ -69,6 +75,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     boolean isClickDateSetBtn = false;
     boolean isClickTimeSetBtn = false;
     Loading loading;
+    LunarCalendar lunarCalendar;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +84,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         lDate = LocalDateTime.now();
         lSelDate = LocalDateTime.now();
         loading = new Loading(getContext());
+        lunarCalendar = new LunarCalendar();
 
         datePicker = new DatePicker(getContext());
         datePicker.setMinDate(lDate.toInstant(ZonedDateTime.now().getOffset()).toEpochMilli());
@@ -90,6 +98,8 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentReservationBinding.inflate(inflater, container, false);
+
+        StatusBar.updateStatusBarColor(requireActivity(), R.color.list_background);
 
         hospitalActivity = (HospitalActivity) getActivity();
 
@@ -118,7 +128,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         ArrayList<String> departmentArray = (ArrayList<String>)hospital.getDepartment();
 
         if(getContext()!=null){
-            binding.department.setDropDownVerticalOffset(LengthConversion.dpToPx(getContext(), 45f));
+            binding.department.setDropDownVerticalOffset(LengthConversion.dpToPx(getContext(), 35f));
         }
 
         binding.department.setAdapter(new ArrayAdapter<>(getContext(),
@@ -180,10 +190,29 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
 
         binding.reservationBtn.setOnClickListener(v -> {
             if(selectTime != null){
-                reservationProcess();
+                String symptom = binding.symptomEdt.getText().toString();
+                if(symptom.equals("")){
+                    binding.emptyMsg.setVisibility(View.VISIBLE);
+                }else{
+                    reservationProcess(symptom);
+                }
             }else{
                 notSelectedTimeAlert();
             }
+        });
+
+        binding.symptomEdt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int length = binding.symptomEdt.getText().toString().length();
+                if(length>0) binding.emptyMsg.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
 
         return binding.getRoot();
@@ -217,7 +246,7 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         alertDialog.show();
     }
 
-    public void reservationProcess(){
+    public void reservationProcess(String symptom){
         loading.show();
         Reservation reservation = new Reservation();
         reservation.setId(user.getEmail());    // 유저 이메일 설정
@@ -227,11 +256,12 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         String date = lSelDate.format(DateTimeFormat.date());
         reservation.setReservationDate(date);      // 예약 날짜 설정
         reservation.setReservationTime(selectTime);    // 예약 시간 설정
-        reservation.setAdditionalContent(binding.additionalContentEdt.getText().toString());  // 추가 입력한 내용 설정
+        reservation.setSymptom(symptom);  // 입력한 증상 설정
         long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
         reservation.setTimestamp(timestamp);    // 현재 시간 타임스탬프 설정
         reservation.setReservationStatus(Reservation.CONFIRMING_RESERVATION);     // 예약 신청됨 상태로 설정
         reservation.setCancelComment(null);
+        reservation.setPredictCost(null);
 
         Query query = db.collection(Reservation.DB_NAME)
                 .whereEqualTo("department", reservation.getDepartment())
@@ -426,7 +456,17 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     }
 
     public void openTimeSelect(){
-        setTimeTable(lSelDate.getDayOfWeek().getValue());
+        String year = lSelDate.format(DateTimeFormatter.ofPattern("yyyy"));
+        String date = lSelDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        final Set<String> set = lunarCalendar.holidayArray(year);
+
+        int num = 7;
+
+        if(!(set.contains(date))){
+            num = lSelDate.getDayOfWeek().getValue();
+        }
+
+        setTimeTable(num);
         isClickTimeSetBtn = true;
         binding.timeExpandImg.setImageResource(R.drawable.ic_action_expand_more);
     }
