@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -37,11 +39,20 @@ public class SearchWindowFragment extends Fragment {
 
     LinearLayoutManager layoutManager;
     HospitalAdapter hospitalAdapter = new HospitalAdapter();
+    ActivityResultLauncher<Intent> mGetContent;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        mGetContent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                if (result.getData() != null) {
+                    binding.searchEdt.setText(result.getData().getStringExtra("result"));
+                }
+                searchProcess();
+            }
+        });
     }
 
     @Override
@@ -51,13 +62,13 @@ public class SearchWindowFragment extends Fragment {
 
         binding.hospitalList.setLayoutManager(layoutManager);
 
-        binding.backBtn.setOnClickListener(v -> Objects.requireNonNull(getActivity()).finish());
+        binding.backBtn.setOnClickListener(v -> requireActivity().finish());
         binding.removeBtn.setOnClickListener(v -> binding.searchEdt.setText(""));
 
         binding.voiceInputBtn.setOnClickListener(v -> {
-            if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()), Manifest.permission.RECORD_AUDIO)
+            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
                     == PackageManager.PERMISSION_GRANTED) {
-                startActivityForResult(new Intent(getContext(), SpeechRecognitionPopUp.class), 1);
+                mGetContent.launch(new Intent(getContext(), SpeechRecognitionPopUp.class));
             }else{
                 micPermissionCheck();
             }
@@ -103,27 +114,13 @@ public class SearchWindowFragment extends Fragment {
         binding = null;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode==1) {
-            if (resultCode == RESULT_OK) {
-                if (data != null) {
-                    binding.searchEdt.setText(data.getStringExtra("result"));
-                }
-                searchProcess();
-            }
-        }
-    }
-
     private void micPermissionCheck(){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(requireContext());
         alertDialog.setTitle("앱 권한");
         alertDialog.setMessage("음성 인식 검색을 이용하기 위해서는 권한 허용이 필요합니다. 해당 기능을 이용하시려면 애플리케이션 [정보]>[권한] 에서 마이크 액세스 권한을 허용해 주십시오.");
         alertDialog.setPositiveButton("권한설정",
                 (dialog, which) -> {
-                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + Objects.requireNonNull(getActivity()).getPackageName()));
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:" + requireActivity().getPackageName()));
                     startActivity(intent);
                     dialog.cancel();
                 });

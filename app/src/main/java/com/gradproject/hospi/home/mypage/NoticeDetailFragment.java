@@ -21,6 +21,7 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentNoticeDetailBinding;
 import com.gradproject.hospi.utils.Loading;
+import com.gradproject.hospi.utils.StatusBar;
 
 import java.text.SimpleDateFormat;
 import java.util.Objects;
@@ -53,6 +54,8 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentNoticeDetailBinding.inflate(inflater, container, false);
+
+        StatusBar.updateStatusBarColor(requireActivity(), R.color.list_background);
 
         setHasOptionsMenu(true);
         settingActivity.setSupportActionBar(binding.toolbar);
@@ -104,7 +107,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     }
 
     public void editBtnProcess(){
-        FragmentTransaction transaction = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
         NoticeEditFragment noticeEditFragment = new NoticeEditFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable("notice", notice);
@@ -130,7 +133,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
     }
 
     public void deletePopUp(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("해당 공지사항을 삭제하시겠습니까?")
                 .setPositiveButton("확인", (dialog, i) -> delBtnProcess())
@@ -141,7 +144,7 @@ public class NoticeDetailFragment extends Fragment implements OnBackPressedListe
 
     public void deleteSuccessPopUp(){
         loading.dismiss();
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("삭제되었습니다.")
                 .setPositiveButton("확인", (dialog, i) -> {

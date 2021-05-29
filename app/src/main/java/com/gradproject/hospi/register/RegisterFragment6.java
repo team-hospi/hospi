@@ -60,7 +60,7 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
                 pw = binding.inputPW2.getText().toString();
 
                 firebaseAuth.createUserWithEmailAndPassword(registerActivity.user.getEmail(), pw)
-                        .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
+                        .addOnCompleteListener(requireActivity(), task -> {
                             if(task.isSuccessful()){
                                 //아이디 생성이 완료 되었을 때
                                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -107,12 +107,12 @@ public class RegisterFragment6 extends Fragment implements OnBackPressedListener
 
     // 회원가입 완료 팝업
     private void registerSuccess(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("회원가입이 완료되었습니다.")
                 .setPositiveButton("확인", (dialogInterface, i) -> {
                     FirebaseAuth.getInstance().signOut();
-                    Objects.requireNonNull(getActivity()).finish();
+                    requireActivity().finish();
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

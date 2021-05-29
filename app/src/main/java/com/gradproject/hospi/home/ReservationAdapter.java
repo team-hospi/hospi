@@ -22,12 +22,15 @@ import com.gradproject.hospi.home.hospital.HospitalActivity;
 import com.gradproject.hospi.home.hospital.Reservation;
 import com.gradproject.hospi.home.hospital.Reserved;
 import com.gradproject.hospi.home.search.Hospital;
+import com.gradproject.hospi.utils.DateTimeFormat;
 import com.gradproject.hospi.utils.Loading;
 
+import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -196,48 +199,59 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        final String[] week = {"일", "월", "화", "수", "목", "금", "토"};
-
         ReservationItemBinding binding;
+        Loading loading;
 
         public ViewHolder(ReservationItemBinding binding){
             super(binding.getRoot());
-
             this.binding = binding;
+            loading = new Loading(binding.getRoot().getContext());
         }
 
         @SuppressLint("SetTextI18n")
         public void setItem(Reservation item){
             binding.hospitalNameTxt.setText(item.getHospitalName());
+
             if(item.getCancelComment() != null){
                 binding.cancelCommentTxt.setText(item.getCancelComment());
             }
-            String date = item.getReservationDate();
+
+            String[] date = item.getReservationDate().split("-");
             String time = item.getReservationTime();
-            Calendar cal = Calendar.getInstance();
-            int year = Integer.parseInt(date.substring(0, 4));
-            int month = Integer.parseInt(date.substring(5, 7));
-            int day = Integer.parseInt(date.substring(8, 10));
-            cal.set(Calendar.YEAR, year);
-            cal.set(Calendar.MONTH, month-1);
-            cal.set(Calendar.DATE, day);
-            binding.reservationDateTxt.setText(date + " (" + week[cal.get(Calendar.DAY_OF_WEEK)-1] + ") " + time);
+
+            LocalDate lDate = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
+            binding.reservationDateTxt.setText(lDate.format(DateTimeFormat.date())
+                    + " ("
+                    + lDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA)
+                    + ") "
+                    + time);
 
             switch (item.getReservationStatus()){
                 case Reservation.RESERVATION_CONFIRMED:
                     binding.reservationStatusTxt.setText("예약 확정");
                     binding.reservationStatusTxt.setTextColor(Color.BLUE);
+                    binding.costLayout.setVisibility(View.VISIBLE);
+                    binding.cost.setText(item.getPredictCost());
                     break;
                 case Reservation.CONFIRMING_RESERVATION:
-                    binding.reservationStatusTxt.setText("예약 확인 중");
+                    binding.reservationStatusTxt.setText("확인 중");
                     binding.reservationStatusTxt.setTextColor(Color.rgb(70, 201, 0));
+                    binding.costLayout.setVisibility(View.GONE);
+                    break;
+                case Reservation.TREATMENT_COMPLETE:
+                    binding.reservationStatusTxt.setText("진료 완료");
+                    binding.reservationStatusTxt.setTextColor(Color.rgb(0, 131, 26));
+                    binding.reservationCancelBtn.setVisibility(View.GONE);
+                    binding.reserveInfo.setVisibility(View.GONE);
+                    binding.costLayout.setVisibility(View.GONE);
                     break;
                 default:
-                    binding.reservationStatusTxt.setText("예약 취소됨");
+                    binding.reservationStatusTxt.setText("취소됨");
                     binding.reservationStatusTxt.setTextColor(Color.RED);
                     binding.reserveInfo.setVisibility(View.GONE);
                     binding.cancelInfo.setVisibility(View.VISIBLE);
                     binding.reservationCancelBtn.setVisibility(View.GONE);
+                    binding.costLayout.setVisibility(View.GONE);
                     break;
             }
 
@@ -245,6 +259,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         }
 
         public void showHospitalInfo(View v, String id){
+            loading.show();
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection(Hospital.DB_NAME)
                     .whereEqualTo("id", id)
@@ -263,6 +278,8 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 v.getContext().startActivity(intent);
                             }
+
+                            loading.dismiss();
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }

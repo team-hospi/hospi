@@ -5,6 +5,7 @@ public class Reservation {
     public static final int RESERVATION_CANCELED = -1;
     public static final int CONFIRMING_RESERVATION = 0;
     public static final int RESERVATION_CONFIRMED = 1;
+    public static final int TREATMENT_COMPLETE = 2;
 
     private String id;
     private String hospitalId;
@@ -12,10 +13,11 @@ public class Reservation {
     private String department;
     private String reservationDate;
     private String reservationTime;
-    private String additionalContent;
+    private String symptom;
     private long timestamp;
     private int reservationStatus;
     private String cancelComment;
+    private String predictCost;
 
     public Reservation() {}
 
@@ -67,12 +69,12 @@ public class Reservation {
         this.reservationTime = reservationTime;
     }
 
-    public String getAdditionalContent() {
-        return additionalContent;
+    public String getSymptom() {
+        return symptom;
     }
 
-    public void setAdditionalContent(String additionalContent) {
-        this.additionalContent = additionalContent;
+    public void setSymptom(String symptom) {
+        this.symptom = symptom;
     }
 
     public long getTimestamp() {
@@ -97,5 +99,13 @@ public class Reservation {
 
     public void setCancelComment(String cancelComment) {
         this.cancelComment = cancelComment;
+    }
+
+    public String getPredictCost() {
+        return predictCost;
+    }
+
+    public void setPredictCost(String predictCost) {
+        this.predictCost = predictCost;
     }
 }

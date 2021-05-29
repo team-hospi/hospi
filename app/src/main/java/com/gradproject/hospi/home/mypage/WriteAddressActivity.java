@@ -5,7 +5,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 
-import androidx.annotation.Nullable;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -13,8 +14,8 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.ActivityWriteAddressBinding;
 
 public class WriteAddressActivity extends AppCompatActivity {
-    private static final int REQUEST_ADDRESS_SEARCH_ACTIVITY_CODE = 101;
     private ActivityWriteAddressBinding binding;
+    ActivityResultLauncher<Intent> mGetContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,9 +23,17 @@ public class WriteAddressActivity extends AppCompatActivity {
         binding = ActivityWriteAddressBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        startActivityForResult(
-                new Intent(getApplicationContext(), AddressSearchActivity.class),
-                REQUEST_ADDRESS_SEARCH_ACTIVITY_CODE);
+        mGetContent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                if (result.getData() != null) {
+                    binding.addressTxt.setText(result.getData().getStringExtra("address"));
+                }
+            } else {
+                finish();
+            }
+        });
+
+        mGetContent.launch(new Intent(getApplicationContext(), AddressSearchActivity.class));
 
         binding.backBtn.setOnClickListener(v -> finish());
 
@@ -60,21 +69,5 @@ public class WriteAddressActivity extends AppCompatActivity {
             setResult(RESULT_OK, intent);
             finish();
         });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode==REQUEST_ADDRESS_SEARCH_ACTIVITY_CODE) {
-            if (resultCode == RESULT_OK) {
-
-                if (data != null) {
-                    binding.addressTxt.setText(data.getStringExtra("address"));
-                }
-            } else {
-                finish();
-            }
-        }
     }
 }

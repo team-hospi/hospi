@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,14 +16,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentReservationStatusBinding;
 import com.gradproject.hospi.home.hospital.Reservation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Objects;
 
-public class ReservationStatusFragment extends Fragment {
+public class ReservationStatusFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = "ReservationStatusFragment";
     private FragmentReservationStatusBinding binding;
 
@@ -46,13 +47,29 @@ public class ReservationStatusFragment extends Fragment {
         binding = FragmentReservationStatusBinding.inflate(inflater, container, false);
 
         binding.reservationList.setLayoutManager(layoutManager);
+        binding.swipeRefresh.setOnRefreshListener(this);
+        binding.swipeRefresh.setColorSchemeResources(R.color.main_color_dark);
+        binding.refreshBtn.setOnClickListener(v -> {
+            binding.loadingLayout.setVisibility(View.VISIBLE);
+            binding.swipeRefresh.setVisibility(View.GONE);
+            binding.nothingReservationView.setVisibility(View.GONE);
+            showReservationList();
+        });
 
         showReservationList();
 
         return binding.getRoot();
     }
 
+    @Override
+    public void onRefresh() {
+        showReservationList();
+        binding.swipeRefresh.setRefreshing(false);
+    }
+
     private void showReservationList(){
+        reservationAdapter.items.clear(); // 기존 항목 모두 삭제
+        reservationAdapter.notifyDataSetChanged(); // 어댑터 갱신
         db.collection(Reservation.DB_NAME)
                 .whereEqualTo("id", firebaseUser.getEmail())
                 .get()
@@ -67,10 +84,10 @@ public class ReservationStatusFragment extends Fragment {
                         }
 
                         if(tmpArrList.size()!=0) {
-                            binding.reservationList.setVisibility(View.VISIBLE);
+                            binding.swipeRefresh.setVisibility(View.VISIBLE);
                             binding.nothingReservationView.setVisibility(View.GONE);
                         }else{
-                            binding.reservationList.setVisibility(View.GONE);
+                            binding.swipeRefresh.setVisibility(View.GONE);
                             binding.nothingReservationView.setVisibility(View.VISIBLE);
                         }
 
@@ -84,6 +101,7 @@ public class ReservationStatusFragment extends Fragment {
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }
+                    binding.loadingLayout.setVisibility(View.GONE);
                 });
     }
 }

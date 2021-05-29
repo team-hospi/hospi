@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.hospital.ReservationFragment">
+    tools:context=".home.hospital.ReservationFragment"
+    android:background="@color/list_background">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:elevation="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -21,12 +20,13 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="?selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_action_back" />
+            android:src="@drawable/ic_action_back"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="35dp"
+            android:layout_marginStart="35dp"
             android:text="병원 예약"
             android:textColor="@color/black"
             android:textSize="17sp" />
@@ -35,425 +35,440 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="5dp"
         android:overScrollMode="never"
-        app:layout_constraintBottom_toTopOf="@+id/reservationBtn"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <FrameLayout
-                android:id="@+id/departmentSetBtn"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
+                android:layout_margin="5dp"
+                android:background="@drawable/balloon_border">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp">
+                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    tools:ignore="UselessParent">
 
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="left|center_vertical"
-                        android:src="@drawable/ic_action_hospital" />
-
-                    <TextView
-                        android:id="@+id/departmentTxt"
-                        android:layout_width="wrap_content"
+                    <FrameLayout
+                        android:id="@+id/departmentSetBtn"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="10dp"
-                        android:text="진료과 설정"
-                        android:textColor="@color/black"
-                        android:textSize="25sp" />
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            tools:ignore="UseCompoundDrawables,UselessParent">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical">
+
+                                <ImageView
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:src="@drawable/ic_action_hospital"
+                                    tools:ignore="ContentDescription" />
+
+                                <TextView
+                                    android:id="@+id/departmentTxt"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:text="진료과"
+                                    android:textColor="@color/black"
+                                    android:textSize="25sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <Spinner
+                                    android:id="@+id/department"
+                                    android:layout_width="200dp"
+                                    android:layout_height="35dp"
+                                    android:layout_gravity="end"
+                                    android:background="@drawable/spinner_background"
+                                    android:spinnerMode="dropdown" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:id="@+id/dateSetBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            tools:ignore="UselessParent">
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="start|center_vertical"
+                                android:src="@drawable/ic_action_calendar"
+                                tools:ignore="ContentDescription" />
+
+                            <TextView
+                                android:id="@+id/dateTxt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="10dp"
+                                android:text="월.일(요일)"
+                                android:textColor="@color/black"
+                                android:textSize="25sp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical|end"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:id="@+id/calendarExpandImg"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:src="@drawable/ic_action_expand_less"
+                                    tools:ignore="ContentDescription" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:id="@+id/calendar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top"
+                        android:orientation="vertical" />
+
+                    <FrameLayout
+                        android:id="@+id/timeSetBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            tools:ignore="UselessParent">
+
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="start|center_vertical"
+                                android:src="@drawable/ic_action_time"
+                                tools:ignore="ContentDescription" />
+
+                            <TextView
+                                android:id="@+id/timeTxt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginStart="10dp"
+                                android:text="시간 설정"
+                                android:textColor="@color/black"
+                                android:textSize="25sp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical|end"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:id="@+id/timeExpandImg"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:src="@drawable/ic_action_expand_less"
+                                    tools:ignore="ContentDescription" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </FrameLayout>
+
+                    <TableLayout
+                        android:id="@+id/timeTable"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_weight="1"
+                        android:shrinkColumns="*"
+                        tools:ignore="InefficientWeight" />
                 </LinearLayout>
-            </FrameLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:background="@color/white"
-                android:elevation="5dp">
-
-                <Spinner
-                    android:id="@+id/department"
-                    android:layout_width="300dp"
-                    android:layout_height="40dp" />
             </LinearLayout>
 
-            <FrameLayout
-                android:id="@+id/dateSetBtn"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true">
+                android:layout_margin="5dp"
+                android:background="@drawable/balloon_border">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp">
+                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    tools:ignore="UselessParent">
 
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="left|center_vertical"
-                        android:src="@drawable/ic_action_calendar" />
-
-                    <TextView
-                        android:id="@+id/dateTxt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="10dp"
-                        android:text="월.일(요일)"
-                        android:textColor="@color/black"
-                        android:textSize="25sp" />
-
-                    <LinearLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical|right"
-                        android:orientation="vertical">
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp">
 
-                        <ImageView
-                            android:id="@+id/calendarExpandImg"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:src="@drawable/ic_action_expand_less" />
-                    </LinearLayout>
+                        <TextView
+                            android:id="@+id/userInfoTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="예약자 정보"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/userName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:text="예약자"
+                            android:textColor="@color/black"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toStartOf="@+id/userInfoTxt"
+                            app:layout_constraintTop_toBottomOf="@+id/userInfoTxt" />
+
+                        <TextView
+                            android:id="@+id/userNameTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="40dp"
+                            android:layout_marginTop="15dp"
+                            android:text="이름"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toEndOf="@+id/userName"
+                            app:layout_constraintTop_toBottomOf="@+id/userInfoTxt" />
+
+                        <TextView
+                            android:id="@+id/userPhone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="연락처"
+                            android:textColor="@color/black"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toStartOf="@+id/userName"
+                            app:layout_constraintTop_toBottomOf="@+id/userName" />
+
+                        <TextView
+                            android:id="@+id/userPhoneTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="010-0000-0000"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toStartOf="@+id/userNameTxt"
+                            app:layout_constraintTop_toBottomOf="@+id/userNameTxt" />
+
+                        <TextView
+                            android:id="@+id/userBirth"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="생년월일"
+                            android:textColor="@color/black"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toStartOf="@+id/userPhone"
+                            app:layout_constraintTop_toBottomOf="@+id/userPhone" />
+
+                        <TextView
+                            android:id="@+id/userBirthTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="0000-00-00"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toStartOf="@+id/userPhoneTxt"
+                            app:layout_constraintTop_toBottomOf="@+id/userPhoneTxt" />
+
+                        <TextView
+                            android:id="@+id/symptomTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:gravity="top"
+                            android:text="증상"
+                            android:textColor="@color/black"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toStartOf="@+id/userBirth"
+                            app:layout_constraintTop_toBottomOf="@+id/userBirth" />
+
+                        <EditText
+                            android:id="@+id/symptomEdt"
+                            android:layout_width="250dp"
+                            android:layout_height="100dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/edit_text"
+                            android:gravity="start|top"
+                            android:hint="증상을 입력해주세요"
+                            android:padding="5dp"
+                            app:layout_constraintStart_toStartOf="@+id/userBirthTxt"
+                            app:layout_constraintTop_toBottomOf="@+id/userBirthTxt"
+                            tools:ignore="Autofill,TextFields" />
+
+                        <TextView
+                            android:id="@+id/emptyMsg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:text="증상을 입력해주세요."
+                            android:textColor="@color/red"
+                            android:visibility="gone"
+                            app:layout_constraintStart_toStartOf="@+id/symptomEdt"
+                            app:layout_constraintTop_toBottomOf="@+id/symptomEdt" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
-            </FrameLayout>
+            </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/calendar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:orientation="vertical" />
-
-            <FrameLayout
-                android:id="@+id/timeSetBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginTop="15dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true">
+                android:layout_margin="5dp"
+                android:background="@drawable/balloon_border">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp">
+                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    tools:ignore="UselessParent">
 
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="left|center_vertical"
-                        android:src="@drawable/ic_action_time" />
-
-                    <TextView
-                        android:id="@+id/timeTxt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="10dp"
-                        android:text="시간 설정"
-                        android:textColor="@color/black"
-                        android:textSize="25sp" />
-
-                    <LinearLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical|right"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/timeExpandImg"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:src="@drawable/ic_action_expand_less" />
-                    </LinearLayout>
-                </LinearLayout>
-            </FrameLayout>
-
-            <TableLayout
-                android:id="@+id/timeTable"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:shrinkColumns="*"
-                android:layout_weight="1"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"/>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginTop="15dp">
-
-                <TextView
-                    android:id="@+id/userInfoTxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="15dp"
-                    android:text="예약자 정보"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <LinearLayout
-                    android:id="@+id/linearLayout4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/userInfoTxt">
-
-                    <TextView
-                        android:id="@+id/userName"
-                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:text="예약자"
-                        android:textColor="@color/black"
-                        android:textSize="17sp"/>
-
-                    <TextView
-                        android:id="@+id/userNameTxt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="50dp"
-                        android:text="이름"
-                        android:textSize="17sp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/linearLayout5"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
-
-                    <TextView
-                        android:id="@+id/userPhone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:text="연락처"
-                        android:textColor="@color/black"
-                        android:textSize="17sp" />
-
-                    <TextView
-                        android:id="@+id/userPhoneTxt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="50dp"
-                        android:text="010-0000-0000"
-                        android:textSize="17sp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/linearLayout6"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
-
-                    <TextView
-                        android:id="@+id/userBirth"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:text="생년월일"
-                        android:textColor="@color/black"
-                        android:textSize="17sp" />
-
-                    <TextView
-                        android:id="@+id/userBirthTxt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="34dp"
-                        android:text="0000-00-00"
-                        android:textSize="17sp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
-
-                    <TextView
-                        android:id="@+id/additionalContentTxt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="15dp"
                         android:layout_marginTop="10dp"
-                        android:gravity="top"
-                        android:text="추가사항"
-                        android:textColor="@color/black"
-                        android:textSize="17sp" />
+                        android:layout_marginBottom="10dp">
 
-                    <EditText
-                        android:id="@+id/additionalContentEdt"
-                        android:layout_width="250dp"
-                        android:layout_height="150dp"
-                        android:layout_marginLeft="35dp"
-                        android:hint="추가사항 입력"
-                        android:background="@drawable/edit_text"
-                        android:gravity="left|top"
-                        android:padding="5dp" />
+                        <TextView
+                            android:id="@+id/hospitalInfoTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="병원 정보"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/hospitalName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="15dp"
+                            android:text="병원명"
+                            android:textColor="@color/black"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toStartOf="@+id/hospitalInfoTxt"
+                            app:layout_constraintTop_toBottomOf="@+id/hospitalInfoTxt" />
+
+                        <TextView
+                            android:id="@+id/hospitalNameTxt"
+                            android:layout_width="250dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="40dp"
+                            android:layout_marginTop="15dp"
+                            android:text="이름"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toEndOf="@+id/hospitalName"
+                            app:layout_constraintTop_toBottomOf="@+id/hospitalInfoTxt" />
+
+                        <TextView
+                            android:id="@+id/hospitalTel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="연락처"
+                            android:textColor="@color/black"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toStartOf="@+id/hospitalName"
+                            app:layout_constraintTop_toBottomOf="@+id/hospitalName" />
+
+                        <TextView
+                            android:id="@+id/hospitalTelTxt"
+                            android:layout_width="250dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="전화번호"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toStartOf="@+id/hospitalNameTxt"
+                            app:layout_constraintTop_toBottomOf="@+id/hospitalNameTxt" />
+
+                        <TextView
+                            android:id="@+id/hospitalAddress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="주소"
+                            android:textColor="@color/black"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toStartOf="@+id/hospitalTel"
+                            app:layout_constraintTop_toBottomOf="@+id/hospitalTel" />
+
+                        <TextView
+                            android:id="@+id/hospitalAddressTxt"
+                            android:layout_width="250dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="OO도 OO시 OO구"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toStartOf="@+id/hospitalTelTxt"
+                            app:layout_constraintTop_toBottomOf="@+id/hospitalTelTxt" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp">
-
-                <TextView
-                    android:id="@+id/hospitalInfoTxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="15dp"
-                    android:text="병원 정보"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <LinearLayout
-                    android:id="@+id/linearLayout7"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/hospitalInfoTxt">
-
-                    <TextView
-                        android:id="@+id/hospitalName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:text="병원명"
-                        android:textColor="@color/black"
-                        android:textSize="17sp" />
-
-                    <TextView
-                        android:id="@+id/hospitalNameTxt"
-                        android:layout_width="250dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="50dp"
-                        android:text="이름"
-                        android:textSize="17sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/linearLayout8"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout7">
-
-                    <TextView
-                        android:id="@+id/hospitalTel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:text="연락처"
-                        android:textColor="@color/black"
-                        android:textSize="17sp" />
-
-                    <TextView
-                        android:id="@+id/hospitalTelTxt"
-                        android:layout_width="250dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="50dp"
-                        android:text="전화번호"
-                        android:textSize="17sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout8">
-
-                    <TextView
-                        android:id="@+id/hospitalAddress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:text="주소"
-                        android:textColor="@color/black"
-                        android:textSize="17sp" />
-
-                    <TextView
-                        android:id="@+id/hospitalAddressTxt"
-                        android:layout_width="250dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="65dp"
-                        android:text="OO도 OO시 OO구"
-                        android:textSize="17sp" />
-                </LinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/reservationBtn"
+                android:layout_width="300dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center_horizontal"
+                android:text="예약하기"
+                android:textColor="@color/white"
+                android:textSize="17sp"/>
         </LinearLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/reservationBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginBottom="15dp"
-        android:background="@color/main_color"
-        android:gravity="center"
-        android:text="예약하기"
-        android:textColor="@color/white"
-        android:textSize="17sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

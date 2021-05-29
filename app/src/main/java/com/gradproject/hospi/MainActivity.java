@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     FirebaseUser firebaseUser;
     FirebaseAuth firebaseAuth;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     protected void onStart() {
         super.onStart();
 
-        if (hasPermissions(this, PERMISSIONS)) {
+        if (hasPermissions(MainActivity.this, PERMISSIONS)) {
             onAuthStateChanged(firebaseAuth);
         }
     }
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     //권한 요청에 대한 결과 처리
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MULTIPLE_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED

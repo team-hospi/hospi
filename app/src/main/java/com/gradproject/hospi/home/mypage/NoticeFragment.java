@@ -18,6 +18,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentNoticeBinding;
+import com.gradproject.hospi.utils.StatusBar;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -43,6 +44,8 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
                              Bundle savedInstanceState) {
         binding = FragmentNoticeBinding.inflate(inflater, container, false);
 
+        StatusBar.updateStatusBarColor(requireActivity(), R.color.white);
+
         binding.noticeList.setLayoutManager(layoutManager);
 
         if(getArguments()!=null){
@@ -66,7 +69,7 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
 
         binding.backBtn.setOnClickListener(v -> onBackPressed());
 
-        binding.writeBtn.setOnClickListener(v -> Objects.requireNonNull(getActivity())
+        binding.writeBtn.setOnClickListener(v -> requireActivity()
                 .getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.settingContainer, new NoticeWriteFragment())
@@ -74,7 +77,7 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
 
         noticeAdapter.setOnItemClickListener((holder, view, position) -> {
             Notice notice = noticeAdapter.getItem(position);
-            FragmentTransaction transaction = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
             NoticeDetailFragment noticeDetailFragment = new NoticeDetailFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("pos", position);
@@ -95,7 +98,7 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
 
     @Override
     public void onBackPressed() {
-        Objects.requireNonNull(getActivity()).finish();
+        requireActivity().finish();
     }
 
     private void getNoticeList(){
@@ -123,6 +126,8 @@ public class NoticeFragment extends Fragment implements OnBackPressedListener {
                         }
 
                         binding.noticeList.setAdapter(noticeAdapter);
+                        binding.noticeList.setVisibility(View.VISIBLE);
+                        binding.loadingLayout.setVisibility(View.GONE);
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                         String msg = "공지사항을 불러올 수 없습니다.";

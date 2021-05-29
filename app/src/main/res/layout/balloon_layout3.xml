@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/balloon_view"
     android:layout_width="170dp"
     android:layout_height="wrap_content"
@@ -26,7 +27,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:text="전화번호"
-        android:textSize="10sp"/>
+        android:textSize="10sp"
+        tools:ignore="SmallSp" />
 
     <TextView
         android:id="@+id/pharmacyAddressTxt"
@@ -37,5 +39,6 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:text="주소"
-        android:textSize="10sp" />
+        android:textSize="10sp"
+        tools:ignore="SmallSp" />
 </LinearLayout>

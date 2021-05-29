@@ -1,6 +1,7 @@
 package com.gradproject.hospi.home;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -15,15 +16,18 @@ import android.view.ViewGroup;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentReceptionStatusBinding;
 
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.TextStyle;
+import java.util.Locale;
 import java.util.Objects;
 
 public class ReceptionStatusFragment extends Fragment {
     private static final String TAG = "ReceptionStatusFragment";
     private FragmentReceptionStatusBinding binding;
-    private final String[] week = {"일", "월", "화", "수", "목", "금", "토"};
 
     FirebaseFirestore db;
     HomeActivity homeActivity;
@@ -40,6 +44,13 @@ public class ReceptionStatusFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentReceptionStatusBinding.inflate(inflater, container, false);
+
+        binding.refreshBtn.setOnClickListener(v -> {
+            binding.loadingLayout.setVisibility(View.VISIBLE);
+            binding.nothingReceptionView.setVisibility(View.GONE);
+            binding.receptionView.setVisibility(View.GONE);
+            showReceptionInfo();
+        });
 
         showReceptionInfo();
 
@@ -76,20 +87,17 @@ public class ReceptionStatusFragment extends Fragment {
                         if(reception != null){
                             String[] time = reception.getReceptionTime().split(":");
                             String[] date = reception.getReceptionDate().split("-");
-                            Calendar curCal = Calendar.getInstance();
-                            Calendar tmpCal = Calendar.getInstance();
-                            tmpCal.set(Integer.parseInt(date[0]), Integer.parseInt(date[1])-1, Integer.parseInt(date[2]));
+                            LocalDate curDate = LocalDate.now();
+                            LocalDate tmpDate = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
 
-                            int curMin = curCal.get(Calendar.MINUTE) + curCal.get(Calendar.HOUR_OF_DAY)*60;
-                            int tmpMin = Integer.parseInt(time[0])*60 + Integer.parseInt(time[1]);
+                            LocalTime curTime = LocalTime.now();
+                            LocalTime tmpTime = LocalTime.of(Integer.parseInt(time[0]), Integer.parseInt(time[1]));
 
-                            if((curCal.get(Calendar.YEAR) == tmpCal.get(Calendar.YEAR))
-                                    && (curCal.get(Calendar.MONTH) == tmpCal.get(Calendar.MONTH))
-                                    && (curCal.get(Calendar.DATE) == tmpCal.get(Calendar.DATE))
-                                    && (curMin>=tmpMin-60) && (curMin<=tmpMin+60)){
+                            if(curDate.isEqual(tmpDate)
+                                    && (curTime.isAfter(tmpTime.minusHours(1)))
+                                    && (curTime.isBefore(tmpTime.plusHours(1)))){
                                 binding.nothingReceptionView.setVisibility(View.GONE);
                                 binding.receptionView.setVisibility(View.VISIBLE);
-
                                 binding.departmentTxt.setText(reception.getDepartment());
                                 binding.hospitalNameTxt.setText(reception.getHospitalName());
                                 binding.patientTxt.setText(reception.getPatient());
@@ -97,9 +105,12 @@ public class ReceptionStatusFragment extends Fragment {
 
                                 String[] tmp = reception.getReceptionDate().split("-");
 
-                                Calendar cal = Calendar.getInstance();
-                                cal.set(Integer.parseInt(tmp[0]), Integer.parseInt(tmp[1]), Integer.parseInt(tmp[2]));
-                                binding.receptionDateTxt.setText(reception.getReceptionDate() + " (" + week[cal.get(Calendar.DAY_OF_WEEK)-1] + ") " + reception.getReceptionTime());
+                                LocalDate lDate = LocalDate.of(Integer.parseInt(tmp[0]), Integer.parseInt(tmp[1]), Integer.parseInt(tmp[2]));
+                                binding.receptionDateTxt.setText(reception.getReceptionDate()
+                                        + " ("
+                                        + lDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREA)
+                                        + ") "
+                                        + reception.getReceptionTime());
                                 binding.officeTxt.setText(reception.getOffice());
                                 binding.doctorTxt.setText(reception.getDoctor());
 
@@ -112,6 +123,7 @@ public class ReceptionStatusFragment extends Fragment {
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }
+                    binding.loadingLayout.setVisibility(View.GONE);
                 });
     }
 
@@ -148,12 +160,12 @@ public class ReceptionStatusFragment extends Fragment {
                 binding.waitingTxt.setVisibility(View.VISIBLE);
                 break;
             case Reception.TREATMENT:
-                binding.statusTxt.setText("진료중");
-                binding.statusTxt.setTextColor(Color.GREEN);
+                binding.statusTxt.setText("진료 중");
+                binding.statusTxt.setTextColor(Color.rgb(70, 201, 0));
                 binding.waitingTxt.setVisibility(View.GONE);
                 break;
             case Reception.TREATMENT_COMPLETE:
-                binding.statusTxt.setText("진료완료");
+                binding.statusTxt.setText("진료 완료");
                 binding.statusTxt.setTextColor(Color.BLACK);
                 binding.waitingTxt.setVisibility(View.GONE);
                 break;

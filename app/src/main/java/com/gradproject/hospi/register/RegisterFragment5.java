@@ -17,8 +17,6 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.User;
 import com.gradproject.hospi.databinding.FragmentRegister5Binding;
 
-import java.util.Objects;
-
 public class RegisterFragment5 extends Fragment implements OnBackPressedListener {
     private static final String TAG = "RegisterFragment5";
     private FragmentRegister5Binding binding;
@@ -91,7 +89,7 @@ public class RegisterFragment5 extends Fragment implements OnBackPressedListener
     }
 
     void duplicateError() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("이미 존재하는 이메일입니다.")
                 .setPositiveButton("확인", (dialogInterface, i) -> { /* empty */ });

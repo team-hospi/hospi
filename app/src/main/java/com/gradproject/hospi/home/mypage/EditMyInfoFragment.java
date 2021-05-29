@@ -1,7 +1,7 @@
 package com.gradproject.hospi.home.mypage;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -28,29 +30,46 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 import com.gradproject.hospi.databinding.FragmentEditMyInfoBinding;
+import com.gradproject.hospi.utils.DateTimeFormat;
 import com.gradproject.hospi.utils.Loading;
 import com.gradproject.hospi.utils.PhoneNumberHyphen;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Objects;
+import java.time.LocalDate;
 
 import static android.app.Activity.RESULT_OK;
 import static com.gradproject.hospi.home.HomeActivity.user;
 
 public class EditMyInfoFragment extends Fragment implements OnBackPressedListener{
     private static final String TAG = "EditMyInfoFragment";
-    private static final int REQUEST_WRITE_ADDRESS_ACTIVITY_CODE = 100; // 주소 입력 화면 식별 코드
     private FragmentEditMyInfoBinding binding;
+    private Context mContext;
 
-    Calendar cal;
     FirebaseFirestore db;
+    ActivityResultLauncher<Intent> mGetContent;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = FirebaseFirestore.getInstance();
-        cal = Calendar.getInstance();
+
+        mGetContent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                String address = null; // 주소 받아와서 address에 저장
+                if (result.getData() != null) {
+                    address = result.getData().getStringExtra("address");
+                }
+                user.setAddress(address);
+                binding.addressTxt.setText(address); // 주소 설정
+
+                DocumentReference documentReference = db
+                        .collection(User.DB_NAME)
+                        .document(user.getDocumentId()); // 해당 이메일 유저 문서 열기
+                // 업데이트에 성공 했을때 호출
+                documentReference
+                        .update("address", address) // 주소 업데이트
+                        .addOnSuccessListener(aVoid -> Log.d(TAG, "주소 정보 업데이트 성공"));
+            }
+        });
     }
 
     @Override
@@ -81,8 +100,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         // 주소 변경 버튼
         binding.changeAddressBtn.setOnClickListener(v -> {
             // 주소 입력 화면으로 이동
-            startActivityForResult(new Intent(getContext(), WriteAddressActivity.class),
-                    REQUEST_WRITE_ADDRESS_ACTIVITY_CODE);
+            mGetContent.launch(new Intent(getContext(), WriteAddressActivity.class));
         });
 
         // 비밀번호 변경 버튼
@@ -99,38 +117,19 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
 
     @Override
     public void onBackPressed() {
-        Objects.requireNonNull(getActivity()).finish();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode==REQUEST_WRITE_ADDRESS_ACTIVITY_CODE) {
-            if (resultCode == RESULT_OK) {
-
-                String address = null; // 주소 받아와서 address에 저장
-                if (data != null) {
-                    address = data.getStringExtra("address");
-                }
-                user.setAddress(address);
-                binding.addressTxt.setText(address); // 주소 설정
-
-                DocumentReference documentReference = db
-                        .collection(User.DB_NAME)
-                        .document(user.getDocumentId()); // 해당 이메일 유저 문서 열기
-                // 업데이트에 성공 했을때 호출
-                documentReference
-                        .update("address", address) // 주소 업데이트
-                        .addOnSuccessListener(aVoid -> Log.d(TAG, "주소 정보 업데이트 성공"));
-            }
-        }
+        requireActivity().finish();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mContext = context;
     }
 
     private void changePhone(){
@@ -158,7 +157,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         container.addView(phone);
         container.addView(err);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setTitle("전화번호 변경")
                 .setMessage("전화번호를 입력해주세요.")
@@ -197,9 +196,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         int cDay = Integer.parseInt(birth[2]);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
-            cal.set(year, month, dayOfMonth);
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            String date = df.format(cal.getTime());
+            String date = LocalDate.of(year, month+1, dayOfMonth).format(DateTimeFormat.date());
 
             DocumentReference documentReference = db.collection(User.DB_NAME)
                     .document(user.getDocumentId()); // 해당 이메일 유저 문서 열기
@@ -221,7 +218,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
     private void changePassword(){
         Loading loading = new Loading(getContext());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("비밀번호를 변경하시겠습니까?")
                 .setPositiveButton("확인", (dialog, i) -> {
@@ -234,12 +231,12 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
                                 if (task.isSuccessful()) {
                                     loading.dismiss();
 
-                                    AlertDialog.Builder builder2 = new AlertDialog.Builder(getContext())
+                                    AlertDialog.Builder builder2 = new AlertDialog.Builder(mContext)
                                             .setCancelable(false)
                                             .setMessage("이메일로 비밀번호 변경 안내 메일이 발송되었습니다.\n비밀번호 변경 후 다시 로그인해주세요.")
                                             .setPositiveButton("확인", (dialog1, i1) -> {
                                                 firebaseAuth.signOut();
-                                                ActivityCompat.finishAffinity(Objects.requireNonNull(getActivity()));
+                                                ActivityCompat.finishAffinity(requireActivity());
                                                 startActivity(new Intent(getContext(), LoginActivity.class));
                                             });
                                     AlertDialog alertDialog2 = builder2.create();
@@ -257,12 +254,12 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
     }
 
     private void logoutDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
                 .setCancelable(false)
                 .setMessage("로그아웃 하시겠습니까?")
                 .setPositiveButton("확인", (dialog, i) -> {
                     FirebaseAuth.getInstance().signOut(); // 로그아웃
-                    ActivityCompat.finishAffinity(Objects.requireNonNull(getActivity())); // 모든 액티비티 종료
+                    ActivityCompat.finishAffinity(requireActivity()); // 모든 액티비티 종료
                     startActivity(new Intent(getContext(), LoginActivity.class)); // 다시 로그인 화면으로
                 })
                 .setNegativeButton("취소", (dialog, which) -> { /* empty */ });

@@ -21,12 +21,13 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_action_back"
-            android:background="?selectableItemBackgroundBorderless"/>
+            android:background="?selectableItemBackgroundBorderless"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="35dp"
+            android:layout_marginStart="35dp"
             android:text="상세주소 입력"
             android:textColor="@color/black"
             android:textSize="17sp"/>
@@ -36,7 +37,7 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="25dp"
         android:text="주소 입력"
         app:layout_constraintStart_toStartOf="parent"
@@ -81,7 +82,8 @@
         android:background="@null"
         android:hint="상세주소를 입력해주세요"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        tools:ignore="TextFields" />
 
     <View
         android:layout_width="match_parent"

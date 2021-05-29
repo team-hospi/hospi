@@ -24,6 +24,7 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 import com.gradproject.hospi.databinding.FragmentHospitalInfoDetailBinding;
 import com.gradproject.hospi.home.LocationPoint;
+import com.gradproject.hospi.utils.StatusBar;
 
 import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.MapPOIItem;
@@ -33,7 +34,6 @@ import net.daum.mf.map.api.MapView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static com.gradproject.hospi.home.HomeActivity.user;
 import static com.gradproject.hospi.home.hospital.HospitalActivity.hospital;
@@ -59,6 +59,8 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentHospitalInfoDetailBinding.inflate(inflater, container, false);
+
+        StatusBar.updateStatusBarColor(requireActivity(), R.color.white);
 
         hospitalActivity = (HospitalActivity) getActivity();
 
@@ -123,7 +125,7 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
 
     @Override
     public void onBackPressed() {
-        Objects.requireNonNull(getActivity()).finish();
+        requireActivity().finish();
     }
 
     @Override
@@ -195,7 +197,7 @@ public class HospitalInfoDetailFragment extends Fragment implements OnBackPresse
     private void showHospitalLocation(){
         LocationPoint point = getPointFromGeoCoder(hospital.getAddress());
 
-        MapView mapView = new MapView(Objects.requireNonNull(getContext()));
+        MapView mapView = new MapView(requireContext());
         mapView.setCalloutBalloonAdapter(new CustomBalloonAdapter(getLayoutInflater()));
         mapView.setZoomLevel(2, false);
         MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(point.latitude, point.longitude);

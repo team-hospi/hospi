@@ -11,8 +11,6 @@ import androidx.fragment.app.Fragment;
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.databinding.FragmentTermsBinding;
 
-import java.util.Objects;
-
 public class TermsFragment extends Fragment implements OnBackPressedListener {
     private FragmentTermsBinding binding;
 
@@ -32,6 +30,6 @@ public class TermsFragment extends Fragment implements OnBackPressedListener {
 
     @Override
     public void onBackPressed() {
-        Objects.requireNonNull(getActivity()).finish();
+        requireActivity().finish();
     }
 }

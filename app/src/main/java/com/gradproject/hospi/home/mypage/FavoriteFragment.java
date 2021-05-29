@@ -69,7 +69,7 @@ public class FavoriteFragment extends Fragment implements OnBackPressedListener 
 
     @Override
     public void onBackPressed() {
-        Objects.requireNonNull(getActivity()).finish();
+        requireActivity().finish();
     }
 
     @Override

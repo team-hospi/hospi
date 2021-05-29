@@ -55,7 +55,8 @@
         android:singleLine="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guideTxt2" />
+        app:layout_constraintTop_toBottomOf="@+id/guideTxt2"
+        tools:ignore="Autofill" />
 
     <Button
         android:id="@+id/nextBtn"
@@ -71,7 +72,7 @@
         android:id="@+id/emailErrorTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="85dp"
+        android:layout_marginStart="85dp"
         android:layout_marginTop="5dp"
         android:textColor="@color/red"
         android:visibility="invisible"

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -16,7 +17,8 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:src="@drawable/ic_action_back"
-            android:background="?selectableItemBackgroundBorderless"/>
+            android:background="?selectableItemBackgroundBorderless"
+            tools:ignore="ContentDescription" />
 
         <EditText
             android:id="@+id/searchEdt"
@@ -28,13 +30,14 @@
             android:layout_gravity="center_vertical"
             android:background="@null"
             android:hint="지역 또는 병원을 검색하세요"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            tools:ignore="Autofill,TextFields" />
 
         <FrameLayout
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginRight="15dp"
-            android:layout_gravity="right">
+            android:layout_marginEnd="15dp"
+            android:layout_gravity="end">
 
             <ImageButton
                 android:id="@+id/removeBtn"
@@ -42,14 +45,16 @@
                 android:layout_height="30dp"
                 android:visibility="invisible"
                 android:src="@drawable/ic_action_clear"
-                android:background="?selectableItemBackgroundBorderless"/>
+                android:background="?selectableItemBackgroundBorderless"
+                tools:ignore="ContentDescription" />
 
             <ImageButton
                 android:id="@+id/voiceInputBtn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/ic_action_voice"
-                android:background="?selectableItemBackgroundBorderless"/>
+                android:background="?selectableItemBackgroundBorderless"
+                tools:ignore="ContentDescription" />
         </FrameLayout>
     </androidx.appcompat.widget.Toolbar>
 
@@ -62,14 +67,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="invisible"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="150dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_action_info"/>
+                android:src="@drawable/ic_action_info"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:layout_width="wrap_content"

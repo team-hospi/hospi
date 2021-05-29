@@ -1,9 +1,6 @@
 package com.gradproject.hospi.home;
 
-import io.reactivex.rxjava3.annotations.NonNull;
-import io.reactivex.rxjava3.functions.BiFunction;
-
-public class Medicine implements @NonNull BiFunction<String, String, String> {
+public class Medicine {
     private String itemName;
     private String chart;
     private String imageUrl;
@@ -39,10 +36,5 @@ public class Medicine implements @NonNull BiFunction<String, String, String> {
 
     public void setClassName(String className) {
         this.className = className;
-    }
-
-    @Override
-    public String apply(String s, String s2) {
-        return null;
     }
 }

@@ -61,7 +61,7 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
 
         inquiryAdapter.setOnItemClickListener((holder, view, position) -> {
             Inquiry inquiry = inquiryAdapter.getItem(position);
-            FragmentTransaction transaction = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
             InquiryDetailFragment inquiryDetailFragment = new InquiryDetailFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("pos", position);
@@ -82,7 +82,7 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
 
     @Override
     public void onBackPressed() {
-        Objects.requireNonNull(getActivity()).finish();
+        requireActivity().finish();
     }
 
     private void getInquiryList(){
@@ -123,10 +123,14 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
                             }
 
                             binding.inquiryList.setAdapter(inquiryAdapter);
+
+                            binding.loadingLayout.setVisibility(View.GONE);
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                             String msg = "문의 내역을 불러올 수 없습니다.";
                             Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                            binding.loadingLayout.setVisibility(View.GONE);
+                            binding.nothingInquiryView.setVisibility(View.VISIBLE);
                         }
                     });
         }

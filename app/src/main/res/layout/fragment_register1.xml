@@ -86,7 +86,7 @@
             android:id="@+id/agree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:text="동의"
             tools:layout_editor_absoluteX="139dp"
             tools:layout_editor_absoluteY="302dp" />
