@@ -87,17 +87,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:text="동의"
-            tools:layout_editor_absoluteX="139dp"
-            tools:layout_editor_absoluteY="302dp" />
+            android:text="동의" />
 
         <RadioButton
             android:id="@+id/noAgree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="미동의"
-            tools:layout_editor_absoluteX="219dp"
-            tools:layout_editor_absoluteY="302dp" />
+            android:text="미동의" />
     </RadioGroup>
 
     <TextView
