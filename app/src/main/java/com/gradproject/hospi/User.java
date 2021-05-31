@@ -21,6 +21,7 @@ public class User {
     private String token;
     private List<String> favorites;
     private boolean admin;
+    private String sex;
 
     public User() {
         this.documentId = "";
@@ -227,5 +228,13 @@ public class User {
 
     public void setAdmin(boolean admin) {
         this.admin = admin;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 }

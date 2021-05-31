@@ -109,6 +109,70 @@
                 android:background="@drawable/border"/>
 
             <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:text="성별"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:id="@+id/sexTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="성별"
+                        android:textSize="17sp"/>
+                </LinearLayout>
+            </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:background="@drawable/border"/>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:text="생년월일"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:id="@+id/birthTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0000-00-00"
+                        android:textSize="17sp"/>
+                </LinearLayout>
+            </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:background="@drawable/border"/>
+
+            <FrameLayout
                 android:id="@+id/changePhNumBtn"
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
@@ -145,49 +209,6 @@
                     android:src="@drawable/ic_action_forward"
                     app:tint="@color/black"
                     tools:ignore="ContentDescription" />
-            </FrameLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:background="@drawable/border"/>
-
-            <FrameLayout
-                android:id="@+id/changeBirthBtn"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:layout_width="match_parent"
-                android:layout_height="70dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_gravity="center_vertical"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="5dp"
-                        android:text="생년월일"
-                        android:textColor="@color/black"/>
-
-                    <TextView
-                        android:id="@+id/birthTxt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="0000-00-00"
-                        android:textSize="17sp"/>
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
-                    android:layout_gravity="center_vertical|end"
-                    android:src="@drawable/ic_action_forward"
-                    app:tint="@color/black"/>
             </FrameLayout>
 
             <View

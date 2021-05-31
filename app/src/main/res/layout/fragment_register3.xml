@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -34,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="생년월일을 설정하세요"
+        android:text="주민등록번호를 설정하세요"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -50,18 +51,54 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <DatePicker
-        android:id="@+id/birthDp"
+    <LinearLayout
+        android:id="@+id/linearLayout4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:calendarViewShown="false"
-        android:background="@color/white"
-        android:elevation="3dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="30dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guideTxt2"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/guideTxt2">
+
+        <EditText
+            android:id="@+id/rrNumFrontEdt"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:background="@drawable/edit_text"
+            android:inputType="number"
+            android:maxLength="6"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:text="-"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/rrNumBackEdt"
+            android:layout_width="90dp"
+            android:layout_height="40dp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:background="@drawable/edit_text"
+            android:inputType="numberPassword"
+            android:maxLength="7"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/rrNumErr"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="올바른 주민등록번호가 아닙니다."
+        android:textColor="@color/red"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout4"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
 </androidx.constraintlayout.widget.ConstraintLayout>
