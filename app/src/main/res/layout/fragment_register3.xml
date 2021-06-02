@@ -43,17 +43,18 @@
 
     <EditText
         android:id="@+id/birthEdt"
-        android:layout_width="130dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="25dp"
         android:background="@drawable/edit_text"
-        android:gravity="center"
-        android:hint="예) 19901020"
-        android:padding="5dp"
+        android:hint="예)19901020"
+        android:padding="10dp"
         android:inputType="number"
+        android:maxLength="8"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guideTxt2" />
+        app:layout_constraintTop_toBottomOf="@+id/guideTxt2"
+        tools:ignore="Autofill" />
 
     <TextView
         android:id="@+id/birthErr"

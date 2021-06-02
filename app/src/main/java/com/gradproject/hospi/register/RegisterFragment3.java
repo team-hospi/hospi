@@ -4,27 +4,29 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.databinding.FragmentRegister3Binding;
 import com.gradproject.hospi.utils.DateTimeFormat;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.GregorianCalendar;
-import java.util.Locale;
 
 public class RegisterFragment3 extends Fragment implements OnBackPressedListener {
     private FragmentRegister3Binding binding;
     RegisterActivity registerActivity;
-    String date; // 생년월일 저장
+    DateTimeFormatter dateFormat;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -33,26 +35,9 @@ public class RegisterFragment3 extends Fragment implements OnBackPressedListener
 
         registerActivity = (RegisterActivity) getActivity();
 
-        // TODO: 생년월일 로직 구현
-
         binding.nextBtn.setOnClickListener(v -> {
-            if(binding.man.isChecked()){
-                registerActivity.user.setSex(binding.man.getText().toString());
-
-
-
-                registerActivity.user.setBirth(date);
-                registerActivity.onFragmentChanged(3);
-            }else if(binding.woman.isChecked()){
-                registerActivity.user.setSex(binding.woman.getText().toString());
-
-
-
-                registerActivity.user.setBirth(date);
-                registerActivity.onFragmentChanged(3);
-            }else{
-                binding.selSexErr.setVisibility(View.VISIBLE);
-            }
+            String date = binding.birthEdt.getText().toString().trim();
+            nextBtnProcess(date);
         });
 
         return binding.getRoot();
@@ -69,13 +54,59 @@ public class RegisterFragment3 extends Fragment implements OnBackPressedListener
         registerActivity.onFragmentChanged(1);
     }
 
-    public boolean dateCheck(String checkDate) {
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd", Locale.KOREA);
+    private void nextBtnProcess(String date){
+        boolean isRadioChecked = radioCheck();
+        boolean isCompareDateChecked = compareDate(date);
+
+        if(isRadioChecked && isCompareDateChecked){
+            int id = binding.sexRg.getCheckedRadioButtonId();
+            RadioButton rb = binding.getRoot().findViewById(id);
+            registerActivity.user.setSex(rb.getText().toString());
+            LocalDate birthDate = LocalDate.parse(date, dateFormat);
+            registerActivity.user.setBirth(birthDate.format(DateTimeFormat.date()));
+            registerActivity.onFragmentChanged(3);
+        }
+    }
+
+    public boolean radioCheck(){
+        if(binding.man.isChecked() || binding.woman.isChecked()){
+            return true;
+        }else{
+            binding.selSexErr.setVisibility(View.VISIBLE);
+            return false;
+        }
+    }
+
+    public boolean dateCheck(String date) {
+        if (date == null || date.equals("")) {
+            binding.birthErr.setVisibility(View.VISIBLE);
+            return false;
+        }
 
         try {
-            dateTimeFormatter.parse(checkDate);
+            dateFormat.parse(date);
             return true;
+
         } catch (Exception e) {
+            e.printStackTrace();
+            binding.birthErr.setVisibility(View.VISIBLE);
+            return false;
+        }
+    }
+
+    public boolean compareDate(String date){
+        if (dateCheck(date)) {
+            LocalDate endDate = LocalDate.now();
+            LocalDate startDate = LocalDate.parse(date, dateFormat);
+
+            if(endDate.isAfter(startDate)){
+                return true;
+            }else{
+                binding.birthErr.setVisibility(View.VISIBLE);
+                return false;
+            }
+        }else{
+            binding.birthErr.setVisibility(View.VISIBLE);
             return false;
         }
     }

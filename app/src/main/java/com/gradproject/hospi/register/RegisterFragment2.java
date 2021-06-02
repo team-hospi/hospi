@@ -10,11 +10,11 @@ import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.databinding.FragmentRegister2Binding;
+import com.gradproject.hospi.utils.PatternCheck;
 
 public class RegisterFragment2 extends Fragment implements OnBackPressedListener {
     private FragmentRegister2Binding binding;
     RegisterActivity registerActivity;
-    String name; // 이름 저장
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -28,13 +28,13 @@ public class RegisterFragment2 extends Fragment implements OnBackPressedListener
         }
 
         binding.nextBtn.setOnClickListener(v -> {
-            name = binding.inputName.getText().toString();
+            String name = binding.inputName.getText().toString();
 
-            if(name.equals("")){
-                binding.nameErrorTxt.setVisibility(View.VISIBLE); // 빈칸 에러 출력
-            }else{
+            if(name.length()>1 && PatternCheck.isKorean(name)){
                 registerActivity.user.setName(name); // user 인스턴스에 이름 저장
                 registerActivity.onFragmentChanged(2); // 다음 화면 이동
+            }else{
+                binding.nameErrorTxt.setVisibility(View.VISIBLE); // 빈칸 에러 출력
             }
         });
 

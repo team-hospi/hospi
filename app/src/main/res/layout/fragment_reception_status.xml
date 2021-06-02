@@ -223,8 +223,7 @@
                         android:layout_gravity="center_horizontal"
                         android:text="대기인수"
                         android:textColor="@color/black"
-                        android:textSize="20sp"
-                        android:visibility="gone" />
+                        android:textSize="20sp"/>
 
                     <TextView
                         android:id="@+id/statusTxt"

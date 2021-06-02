@@ -3,9 +3,6 @@ package com.gradproject.hospi.home;
 @SuppressWarnings("unused")
 public class Reception {
     public static final String DB_NAME = "receptionList";
-    public static final int RECEIVED = 0;
-    public static final int TREATMENT = 1;
-    public static final int TREATMENT_COMPLETE = 2;
 
     private String department;
     private String doctor;
@@ -17,7 +14,6 @@ public class Reception {
     private String receptionDate;
     private String receptionTime;
     private int waitingNumber;
-    private int status;
 
     public Reception() {
     }
@@ -100,13 +96,5 @@ public class Reception {
 
     public void setWaitingNumber(int waitingNumber) {
         this.waitingNumber = waitingNumber;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 }
