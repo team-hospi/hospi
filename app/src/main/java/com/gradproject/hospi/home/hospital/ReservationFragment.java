@@ -261,7 +261,6 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
         reservation.setTimestamp(timestamp);    // 현재 시간 타임스탬프 설정
         reservation.setReservationStatus(Reservation.CONFIRMING_RESERVATION);     // 예약 신청됨 상태로 설정
         reservation.setCancelComment(null);
-        reservation.setPredictCost(null);
 
         Query query = db.collection(Reservation.DB_NAME)
                 .whereEqualTo("department", reservation.getDepartment())

@@ -17,7 +17,6 @@ public class Reservation {
     private long timestamp;
     private int reservationStatus;
     private String cancelComment;
-    private String predictCost;
 
     public Reservation() {}
 
@@ -99,13 +98,5 @@ public class Reservation {
 
     public void setCancelComment(String cancelComment) {
         this.cancelComment = cancelComment;
-    }
-
-    public String getPredictCost() {
-        return predictCost;
-    }
-
-    public void setPredictCost(String predictCost) {
-        this.predictCost = predictCost;
     }
 }

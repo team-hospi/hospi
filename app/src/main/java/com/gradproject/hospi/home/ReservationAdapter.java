@@ -230,20 +230,16 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                 case Reservation.RESERVATION_CONFIRMED:
                     binding.reservationStatusTxt.setText("예약 확정");
                     binding.reservationStatusTxt.setTextColor(Color.BLUE);
-                    binding.costLayout.setVisibility(View.VISIBLE);
-                    binding.cost.setText(item.getPredictCost());
                     break;
                 case Reservation.CONFIRMING_RESERVATION:
                     binding.reservationStatusTxt.setText("확인 중");
                     binding.reservationStatusTxt.setTextColor(Color.rgb(70, 201, 0));
-                    binding.costLayout.setVisibility(View.GONE);
                     break;
                 case Reservation.TREATMENT_COMPLETE:
                     binding.reservationStatusTxt.setText("진료 완료");
                     binding.reservationStatusTxt.setTextColor(Color.rgb(0, 131, 26));
                     binding.reservationCancelBtn.setVisibility(View.GONE);
                     binding.reserveInfo.setVisibility(View.GONE);
-                    binding.costLayout.setVisibility(View.GONE);
                     break;
                 default:
                     binding.reservationStatusTxt.setText("취소됨");
@@ -251,7 +247,6 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
                     binding.reserveInfo.setVisibility(View.GONE);
                     binding.cancelInfo.setVisibility(View.VISIBLE);
                     binding.reservationCancelBtn.setVisibility(View.GONE);
-                    binding.costLayout.setVisibility(View.GONE);
                     break;
             }
 
