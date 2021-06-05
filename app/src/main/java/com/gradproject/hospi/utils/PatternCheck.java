@@ -16,6 +16,6 @@ public class PatternCheck {
 
     // 전화 검사기
     public static boolean isPhone(String str) {
-        return Pattern.matches("^\\d{3}\\d{4}\\d{4}$", str);
+        return Pattern.matches("^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$", str);
     }
 }

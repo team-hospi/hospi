@@ -2,8 +2,11 @@ package com.gradproject.hospi.home.mypage;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +33,7 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 import com.gradproject.hospi.databinding.FragmentEditMyInfoBinding;
 import com.gradproject.hospi.utils.Loading;
+import com.gradproject.hospi.utils.PatternCheck;
 import com.gradproject.hospi.utils.PhoneNumberHyphen;
 
 import static android.app.Activity.RESULT_OK;
@@ -132,9 +136,27 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         phone.setHint("전화번호");
         phone.setInputType(InputType.TYPE_CLASS_NUMBER);
         phone.setPadding(40,0,0,0);
+        phone.setTextColor(Color.BLACK);
+
+        phone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(phone.length()>11){
+                    String tmp = phone.getText().toString().substring(0, 11);
+                    phone.setText(tmp);
+                    phone.setSelection(phone.length());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         TextView err = new TextView(getContext());
-        err.setText("전화번호를 입력해주세요.");
+        err.setText("올바른 번호가 아닙니다.");
         err.setTextColor(getResources().getColor(R.color.red, null));
         err.setVisibility(View.INVISIBLE);
         err.setPadding(10,10,0,0);
@@ -152,9 +174,9 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         container.addView(err);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
-                .setCancelable(false)
-                .setTitle("전화번호 변경")
-                .setMessage("전화번호를 입력해주세요.")
+                .setCancelable(true)
+                .setTitle("휴대전화 번호 변경")
+                .setMessage("휴대전화 번호를 입력해주세요.")
                 .setView(container)
                 .setPositiveButton("확인", (dialog, i) -> { /* empty */ })
                 .setNegativeButton("취소", (dialog, which) -> { /* empty */ });
@@ -162,11 +184,12 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String phoneNum = PhoneNumberHyphen.phone(phone.getText().toString());
+            String phNum = phone.getText().toString();
 
-            if(phoneNum.equals("")){
+            if(!(PatternCheck.isPhone(phNum))){
                 err.setVisibility(View.VISIBLE);
             }else{
+                String phoneNum = PhoneNumberHyphen.phone(phNum);
                 DocumentReference documentReference = db
                         .collection(User.DB_NAME)
                         .document(user.getDocumentId()); // 해당 이메일 유저 문서 열기
@@ -187,7 +210,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         Loading loading = new Loading(getContext());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
-                .setCancelable(false)
+                .setCancelable(true)
                 .setMessage("비밀번호를 변경하시겠습니까?")
                 .setPositiveButton("확인", (dialog, i) -> {
                     loading.show();
@@ -223,7 +246,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
 
     private void logoutDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
-                .setCancelable(false)
+                .setCancelable(true)
                 .setMessage("로그아웃 하시겠습니까?")
                 .setPositiveButton("확인", (dialog, i) -> {
                     FirebaseAuth.getInstance().signOut(); // 로그아웃
