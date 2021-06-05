@@ -169,30 +169,82 @@
                     app:layout_constraintStart_toStartOf="@+id/textView5"
                     app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/linearLayout5"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginTop="20dp"
-                    android:text="님의 접수현황"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    app:layout_constraintStart_toEndOf="@+id/patientTxt"
-                    app:layout_constraintTop_toBottomOf="@+id/departmentTxt" />
-
-                <TextView
-                    android:id="@+id/patientTxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="20dp"
-                    android:text="OOO"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
+                    android:layout_marginTop="15dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/departmentTxt" />
+                    app:layout_constraintTop_toBottomOf="@+id/departmentTxt">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center">
+
+                        <TextView
+                            android:id="@+id/patientTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="OOO"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="님의 접수현황"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"
+                            app:layout_constraintStart_toEndOf="@+id/patientTxt"
+                            app:layout_constraintTop_toBottomOf="@+id/departmentTxt" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/autoRefreshBtn"
+                            android:layout_width="80dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/button_clickable_true"
+                            android:clickable="true"
+                            android:layout_gravity="right"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/textView"
+                            app:layout_constraintTop_toBottomOf="@+id/departmentTxt"
+                            tools:ignore="RtlHardcoded,UselessParent">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                tools:ignore="UseCompoundDrawables,UselessParent">
+
+                                <TextView
+                                    android:id="@+id/secTxt"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="3dp"
+                                    android:text="갱신중"
+                                    android:textColor="@color/black" />
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_action_refresh"
+                                    app:tint="@color/black"
+                                    tools:ignore="ContentDescription" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/textView4"
@@ -210,11 +262,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="25dp"
+                    android:layout_marginTop="20dp"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView" >
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout5" >
 
                     <TextView
                         android:id="@+id/waitingTxt"
@@ -231,6 +283,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="5dp"
+                        android:textColor="@color/black"
                         android:textSize="60sp" />
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>

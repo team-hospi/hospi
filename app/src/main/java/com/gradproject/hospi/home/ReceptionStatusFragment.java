@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.gradproject.hospi.databinding.FragmentReceptionStatusBinding;
@@ -20,6 +19,12 @@ import java.time.LocalTime;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class ReceptionStatusFragment extends Fragment {
     private static final String TAG = "ReceptionStatusFragment";
@@ -28,6 +33,9 @@ public class ReceptionStatusFragment extends Fragment {
     FirebaseFirestore db;
     HomeActivity homeActivity;
     Reception reception;
+    Observable<String> ob;
+    Disposable disposable;
+    int seconds;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,9 +56,50 @@ public class ReceptionStatusFragment extends Fragment {
             showReceptionInfo();
         });
 
-        showReceptionInfo();
+        binding.autoRefreshBtn.setOnClickListener(v -> {
+            binding.secTxt.setText("갱신중");
+            if(disposable != null){
+                disposable.dispose();
+            }
+            showReceptionInfo();
+        });
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showReceptionInfo();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(disposable != null){
+            disposable.dispose();
+        }
+    }
+
+    private void autoRefreshStatus(){
+        seconds = 10;
+        ob = Observable.interval(1, TimeUnit.SECONDS)
+                .flatMap(o -> {
+                    String timerStr;
+                    if(seconds >= 0) {
+                        timerStr = seconds + "초";
+                        seconds--;
+                    }else{
+                        timerStr = "갱신중";
+                        showReceptionInfo();
+                        disposable.dispose();
+                    }
+                    return Observable.just(timerStr);
+                });
+
+        disposable = ob.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(binding.secTxt::setText);
     }
 
     @SuppressLint("SetTextI18n")
@@ -107,7 +156,7 @@ public class ReceptionStatusFragment extends Fragment {
                                 binding.doctorTxt.setText(reception.getDoctor());
 
                                 binding.statusTxt.setText(String.valueOf(reception.getWaitingNumber()));
-                                realtimeCheck(docId);
+                                autoRefreshStatus();
                             }else{
                                 binding.nothingReceptionView.setVisibility(View.VISIBLE);
                                 binding.receptionView.setVisibility(View.GONE);
@@ -125,29 +174,5 @@ public class ReceptionStatusFragment extends Fragment {
                     }
                     binding.loadingLayout.setVisibility(View.GONE);
                 });
-    }
-
-    private void realtimeCheck(String docId){
-        if(docId != null){
-            final DocumentReference docRef = db.collection(Reception.DB_NAME).document(docId);
-            docRef.addSnapshotListener((snapshot, e) -> {
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
-                    return;
-                }
-
-                if (snapshot != null && snapshot.exists()) {
-                    Log.d(TAG, "Current data: " + snapshot.getData());
-
-                    Reception reception = snapshot.toObject(Reception.class);
-                    if (reception != null) {
-                        binding.statusTxt.setText(String.valueOf(reception.getWaitingNumber()));
-                    }
-
-                } else {
-                    Log.d(TAG, "Current data: null");
-                }
-            });
-        }
     }
 }
