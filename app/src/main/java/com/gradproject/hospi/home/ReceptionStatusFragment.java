@@ -76,6 +76,7 @@ public class ReceptionStatusFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        binding.secTxt.setText("갱신중");
         if(disposable != null){
             disposable.dispose();
         }
@@ -91,6 +92,7 @@ public class ReceptionStatusFragment extends Fragment {
                         seconds--;
                     }else{
                         timerStr = "갱신중";
+                        requireActivity().runOnUiThread(() -> binding.secTxt.setText(timerStr));
                         showReceptionInfo();
                         disposable.dispose();
                     }
