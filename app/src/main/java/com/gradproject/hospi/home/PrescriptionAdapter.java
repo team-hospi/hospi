@@ -3,11 +3,9 @@ package com.gradproject.hospi.home;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gradproject.hospi.databinding.TreatmentItemBinding;
@@ -53,29 +51,16 @@ public class PrescriptionAdapter extends RecyclerView.Adapter<PrescriptionAdapte
         holder.setItem(item);
         holder.binding.prescriptionInfoBtn.setTag(holder.getAdapterPosition());
         holder.binding.prescriptionInfoBtn.setOnClickListener(v -> {
-            if(item.getMedicine() != null){
-                Intent intent = new Intent(v.getContext(), PrescriptionInfoPopUpActivity.class);
-                intent.putExtra("prescription", item);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                v.getContext().startActivity(intent);
-            }else{
-                notMedicineAlert(v);
-            }
+            Intent intent = new Intent(v.getContext(), PrescriptionInfoPopUpActivity.class);
+            intent.putExtra("prescription", item);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            v.getContext().startActivity(intent);
         });
     }
 
     @Override
     public int getItemCount() {
         return items.size();
-    }
-
-    private void notMedicineAlert(View v){
-        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext())
-                .setCancelable(true)
-                .setMessage("처방된 의약품이 존재하지 않습니다.")
-                .setPositiveButton("확인", (dialogInterface, i) -> {});
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{

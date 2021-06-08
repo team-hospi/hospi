@@ -21,6 +21,7 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentInquiryDetailBinding;
 import com.gradproject.hospi.utils.Loading;
+import com.gradproject.hospi.utils.StatusBar;
 
 import java.util.Objects;
 
@@ -50,6 +51,8 @@ public class InquiryDetailFragment extends Fragment implements OnBackPressedList
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentInquiryDetailBinding.inflate(inflater, container, false);
+
+        StatusBar.updateStatusBarColor(requireActivity(), R.color.list_background);
 
         setHasOptionsMenu(true);
         settingActivity.setSupportActionBar(binding.toolbar);
