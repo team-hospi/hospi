@@ -1,22 +1,17 @@
 package com.gradproject.hospi.home;
 
 import android.annotation.SuppressLint;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.firestore.DocumentReference;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentReceptionStatusBinding;
 
 import java.time.LocalDate;
@@ -24,6 +19,12 @@ import java.time.LocalTime;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class ReceptionStatusFragment extends Fragment {
     private static final String TAG = "ReceptionStatusFragment";
@@ -32,6 +33,9 @@ public class ReceptionStatusFragment extends Fragment {
     FirebaseFirestore db;
     HomeActivity homeActivity;
     Reception reception;
+    Observable<String> ob;
+    Disposable disposable;
+    int seconds;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,9 +56,52 @@ public class ReceptionStatusFragment extends Fragment {
             showReceptionInfo();
         });
 
-        showReceptionInfo();
+        binding.autoRefreshBtn.setOnClickListener(v -> {
+            binding.secTxt.setText("갱신중");
+            if(disposable != null){
+                disposable.dispose();
+            }
+            showReceptionInfo();
+        });
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showReceptionInfo();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        binding.secTxt.setText("갱신중");
+        if(disposable != null){
+            disposable.dispose();
+        }
+    }
+
+    private void autoRefreshStatus(){
+        seconds = 10;
+        ob = Observable.interval(1, TimeUnit.SECONDS)
+                .flatMap(o -> {
+                    String timerStr;
+                    if(seconds >= 0) {
+                        timerStr = seconds + "초";
+                        seconds--;
+                    }else{
+                        timerStr = "갱신중";
+                        requireActivity().runOnUiThread(() -> binding.secTxt.setText(timerStr));
+                        showReceptionInfo();
+                        disposable.dispose();
+                    }
+                    return Observable.just(timerStr);
+                });
+
+        disposable = ob.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(binding.secTxt::setText);
     }
 
     @SuppressLint("SetTextI18n")
@@ -64,38 +111,34 @@ public class ReceptionStatusFragment extends Fragment {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        int minNum = 1440;
+                        LocalDate curDate = LocalDate.now();
+                        LocalTime curTime = LocalTime.now();
+                        LocalTime minTime = LocalTime.of(23, 59, 59);
                         String docId = null;
 
                         for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
-                            Reception tmpRec = document.toObject(Reception.class);
-                            String tmpStr = tmpRec.getReceptionTime();
-                            String[] tmpTime = tmpStr.split(":");
-                            int tmpNum = Integer.parseInt(tmpTime[0])*60 + Integer.parseInt(tmpTime[1]);
-                            if(tmpNum<minNum){
-                                minNum=tmpNum;
-                                reception = tmpRec;
+                            Reception r = document.toObject(Reception.class);
+                            String[] tmpTimeArr = r.getReceptionTime().split(":");
+                            String[] tmpDateArr = r.getReceptionDate().split("-");
+                            LocalTime tmpTime = LocalTime.of(Integer.parseInt(tmpTimeArr[0]), Integer.parseInt(tmpTimeArr[1]));
+                            LocalDate tmpDate = LocalDate.of(Integer.parseInt(tmpDateArr[0]), Integer.parseInt(tmpDateArr[1]), Integer.parseInt(tmpDateArr[2]));
+                            if(minTime.isAfter(tmpTime) && curDate.isEqual(tmpDate)){
+                                minTime = tmpTime;
                                 docId = document.getId();
+                                reception = r;
                             }
-                        }
+                        } // for end
+                        Log.d(TAG, docId + " => " + minTime);
 
-                        if(docId != null){
-                            realtimeCheck(docId);
-                        }
+                        try{
+                            String[] timeArr = reception.getReceptionTime().split(":");
+                            String[] dateArr = reception.getReceptionDate().split("-");
+                            LocalTime rTime = LocalTime.of(Integer.parseInt(timeArr[0]), Integer.parseInt(timeArr[1]));
+                            LocalDate rDate = LocalDate.of(Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]), Integer.parseInt(dateArr[2]));
 
-                        if(reception != null){
-                            String[] time = reception.getReceptionTime().split(":");
-                            String[] date = reception.getReceptionDate().split("-");
-                            LocalDate curDate = LocalDate.now();
-                            LocalDate tmpDate = LocalDate.of(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]));
-
-                            LocalTime curTime = LocalTime.now();
-                            LocalTime tmpTime = LocalTime.of(Integer.parseInt(time[0]), Integer.parseInt(time[1]));
-
-                            if(curDate.isEqual(tmpDate)
-                                    && (curTime.isAfter(tmpTime.minusHours(1)))
-                                    && (curTime.isBefore(tmpTime.plusHours(1)))){
+                            if(curDate.isEqual(rDate)
+                                    && curTime.isAfter(rTime.minusHours(1))){
                                 binding.nothingReceptionView.setVisibility(View.GONE);
                                 binding.receptionView.setVisibility(View.VISIBLE);
                                 binding.departmentTxt.setText(reception.getDepartment());
@@ -114,63 +157,24 @@ public class ReceptionStatusFragment extends Fragment {
                                 binding.officeTxt.setText(reception.getOffice());
                                 binding.doctorTxt.setText(reception.getDoctor());
 
-                                updateStatus(reception);
+                                binding.statusTxt.setText(String.valueOf(reception.getWaitingNumber()));
+                                autoRefreshStatus();
+                            }else{
+                                binding.nothingReceptionView.setVisibility(View.VISIBLE);
+                                binding.receptionView.setVisibility(View.GONE);
                             }
-                        }else{
+
+                        }catch (Exception e){
+                            e.printStackTrace();
                             binding.nothingReceptionView.setVisibility(View.VISIBLE);
                             binding.receptionView.setVisibility(View.GONE);
                         }
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
+                        binding.nothingReceptionView.setVisibility(View.VISIBLE);
+                        binding.receptionView.setVisibility(View.GONE);
                     }
                     binding.loadingLayout.setVisibility(View.GONE);
                 });
-    }
-
-    private void realtimeCheck(String docId){
-        if(docId != null){
-            final DocumentReference docRef = db.collection(Reception.DB_NAME).document(docId);
-            docRef.addSnapshotListener((snapshot, e) -> {
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
-                    return;
-                }
-
-                if (snapshot != null && snapshot.exists()) {
-                    Log.d(TAG, "Current data: " + snapshot.getData());
-
-                    Reception reception = snapshot.toObject(Reception.class);
-                    if (reception != null) {
-                        updateStatus(reception);
-                    }
-
-                } else {
-                    Log.d(TAG, "Current data: null");
-                }
-            });
-        }
-    }
-
-    private void updateStatus(Reception reception){
-        switch (reception.getStatus()){
-            case Reception.RECEIVED:
-                String str = String.valueOf(reception.getWaitingNumber());
-                binding.statusTxt.setText(str);
-                binding.statusTxt.setTextColor(Color.BLACK);
-                binding.waitingTxt.setVisibility(View.VISIBLE);
-                break;
-            case Reception.TREATMENT:
-                binding.statusTxt.setText("진료 중");
-                binding.statusTxt.setTextColor(Color.rgb(70, 201, 0));
-                binding.waitingTxt.setVisibility(View.GONE);
-                break;
-            case Reception.TREATMENT_COMPLETE:
-                binding.statusTxt.setText("진료 완료");
-                binding.statusTxt.setTextColor(Color.BLACK);
-                binding.waitingTxt.setVisibility(View.GONE);
-                break;
-            default:
-                break;
-        }
     }
 }

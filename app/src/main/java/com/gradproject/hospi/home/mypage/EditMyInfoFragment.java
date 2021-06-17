@@ -1,10 +1,12 @@
 package com.gradproject.hospi.home.mypage;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,11 +32,9 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 import com.gradproject.hospi.databinding.FragmentEditMyInfoBinding;
-import com.gradproject.hospi.utils.DateTimeFormat;
 import com.gradproject.hospi.utils.Loading;
+import com.gradproject.hospi.utils.PatternCheck;
 import com.gradproject.hospi.utils.PhoneNumberHyphen;
-
-import java.time.LocalDate;
 
 import static android.app.Activity.RESULT_OK;
 import static com.gradproject.hospi.home.HomeActivity.user;
@@ -77,6 +77,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
                              Bundle savedInstanceState) {
         binding = FragmentEditMyInfoBinding.inflate(inflater, container, false);
 
+        binding.sexTxt.setText(user.getSex());
         binding.emailTxt.setText(user.getEmail());
         binding.nameTxt.setText(user.getName());
         binding.phoneTxt.setText(user.getPhone());
@@ -93,9 +94,6 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
 
         // 전화번호 변경 버튼
         binding.changePhNumBtn.setOnClickListener(v -> changePhone());
-
-        // 생년월일 변경 버튼
-        binding.changeBirthBtn.setOnClickListener(v -> changeBirth());
 
         // 주소 변경 버튼
         binding.changeAddressBtn.setOnClickListener(v -> {
@@ -138,9 +136,27 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         phone.setHint("전화번호");
         phone.setInputType(InputType.TYPE_CLASS_NUMBER);
         phone.setPadding(40,0,0,0);
+        phone.setTextColor(Color.BLACK);
+
+        phone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(phone.length()>11){
+                    String tmp = phone.getText().toString().substring(0, 11);
+                    phone.setText(tmp);
+                    phone.setSelection(phone.length());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         TextView err = new TextView(getContext());
-        err.setText("전화번호를 입력해주세요.");
+        err.setText("올바른 번호가 아닙니다.");
         err.setTextColor(getResources().getColor(R.color.red, null));
         err.setVisibility(View.INVISIBLE);
         err.setPadding(10,10,0,0);
@@ -158,9 +174,9 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         container.addView(err);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
-                .setCancelable(false)
-                .setTitle("전화번호 변경")
-                .setMessage("전화번호를 입력해주세요.")
+                .setCancelable(true)
+                .setTitle("휴대전화 번호 변경")
+                .setMessage("휴대전화 번호를 입력해주세요.")
                 .setView(container)
                 .setPositiveButton("확인", (dialog, i) -> { /* empty */ })
                 .setNegativeButton("취소", (dialog, which) -> { /* empty */ });
@@ -168,11 +184,12 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            String phoneNum = PhoneNumberHyphen.phone(phone.getText().toString());
+            String phNum = phone.getText().toString();
 
-            if(phoneNum.equals("")){
+            if(!(PatternCheck.isPhone(phNum))){
                 err.setVisibility(View.VISIBLE);
             }else{
+                String phoneNum = PhoneNumberHyphen.phone(phNum);
                 DocumentReference documentReference = db
                         .collection(User.DB_NAME)
                         .document(user.getDocumentId()); // 해당 이메일 유저 문서 열기
@@ -189,37 +206,11 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
         });
     }
 
-    private void changeBirth(){
-        String[] birth = user.getBirth().split("-");
-        int cYear = Integer.parseInt(birth[0]);
-        int cMonth = Integer.parseInt(birth[1])-1;
-        int cDay = Integer.parseInt(birth[2]);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
-            String date = LocalDate.of(year, month+1, dayOfMonth).format(DateTimeFormat.date());
-
-            DocumentReference documentReference = db.collection(User.DB_NAME)
-                    .document(user.getDocumentId()); // 해당 이메일 유저 문서 열기
-            // 업데이트에 성공 했을때 호출
-            documentReference
-                    .update("birth", date) // 생년월일 업데이트
-                    .addOnSuccessListener(aVoid -> {
-                        user.setBirth(date);
-                        binding.birthTxt.setText(date);
-                        Log.d(TAG, "생년월일 정보 업데이트 성공");
-                    });
-        },cYear, cMonth, cDay);
-
-        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
-        datePickerDialog.setCancelable(false);
-        datePickerDialog.show();
-    }
-
     private void changePassword(){
         Loading loading = new Loading(getContext());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
-                .setCancelable(false)
+                .setCancelable(true)
                 .setMessage("비밀번호를 변경하시겠습니까?")
                 .setPositiveButton("확인", (dialog, i) -> {
                     loading.show();
@@ -255,7 +246,7 @@ public class EditMyInfoFragment extends Fragment implements OnBackPressedListene
 
     private void logoutDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext())
-                .setCancelable(false)
+                .setCancelable(true)
                 .setMessage("로그아웃 하시겠습니까?")
                 .setPositiveButton("확인", (dialog, i) -> {
                     FirebaseAuth.getInstance().signOut(); // 로그아웃

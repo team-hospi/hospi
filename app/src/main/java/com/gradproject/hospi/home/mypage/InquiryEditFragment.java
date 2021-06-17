@@ -21,6 +21,7 @@ import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.FragmentInquiryEditBinding;
 import com.gradproject.hospi.utils.Loading;
+import com.gradproject.hospi.utils.StatusBar;
 
 public class InquiryEditFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "InquiryEditFragment";
@@ -47,6 +48,8 @@ public class InquiryEditFragment extends Fragment implements OnBackPressedListen
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentInquiryEditBinding.inflate(inflater, container, false);
+
+        StatusBar.updateStatusBarColor(requireActivity(), R.color.list_background);
 
         binding.hospitalNameTxt.setText(inquiry.getHospitalName());
         binding.inquiryTitleEdt.setText(inquiry.getTitle());

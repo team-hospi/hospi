@@ -45,7 +45,7 @@ public class InquiryFragment extends Fragment implements OnBackPressedListener {
                              Bundle savedInstanceState) {
         binding = FragmentInquiryBinding.inflate(inflater, container, false);
 
-        StatusBar.updateStatusBarColor(requireActivity(), R.color.white);
+        StatusBar.updateStatusBarColor(requireActivity(), R.color.list_background);
 
         hospitalActivity = (HospitalActivity) getActivity();
 

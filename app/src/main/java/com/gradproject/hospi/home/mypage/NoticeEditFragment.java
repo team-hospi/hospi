@@ -48,7 +48,7 @@ public class NoticeEditFragment extends Fragment implements OnBackPressedListene
                              Bundle savedInstanceState) {
         binding = FragmentNoticeEditBinding.inflate(inflater, container, false);
 
-        StatusBar.updateStatusBarColor(requireActivity(), R.color.white);
+        StatusBar.updateStatusBarColor(requireActivity(), R.color.list_background);
 
         binding.titleEdt.setText(notice.getTitle());
         binding.contentEdt.setText(notice.getContent());

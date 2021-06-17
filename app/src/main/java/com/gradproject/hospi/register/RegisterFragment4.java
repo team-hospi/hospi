@@ -10,12 +10,12 @@ import androidx.fragment.app.Fragment;
 
 import com.gradproject.hospi.OnBackPressedListener;
 import com.gradproject.hospi.databinding.FragmentRegister4Binding;
+import com.gradproject.hospi.utils.PatternCheck;
 import com.gradproject.hospi.utils.PhoneNumberHyphen;
 
-public class RegisterFragment4 extends Fragment implements OnBackPressedListener {
+public class RegisterFragment4 extends Fragment implements OnBackPressedListener{
     private FragmentRegister4Binding binding;
     RegisterActivity registerActivity;
-    String phone; // 전화번호
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -24,14 +24,13 @@ public class RegisterFragment4 extends Fragment implements OnBackPressedListener
 
         registerActivity = (RegisterActivity) getActivity();
 
-        // 다음 버튼
         binding.nextBtn.setOnClickListener(v -> {
-            phone = PhoneNumberHyphen.phone(binding.inputPhone.getText().toString()); // 자동 하이픈 입력 후 전화번호 저장
-            if(phone.equals("")){
-                binding.phoneErrorTxt.setVisibility(View.VISIBLE);
-            }else{
-                registerActivity.user.setPhone(phone);
+            String phone = binding.inputPhone.getText().toString();
+            if(PatternCheck.isPhone(phone)){
+                registerActivity.user.setPhone(PhoneNumberHyphen.phone(phone));
                 registerActivity.onFragmentChanged(4);
+            }else{
+                binding.phoneErrorTxt.setVisibility(View.VISIBLE);
             }
         });
 

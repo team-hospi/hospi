@@ -17,7 +17,7 @@ public class RegisterActivity extends AppCompatActivity {
     // 회원가입 프래그먼트
     RegisterFragment1 registerFragment1; RegisterFragment2 registerFragment2;
     RegisterFragment3 registerFragment3; RegisterFragment4 registerFragment4;
-    RegisterFragment5 registerFragment5; RegisterFragment6 registerFragment6;
+    RegisterFragment5 registerFragment5;
 
     User user; // 회원가입 정보 임시 저장
 
@@ -31,7 +31,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         registerFragment1 = new RegisterFragment1(); registerFragment2 = new RegisterFragment2();
         registerFragment3 = new RegisterFragment3(); registerFragment4 = new RegisterFragment4();
-        registerFragment5 = new RegisterFragment5(); registerFragment6 = new RegisterFragment6();
+        registerFragment5 = new RegisterFragment5();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.registerContainer, registerFragment1).commit();
     }
@@ -63,9 +63,6 @@ public class RegisterActivity extends AppCompatActivity {
                 break;
             case 4:
                 getSupportFragmentManager().beginTransaction().replace(R.id.registerContainer, registerFragment5).commit();
-                break;
-            case 5:
-                getSupportFragmentManager().beginTransaction().replace(R.id.registerContainer, registerFragment6).commit();
                 break;
         }
     }

@@ -11,19 +11,32 @@ import android.os.Bundle;
 import android.os.Handler;
 
 public class SplashActivity extends AppCompatActivity {
+    Handler handler;
+    Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        networkCheck();
+        handler = new Handler();
+        runnable = () -> {
+            Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+            startActivity(intent);
+            finish();
+        };
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        finish();
+        handler.removeCallbacks(runnable);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        networkCheck();
     }
 
     private void networkCheck(){
@@ -35,12 +48,7 @@ public class SplashActivity extends AppCompatActivity {
                 activeNetwork.isConnectedOrConnecting();
 
         if(isConnected){
-            Handler handler = new Handler();
-            handler.postDelayed(() -> {
-                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                startActivity(intent);
-                finish();
-            },2000);
+            handler.postDelayed(runnable,700);
         }else{
             notConnectedAlert();
         }
