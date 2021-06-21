@@ -54,9 +54,13 @@ public class TreatmentHistoryFragment extends Fragment implements SwipeRefreshLa
             showPrescriptionList();
         });
 
-        showPrescriptionList();
-
         return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showPrescriptionList();
     }
 
     @Override
