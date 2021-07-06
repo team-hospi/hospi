@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.gradproject.hospi">
+
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+    </queries>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:icon="@drawable/icon"
+        android:label="@string/app_name"
+        android:roundIcon="@null"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Hospi"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".home.PharmacyMapActivity" />
+        <activity
+            android:name=".home.PrescriptionInfoPopUpActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PopUp"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".home.search.SpeechRecognitionPopUp"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PopUp"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".home.hospital.HospitalInfoPopUp"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PopUp"
+            tools:ignore="LockedOrientationActivity" />
+
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="f8c837b167ba775d01673772ef6f006c" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/icon" />
+
+        <activity android:name=".home.hospital.HospitalMapActivity" />
+        <activity android:name=".home.CoronaCheckActivity" />
+        <activity
+            android:name=".home.hospital.HospitalActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".FindPasswordActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".home.mypage.WithdrawalActivity" />
+        <activity
+            android:name=".home.mypage.WriteAddressActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".home.mypage.AddressSearchActivity" />
+        <activity android:name=".home.mypage.SettingActivity" />
+        <activity android:name=".home.search.ResultActivity" />
+        <activity android:name=".home.HomeActivity" />
+        <activity
+            android:name=".register.RegisterActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".LoginActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".MainActivity"/>
+        <activity android:name=".SplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme"
+            tools:ignore="LockedOrientationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
