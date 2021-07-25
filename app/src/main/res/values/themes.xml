@@ -35,9 +35,9 @@
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:statusBarColor" tools:targetApi="l">@color/main_color</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/icon_color</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowBackground">@color/main_color</item>
+        <item name="android:windowBackground">@drawable/background_splash</item>
     </style>
 
     <style name="SpinnerDivideStyle" parent="android:style/Widget.ListView.DropDown">
