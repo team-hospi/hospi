@@ -6,12 +6,16 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -33,22 +37,30 @@ import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
-public class SearchWindowFragment extends Fragment {
+public class SearchWindowFragment extends Fragment implements RecognitionListener {
     private static final String TAG = "SearchWindowFragment";
     private FragmentSearchWindowBinding binding;
 
     LinearLayoutManager layoutManager;
     HospitalAdapter hospitalAdapter = new HospitalAdapter();
     ActivityResultLauncher<Intent> mGetContent;
+    SpeechRecognizer speech;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        speech = SpeechRecognizer.createSpeechRecognizer(getContext());
+        speech.setRecognitionListener(this);
         mGetContent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
-                if (result.getData() != null) {
-                    binding.searchEdt.setText(result.getData().getStringExtra("result"));
+                if(result.getData()!=null){
+                    ArrayList<String> text = result.getData().getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+
+                    for(int i = 0; i < text.size() ; i++){
+                        Log.e("GoogleActivity", "onActivityResult text : " + text.get(i));
+                        binding.searchEdt.setText(text.get(i));
+                    }
                 }
                 searchProcess();
             }
@@ -68,7 +80,12 @@ public class SearchWindowFragment extends Fragment {
         binding.voiceInputBtn.setOnClickListener(v -> {
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
                     == PackageManager.PERMISSION_GRANTED) {
-                mGetContent.launch(new Intent(getContext(), SpeechRecognitionPopUp.class));
+                Intent recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "ko-KR"); //언어지정입니다.
+                recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, requireContext().getPackageName());
+                recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
+                recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);   //검색을 말한 결과를 보여주는 갯수
+                mGetContent.launch(recognizerIntent);
             }else{
                 micPermissionCheck();
             }
@@ -194,5 +211,89 @@ public class SearchWindowFragment extends Fragment {
         }
 
         return str;
+    }
+
+    @Override
+    public void onReadyForSpeech(Bundle params) {}
+
+    @Override
+    public void onBeginningOfSpeech() {}
+
+    @Override
+    public void onRmsChanged(float rmsdB) {}
+
+    @Override
+    public void onBufferReceived(byte[] buffer) {}
+
+    @Override
+    public void onEndOfSpeech() {}
+
+    @Override
+    public void onError(int error) {
+        String message;
+
+        switch (error) {
+            case SpeechRecognizer.ERROR_AUDIO:
+                message = "오디오 에러가 발생하였습니다.";
+                break;
+
+            case SpeechRecognizer.ERROR_CLIENT:
+                message = "클라이언트 에러가 발생하였습니다.";
+                break;
+
+            case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
+                message = "권한이 존재하지 않습니다.";
+                break;
+
+            case SpeechRecognizer.ERROR_NETWORK:
+                message = "네트워크 에러가 발생하였습니다.";
+                break;
+
+            case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
+                message = "연결 시간이 초과되었습니다.";
+                break;
+
+            case SpeechRecognizer.ERROR_NO_MATCH:
+                message = "일치하는 문자를 찾을 수 없습니다.";
+                break;
+
+            case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
+                message = "다시 시도해주세요.";
+                break;
+
+            case SpeechRecognizer.ERROR_SERVER:
+                message = "서버 에러가 발생하였습니다.";
+                break;
+
+            case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
+                message = "말하는 시간이 초과되었습니다.";
+                break;
+
+            default:
+                message = "알 수 없는 에러가 발생하였습니다.";
+                break;
+        }
+
+        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onResults(Bundle results) {
+        ArrayList<String> matches = results
+                .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+
+        for(int i = 0; i < matches.size() ; i++){
+            Log.e("GoogleActivity", "onResults text : " + matches.get(i));
+        }
+    }
+
+    @Override
+    public void onPartialResults(Bundle partialResults) {
+
+    }
+
+    @Override
+    public void onEvent(int eventType, Bundle params) {
+
     }
 }
