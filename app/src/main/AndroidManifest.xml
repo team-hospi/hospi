@@ -47,7 +47,7 @@
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="f8c837b167ba775d01673772ef6f006c" />
+            android:value="d9947b7d767bc87aa32ca9afcaaed728" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/icon" />
@@ -78,7 +78,8 @@
         <activity android:name=".SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme"
-            tools:ignore="LockedOrientationActivity">
+            tools:ignore="LockedOrientationActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
