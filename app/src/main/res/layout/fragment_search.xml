@@ -11,8 +11,10 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/view2"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.459">
 
         <TextView
             android:id="@+id/logo"
@@ -21,13 +23,32 @@
             android:layout_gravity="center_horizontal"
             android:text="Hospi"
             android:textColor="@color/main_color"
-            android:textSize="60sp" />
+            android:textSize="70sp" />
+
+        <TextView
+            android:id="@+id/info1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="45dp"
+            android:text="Hospi에서"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/info2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:text="쉽고 빠르게 병원을 검색해보세요!"
+            android:textSize="20sp" />
 
         <FrameLayout
             android:id="@+id/searchBox"
             android:layout_width="320dp"
             android:layout_height="50dp"
-            android:layout_marginTop="50dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp"
             android:background="@drawable/edit_text"
             android:clickable="true">
 
@@ -65,10 +86,10 @@
     <FrameLayout
         android:id="@+id/pharmacyMapBtn"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
-        app:layout_constraintBottom_toTopOf="@+id/coronaCheckBtn"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -115,7 +136,7 @@
     <FrameLayout
         android:id="@+id/hospitalMapBtn"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         app:layout_constraintBottom_toTopOf="@+id/pharmacyMapBtn"
@@ -128,8 +149,7 @@
             android:layout_height="60dp"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="25dp"
-            android:layout_marginBottom="3dp"
-            android:src="@drawable/hospital"
+            android:src="@drawable/ic_action_hospital"
             tools:ignore="ContentDescription" />
 
         <LinearLayout
@@ -163,53 +183,4 @@
             tools:ignore="ContentDescription" />
     </FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/coronaCheckBtn"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="25dp"
-            android:layout_marginBottom="3dp"
-            android:src="@drawable/ic_action_corona"
-            tools:ignore="ContentDescription" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="110dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:text="코로나19 발생동향"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="시도별 코로나19 발생동향 확인" />
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginEnd="25dp"
-            android:src="@drawable/ic_action_forward"
-            app:tint="@color/black"
-            tools:ignore="ContentDescription" />
-    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

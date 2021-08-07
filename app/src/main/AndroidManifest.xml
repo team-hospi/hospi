@@ -53,7 +53,6 @@
             android:resource="@drawable/icon" />
 
         <activity android:name=".home.hospital.HospitalMapActivity" />
-        <activity android:name=".home.CoronaCheckActivity" />
         <activity
             android:name=".home.hospital.HospitalActivity"
             android:windowSoftInputMode="adjustResize" />
