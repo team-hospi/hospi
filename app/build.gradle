@@ -19,7 +19,7 @@ android {
         applicationId "com.gradproject.hospi"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 6
+        versionCode 12
         versionName "1.0.0"
 
         buildConfigField "String", "SMTP_EMAIL", properties['smtp_email']
@@ -34,9 +34,6 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            ndk {
-                debugSymbolLevel 'FULL'
-            }
         }
     }
 
