@@ -77,6 +77,17 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     Loading loading;
     LunarCalendar lunarCalendar;
 
+    final String[] timeArr = {
+            "00:00", "00:30", "01:00", "01:30", "02:00", "02:30",
+            "03:00", "03:30", "04:00", "04:30", "05:00", "05:30",
+            "06:00", "06:30", "07:00", "07:30", "08:00", "08:30",
+            "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+            "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+            "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
+            "18:00", "18:30", "19:00", "19:30", "20:00", "20:30",
+            "21:00", "21:30", "22:00", "22:30", "23:00", "23:30"
+    };
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -614,31 +625,41 @@ public class ReservationFragment extends Fragment implements OnBackPressedListen
     public ArrayList<String> reservationTimeMaker(String open, String close, String lunch){
         ArrayList<String> timeList = new ArrayList<>();
 
-        String[] openArr = open.split(":");
-        String[] closeArr = close.split(":");
-        String[] lunchArr = lunch.split(":");
-
-        LocalTime openTime = LocalTime.of(Integer.parseInt(openArr[0]), Integer.parseInt(openArr[1]));
-        LocalTime closeTime = LocalTime.of(Integer.parseInt(closeArr[0]), Integer.parseInt(closeArr[1]));
-        LocalTime lunchTime = LocalTime.of(Integer.parseInt(lunchArr[0]), Integer.parseInt(lunchArr[1]));
-        LocalTime lunchEndTime = lunchTime.plusHours(1);
-
-        while(openTime.isBefore(closeTime)){
-            timeList.add(openTime.format(DateTimeFormat.time()));
-            openTime = openTime.plusMinutes(30);
+        if(open.equals(close)) {
+            for (int i = 0; i < timeArr.length; i++) {
+                if (timeArr[i].equals(lunch)) {
+                    i++;
+                } else {
+                    timeList.add(timeArr[i]);
+                }
+            }
+            return timeList;
         }
 
-        ArrayList<String> tmpList = new ArrayList<>();
+        int openIdx = 0, closeIdx = 0;
 
-        while(lunchTime.isBefore(lunchEndTime)){
-            tmpList.add(lunchTime.format(DateTimeFormat.time()));
-            lunchTime = lunchTime.plusMinutes(30);
+        for(int i = 0; i < timeArr.length; i++){
+            if(timeArr[i].equals(open)){
+                openIdx = i;
+            }else if(timeArr[i].equals(close)){
+                closeIdx = i;
+            }
         }
 
-        for(int i=0; i<timeList.size(); i++){
-            for(int j=0; j<tmpList.size(); j++){
-                if(timeList.get(i).equals(tmpList.get(j))){
-                    timeList.remove(i);
+        for(int i=0; i < timeArr.length; i++){
+            if(closeIdx < openIdx){
+                if(timeArr[i].equals(lunch)){
+                    i++;
+                }else if(!(closeIdx <= i && i < openIdx)){
+                    timeList.add(timeArr[i]);
+                }
+            }else{
+                if(openIdx <= i && i < closeIdx){
+                    if(timeArr[i].equals(lunch)){
+                        i++;
+                    }else{
+                        timeList.add(timeArr[i]);
+                    }
                 }
             }
         }
