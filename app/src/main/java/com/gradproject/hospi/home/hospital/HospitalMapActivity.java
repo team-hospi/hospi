@@ -154,7 +154,7 @@ public class HospitalMapActivity extends AppCompatActivity implements MapView.PO
                     }
 
                     RoadAddress roadAddress = null;
-                    if (hospitalInfo != null) {
+                    if (hospitalInfo != null && !(hospitalInfo.isEmpty())) {
                         roadAddress = hospitalInfo.get(0).getRoadAddress();
                     }
 
