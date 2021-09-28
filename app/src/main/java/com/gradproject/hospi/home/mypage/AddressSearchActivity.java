@@ -14,7 +14,7 @@ import com.gradproject.hospi.R;
 import com.gradproject.hospi.databinding.ActivityAddressSearchBinding;
 
 public class AddressSearchActivity extends AppCompatActivity {
-    private static final String ADDRESS = "https://hospipi.kro.kr/AddressSearch/Mobile";
+    private static final String ADDRESS = "https://hospi-edcf9.web.app/addressSearchMobile.html";
 
     private Handler handler;
 
