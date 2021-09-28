@@ -19,7 +19,7 @@ android {
         applicationId "com.gradproject.hospi"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 12
+        versionCode 13
         versionName "1.0.1"
 
         buildConfigField "String", "SMTP_EMAIL", properties['smtp_email']
