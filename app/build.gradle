@@ -19,8 +19,8 @@ android {
         applicationId "com.gradproject.hospi"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 14
-        versionName "1.0.2"
+        versionCode 15
+        versionName "1.1.0"
 
         buildConfigField "String", "KAKAO_REST_API_KEY", properties['kakao_rest_api_key']
         buildConfigField "String", "MEDICINE_API_KEY", properties['medicine_api_key']

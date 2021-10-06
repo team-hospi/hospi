@@ -22,6 +22,7 @@ import com.gradproject.hospi.LoginActivity;
 import com.gradproject.hospi.R;
 import com.gradproject.hospi.User;
 import com.gradproject.hospi.databinding.ActivityHomeBinding;
+import com.gradproject.hospi.utils.KeyHash;
 
 import java.util.Objects;
 
