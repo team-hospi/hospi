@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,7 +27,7 @@ import com.gradproject.hospi.utils.StatusBar;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class InquiryListFragment extends Fragment implements OnBackPressedListener {
+public class InquiryListFragment extends Fragment implements OnBackPressedListener, SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = "InquiryListFragment";
     private FragmentInquiryListBinding binding;
 
@@ -58,6 +59,9 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
             }
         }
 
+        binding.swipeRefresh.setOnRefreshListener(this);
+        binding.swipeRefresh.setColorSchemeResources(R.color.main_color_dark);
+
         getInquiryList();
 
         binding.backBtn.setOnClickListener(v -> onBackPressed());
@@ -86,6 +90,12 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
     @Override
     public void onBackPressed() {
         requireActivity().finish();
+    }
+
+    @Override
+    public void onRefresh() {
+        getInquiryList();
+        binding.swipeRefresh.setRefreshing(false);
     }
 
     private void getInquiryList(){
@@ -118,9 +128,11 @@ public class InquiryListFragment extends Fragment implements OnBackPressedListen
                             }
 
                             if(!(inquiryAdapter.items.isEmpty())){
+                                binding.swipeRefresh.setVisibility(View.VISIBLE);
                                 binding.inquiryList.setVisibility(View.VISIBLE);
                                 binding.nothingInquiryView.setVisibility(View.GONE);
                             }else{
+                                binding.swipeRefresh.setVisibility(View.GONE);
                                 binding.inquiryList.setVisibility(View.GONE);
                                 binding.nothingInquiryView.setVisibility(View.VISIBLE);
                             }
