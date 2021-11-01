@@ -19,8 +19,8 @@ android {
         applicationId "com.gradproject.hospi"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 16
-        versionName "1.1.1"
+        versionCode 17
+        versionName "1.1.2"
 
         buildConfigField "String", "KAKAO_REST_API_KEY", properties['kakao_rest_api_key']
         buildConfigField "String", "MEDICINE_API_KEY", properties['medicine_api_key']
@@ -47,7 +47,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation files('libs/libDaumMapAndroid.jar')
-    implementation 'com.google.firebase:firebase-firestore:23.0.3'
+    implementation 'com.google.firebase:firebase-firestore:24.0.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

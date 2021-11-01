@@ -138,7 +138,7 @@ public class ReceptionStatusFragment extends Fragment {
                             LocalDate rDate = LocalDate.of(Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]), Integer.parseInt(dateArr[2]));
 
                             if(curDate.isEqual(rDate)
-                                    && curTime.isAfter(rTime.minusHours(1))){
+                                    && curTime.isAfter(rTime.minusHours(3))){
                                 binding.nothingReceptionView.setVisibility(View.GONE);
                                 binding.receptionView.setVisibility(View.VISIBLE);
                                 binding.departmentTxt.setText(reception.getDepartment());
