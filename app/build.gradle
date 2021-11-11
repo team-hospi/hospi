@@ -5,6 +5,7 @@ plugins {
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def kakao_native_app_key = properties.getProperty('kakao_native_app_key')
 
 android {
 
@@ -24,6 +25,7 @@ android {
 
         buildConfigField "String", "KAKAO_REST_API_KEY", properties['kakao_rest_api_key']
         buildConfigField "String", "MEDICINE_API_KEY", properties['medicine_api_key']
+        manifestPlaceholders = [KAKAO_NATIVE_APP_KEY:kakao_native_app_key]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
